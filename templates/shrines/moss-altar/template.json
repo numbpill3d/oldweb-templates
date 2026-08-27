@@ -1,0 +1,13 @@
+{
+  "title": "Moss Altar",
+  "slug": "moss-altar",
+  "category": "shrines",
+  "description": "Organic shrine titled Altar of Moss, Teeth & Forgotten Songs.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/verdant",
+  "source_commit": "fb76ec350655f485ca3a95b212e60bd4037231b9",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

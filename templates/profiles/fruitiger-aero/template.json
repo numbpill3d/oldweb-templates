@@ -1,0 +1,13 @@
+{
+  "title": "Frutiger Aero Profile",
+  "slug": "fruitiger-aero",
+  "category": "profiles",
+  "description": "Asset-backed Frutiger Aero/Y2K Carrd-style profile with avatar, lists, BYF/DNI, and links.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/fruitiger_aero_template",
+  "source_commit": "3681d87949e1f173cd0c2a73cc5e1da4426a631e",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

@@ -1,0 +1,1857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAGAZINE//SCANT — The Digital Archaeology of Print</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@300;400;600;700;800;900&family=Oswald:wght@200;300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cyan: #00E5FF;
+  --magenta: #FF006E;
+  --yellow: #FFE600;
+  --paper: #F5F0E8;
+  --ink: #0A0A0A;
+  --dark-cyan: #003D45;
+  --muted-cyan: rgba(0,229,255,0.15);
+  --col-gap: 16px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-x: hidden;
+}
+
+/* ─── NOISE TEXTURE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ─── MASTHEAD ─── */
+#masthead {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 4px solid var(--magenta);
+}
+
+.masthead-ticker {
+  background: var(--magenta);
+  color: var(--paper);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  padding: 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  position: relative;
+}
+
+.ticker-inner {
+  display: inline-block;
+  animation: tickerScroll 28s linear infinite;
+}
+
+@keyframes tickerScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.masthead-main {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: end;
+  padding: 28px 40px 0 40px;
+  gap: 20px;
+}
+
+.issue-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.issue-details {
+  font-size: 8px;
+  color: rgba(245,240,232,0.5);
+  letter-spacing: 0.1em;
+  line-height: 1.8;
+}
+
+.masthead-logo {
+  text-align: center;
+}
+
+.logo-main {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(72px, 10vw, 120px);
+  line-height: 0.85;
+  letter-spacing: -0.02em;
+  color: var(--paper);
+  display: block;
+  position: relative;
+}
+
+.logo-main .slash {
+  color: var(--cyan);
+}
+
+.logo-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px;
+  font-weight: 300;
+  letter-spacing: 0.6em;
+  color: var(--yellow);
+  text-transform: uppercase;
+  display: block;
+  margin-top: 4px;
+}
+
+.masthead-price {
+  text-align: right;
+  font-size: 8px;
+  color: rgba(245,240,232,0.5);
+  letter-spacing: 0.1em;
+}
+
+.masthead-price strong {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--yellow);
+  line-height: 1;
+  letter-spacing: 0.05em;
+}
+
+/* ─── NAV STRIP ─── */
+nav {
+  background: var(--ink);
+  border-top: 1px solid rgba(245,240,232,0.1);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+nav a {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.6);
+  text-decoration: none;
+  padding: 10px 16px;
+  border-right: 1px solid rgba(245,240,232,0.1);
+  transition: color 100ms, background 100ms;
+  display: block;
+}
+
+nav a:first-child { border-left: 1px solid rgba(245,240,232,0.1); }
+
+nav a:hover {
+  color: var(--ink);
+  background: var(--cyan);
+}
+
+nav a.active {
+  color: var(--ink);
+  background: var(--yellow);
+}
+
+.nav-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-tag {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: var(--magenta);
+  border: 1px solid var(--magenta);
+  padding: 2px 6px;
+}
+
+/* ─── COVER LINE STRIP ─── */
+.coverline-strip {
+  background: var(--cyan);
+  padding: 8px 40px;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  overflow: hidden;
+}
+
+.coverline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+.coverline-dot {
+  width: 4px;
+  height: 4px;
+  background: var(--magenta);
+  flex-shrink: 0;
+}
+
+/* ─── MAIN WRAPPER ─── */
+.page-wrapper {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ─── BARCODE DIVIDER ─── */
+.barcode-divider {
+  height: 48px;
+  margin: 24px 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.barcode-svg {
+  flex: 1;
+  height: 40px;
+}
+
+.barcode-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  color: rgba(10,10,10,0.4);
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+/* ─── HERO SECTION ─── */
+#hero {
+  padding: 32px 0 0 0;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto;
+  gap: var(--col-gap);
+  position: relative;
+}
+
+.hero-main {
+  grid-column: 1;
+  position: relative;
+}
+
+.hero-image-block {
+  position: relative;
+  height: 480px;
+  background: var(--ink);
+  overflow: hidden;
+}
+
+.hero-bg-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(135deg, rgba(0,229,255,0.12) 0%, transparent 50%),
+    linear-gradient(225deg, rgba(255,0,110,0.1) 0%, transparent 50%);
+}
+
+/* Overlapping headline */
+.hero-headline {
+  position: absolute;
+  bottom: -20px;
+  left: -8px;
+  z-index: 10;
+}
+
+.hero-kicker {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.4em;
+  color: var(--cyan);
+  text-transform: uppercase;
+  background: var(--ink);
+  padding: 4px 10px;
+  display: inline-block;
+  margin-bottom: -2px;
+}
+
+.hero-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(56px, 7vw, 88px);
+  line-height: 0.88;
+  letter-spacing: -0.01em;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 8px 16px 12px 10px;
+  display: block;
+}
+
+.hero-title .accent-cyan { color: var(--cyan); }
+.hero-title .accent-mag { color: var(--magenta); }
+.hero-title .accent-yel { color: var(--yellow); }
+
+/* Hero sidebar */
+.hero-sidebar {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--col-gap);
+}
+
+.data-stream {
+  border: 1px solid var(--ink);
+  padding: 10px;
+  background: var(--paper);
+  position: relative;
+}
+
+.data-stream::before {
+  content: attr(data-label);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 2px 6px;
+  position: absolute;
+  top: -1px;
+  left: 0;
+}
+
+.data-stream.cyan-accent::before { background: var(--cyan); color: var(--ink); }
+.data-stream.mag-accent::before { background: var(--magenta); }
+.data-stream.yel-accent::before { background: var(--yellow); color: var(--ink); }
+
+.ds-content {
+  margin-top: 16px;
+  font-size: 8px;
+  line-height: 1.7;
+  color: rgba(10,10,10,0.7);
+}
+
+.ds-content strong {
+  display: block;
+  font-size: 9px;
+  color: var(--ink);
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+  margin-top: 6px;
+}
+
+.ds-content strong:first-child { margin-top: 0; }
+
+.stat-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1px dotted rgba(10,10,10,0.2);
+  padding: 3px 0;
+}
+
+.stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 7px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba(10,10,10,0.5);
+  text-align: right;
+  max-width: 70px;
+  line-height: 1.3;
+}
+
+/* ─── STORY GRID ─── */
+#stories {
+  padding: 48px 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 20px;
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 6px;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.section-number {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  color: rgba(10,10,10,0.4);
+  letter-spacing: 0.2em;
+}
+
+.section-tag {
+  margin-left: auto;
+  font-size: 8px;
+  letter-spacing: 0.2em;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--paper);
+  background: var(--magenta);
+  padding: 2px 8px;
+  text-transform: uppercase;
+}
+
+.story-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--col-gap);
+}
+
+.story-card {
+  border: 1px solid var(--ink);
+  overflow: hidden;
+  position: relative;
+  background: var(--paper);
+  cursor: default;
+  transition: transform 80ms;
+}
+
+.story-card:hover { transform: translate(-2px, -2px); }
+.story-card:hover .story-img-block { filter: saturate(1.3); }
+
+.story-card.featured { grid-column: 1; grid-row: 1 / 3; }
+
+.story-img-block {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+  background: var(--ink);
+  transition: filter 150ms;
+}
+
+.story-card.featured .story-img-block { height: 300px; }
+
+.story-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.story-category {
+  position: absolute;
+  top: 8px;
+  left: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  color: var(--ink);
+}
+
+.cat-cyan { background: var(--cyan); }
+.cat-mag { background: var(--magenta); color: var(--paper); }
+.cat-yel { background: var(--yellow); }
+
+.story-body {
+  padding: 12px;
+  position: relative;
+}
+
+.story-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 0.95;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.story-card.featured .story-headline { font-size: 32px; }
+
+.story-deck {
+  font-size: 10px;
+  line-height: 1.6;
+  color: rgba(10,10,10,0.65);
+  margin-bottom: 10px;
+}
+
+.story-byline {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: rgba(10,10,10,0.4);
+  text-transform: uppercase;
+  border-top: 1px solid rgba(10,10,10,0.15);
+  padding-top: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ─── FULL-BLEED FEATURE ─── */
+#feature {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  margin: 0 -40px;
+}
+
+.feature-inner {
+  padding: 48px 80px;
+  position: relative;
+  z-index: 2;
+}
+
+.feature-bg-text {
+  position: absolute;
+  top: -20px;
+  right: -40px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 280px;
+  line-height: 1;
+  color: rgba(255,255,255,0.03);
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.feature-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 16px;
+  display: block;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+
+.feature-headline {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(48px, 6vw, 76px);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  margin-bottom: 20px;
+}
+
+.feature-headline em {
+  color: var(--magenta);
+  font-style: normal;
+}
+
+.feature-body {
+  font-size: 12px;
+  line-height: 1.75;
+  color: rgba(245,240,232,0.75);
+  columns: 2;
+  column-gap: 28px;
+}
+
+.feature-body p { margin-bottom: 12px; break-inside: avoid; }
+
+.feature-pullquote {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--yellow);
+  border-left: 4px solid var(--yellow);
+  padding-left: 20px;
+  margin: 24px 0;
+  letter-spacing: 0.01em;
+}
+
+.feature-sidebar {
+  padding-top: 8px;
+}
+
+.quick-facts {
+  border: 1px solid rgba(245,240,232,0.2);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.qf-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border-bottom: 1px solid rgba(0,229,255,0.3);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.qf-item {
+  font-size: 8px;
+  line-height: 1.6;
+  color: rgba(245,240,232,0.6);
+  border-bottom: 1px dotted rgba(245,240,232,0.1);
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+}
+
+.qf-item::before {
+  content: '//';
+  color: var(--magenta);
+  flex-shrink: 0;
+}
+
+.feature-stat {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.fstat {
+  flex: 1;
+  text-align: center;
+  border: 1px solid rgba(245,240,232,0.15);
+  padding: 12px 8px;
+}
+
+.fstat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  color: var(--yellow);
+  line-height: 1;
+  display: block;
+}
+
+.fstat-unit {
+  font-size: 7px;
+  letter-spacing: 0.2em;
+  color: rgba(245,240,232,0.4);
+  text-transform: uppercase;
+}
+
+/* ─── COLUMNS SECTION ─── */
+#columns {
+  padding: 48px 0;
+}
+
+.columns-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 180px;
+  gap: var(--col-gap);
+  align-items: start;
+}
+
+.column-block {
+  border-top: 3px solid var(--ink);
+  padding-top: 12px;
+}
+
+.column-block.cyan-top { border-top-color: var(--cyan); }
+.column-block.mag-top { border-top-color: var(--magenta); }
+.column-block.yel-top { border-top-color: var(--yellow); }
+
+.col-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(10,10,10,0.4);
+  margin-bottom: 6px;
+}
+
+.col-head {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+
+.col-text {
+  font-size: 10px;
+  line-height: 1.7;
+  color: rgba(10,10,10,0.7);
+}
+
+.col-text p { margin-bottom: 8px; }
+
+/* Sidebar column */
+.sidebar-col {
+  border: 1px solid var(--ink);
+  padding: 0;
+  overflow: hidden;
+}
+
+.sc-header {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 6px 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.sc-item {
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(10,10,10,0.1);
+  font-size: 8px;
+  line-height: 1.5;
+}
+
+.sc-item-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: var(--magenta);
+  line-height: 1;
+  display: block;
+}
+
+.sc-item-label {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(10,10,10,0.5);
+}
+
+/* ─── TECH ARCHAEOLOGY GRID ─── */
+#archive {
+  padding: 48px 0;
+  background: none;
+}
+
+.arch-grid {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.arch-toc {
+  position: sticky;
+  top: 20px;
+}
+
+.toc-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+}
+
+.toc-item {
+  font-size: 8px;
+  line-height: 1.5;
+  padding: 4px 0;
+  border-bottom: 1px dotted rgba(10,10,10,0.15);
+  display: flex;
+  gap: 8px;
+  color: rgba(10,10,10,0.6);
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 80ms;
+}
+
+.toc-item:hover { color: var(--magenta); }
+
+.toc-item span:first-child {
+  color: rgba(10,10,10,0.3);
+  font-family: 'IBM Plex Mono', monospace;
+  flex-shrink: 0;
+}
+
+.arch-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--col-gap);
+}
+
+.archive-entry {
+  border: 1px solid var(--ink);
+  padding: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.archive-entry::after {
+  content: attr(data-year);
+  position: absolute;
+  bottom: -8px;
+  right: 4px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 64px;
+  color: rgba(10,10,10,0.05);
+  line-height: 1;
+  pointer-events: none;
+}
+
+.ae-pub {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 7px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  padding: 2px 6px;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+
+.ae-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.ae-meta {
+  font-size: 8px;
+  color: rgba(10,10,10,0.45);
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.ae-body {
+  font-size: 9px;
+  line-height: 1.6;
+  color: rgba(10,10,10,0.65);
+}
+
+.ae-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.ae-tag {
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid rgba(10,10,10,0.3);
+  padding: 1px 5px;
+  color: rgba(10,10,10,0.5);
+}
+
+/* ─── DATA MANIFESTO ─── */
+#manifesto {
+  background: var(--magenta);
+  color: var(--paper);
+  padding: 0;
+  margin: 0 -40px;
+  overflow: hidden;
+  position: relative;
+}
+
+.manifesto-inner {
+  padding: 48px 80px;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.manifesto-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 160px;
+  line-height: 1;
+  color: rgba(245,240,232,0.15);
+  text-align: center;
+}
+
+.manifesto-text .m-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 52px;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+
+.manifesto-text .m-body {
+  font-size: 11px;
+  line-height: 1.8;
+  color: rgba(245,240,232,0.85);
+  columns: 2;
+  column-gap: 24px;
+}
+
+.manifesto-text .m-body p { margin-bottom: 10px; }
+
+/* ─── BOTTOM GRID ─── */
+#bottom {
+  padding: 48px 0;
+}
+
+.bottom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 200px;
+  gap: var(--col-gap);
+}
+
+.mini-review {
+  border: 1px solid var(--ink);
+  padding: 12px;
+}
+
+.mr-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+
+.mr-meta { 
+  font-size: 8px;
+  color: rgba(10,10,10,0.45);
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.mr-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px;
+  color: var(--cyan);
+  line-height: 1;
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.mr-body { font-size: 9px; line-height: 1.6; color: rgba(10,10,10,0.65); }
+
+.info-col {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 16px;
+}
+
+.ic-header {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px;
+  color: var(--yellow);
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid rgba(245,240,232,0.2);
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+}
+
+.ic-item {
+  font-size: 8px;
+  line-height: 1.6;
+  color: rgba(245,240,232,0.5);
+  padding: 4px 0;
+  border-bottom: 1px dotted rgba(245,240,232,0.1);
+}
+
+.ic-item strong { color: var(--cyan); display: block; font-size: 9px; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 32px 40px 20px;
+  margin-top: 0;
+  position: relative;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 32px;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding-bottom: 24px;
+  border-bottom: 1px solid rgba(245,240,232,0.1);
+}
+
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--paper);
+}
+
+.footer-logo .slash { color: var(--cyan); }
+
+.footer-tagline {
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  color: rgba(245,240,232,0.4);
+  text-transform: uppercase;
+  margin-top: 6px;
+}
+
+.footer-desc {
+  font-size: 9px;
+  line-height: 1.7;
+  color: rgba(245,240,232,0.4);
+  margin-top: 10px;
+}
+
+.footer-col-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  border-bottom: 1px solid rgba(0,229,255,0.3);
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+
+.footer-link {
+  display: block;
+  font-size: 9px;
+  color: rgba(245,240,232,0.5);
+  text-decoration: none;
+  padding: 3px 0;
+  letter-spacing: 0.05em;
+  transition: color 80ms;
+}
+
+.footer-link:hover { color: var(--magenta); }
+
+.footer-bottom {
+  max-width: 1160px;
+  margin: 16px auto 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  color: rgba(245,240,232,0.3);
+  letter-spacing: 0.1em;
+}
+
+.footer-bottom .copy { letter-spacing: 0.15em; text-transform: uppercase; }
+
+/* ─── BARCODE SVG BUILDER ─── */
+.bc-bars {
+  shape-rendering: crispEdges;
+}
+
+/* ─── RESPONSIVE PATCH ─── */
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .hero-sidebar { flex-direction: row; flex-wrap: wrap; }
+  .story-grid { grid-template-columns: 1fr 1fr; }
+  .story-card.featured { grid-column: 1 / 3; }
+  .columns-grid { grid-template-columns: 1fr 1fr; }
+  .arch-grid { grid-template-columns: 1fr; }
+  .bottom-grid { grid-template-columns: 1fr 1fr; }
+  .feature-grid { grid-template-columns: 1fr; }
+  .manifesto-inner { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ─── MASTHEAD ─── -->
+<header id="masthead">
+  <div class="masthead-ticker">
+    <span class="ticker-inner">
+      WIRED 1.01 &nbsp;///&nbsp; MONDO 2000 ISSUE 14 &nbsp;///&nbsp; BOING BOING ZINE #9 &nbsp;///&nbsp; 2600 MAGAZINE &nbsp;///&nbsp; PHREAKING THE MAINFRAME &nbsp;///&nbsp; INFORMATION WANTS TO BE FREE &nbsp;///&nbsp; THE MEDIUM IS THE MESSAGE &nbsp;///&nbsp; DIGITAL REVOLUTION VOL.III &nbsp;///&nbsp; CYBERPUNK IS DEAD — LONG LIVE CYBERPUNK &nbsp;///&nbsp; WIRED 1.01 &nbsp;///&nbsp; MONDO 2000 ISSUE 14 &nbsp;///&nbsp; BOING BOING ZINE #9 &nbsp;///&nbsp; 2600 MAGAZINE &nbsp;///&nbsp; PHREAKING THE MAINFRAME &nbsp;///&nbsp; INFORMATION WANTS TO BE FREE &nbsp;///&nbsp; THE MEDIUM IS THE MESSAGE &nbsp;///&nbsp; DIGITAL REVOLUTION VOL.III &nbsp;///&nbsp; CYBERPUNK IS DEAD — LONG LIVE CYBERPUNK &nbsp;///&nbsp;
+    </span>
+  </div>
+
+  <div class="masthead-main">
+    <div>
+      <div class="issue-label">Est. 1993 &nbsp; // &nbsp; Quarterly Publication</div>
+      <div class="issue-details">
+        VOLUME 07 · ISSUE 03<br>
+        SPRING/SUMMER 1997<br>
+        PRINTED ON RECYCLED STOCK<br>
+        ISSN 1072-0030
+      </div>
+    </div>
+
+    <div class="masthead-logo">
+      <span class="logo-main">MAG<span class="slash">//</span>SCANT</span>
+      <span class="logo-sub">A Tribute to the Printed Techno-Culture Magazines of the Late 20th Century</span>
+    </div>
+
+    <div class="masthead-price">
+      COVER PRICE<br>
+      <strong>$4.95</strong>
+      CAN $6.50 · UK £3.25<br>
+      DISPLAY UNTIL AUG 1997
+    </div>
+  </div>
+
+  <nav>
+    <a href="#hero" class="active">FRONT</a>
+    <a href="#stories">FEATURES</a>
+    <a href="#feature">DEEP DIVE</a>
+    <a href="#columns">COLUMNS</a>
+    <a href="#archive">ARCHIVE</a>
+    <a href="#manifesto">MANIFESTO</a>
+    <a href="#bottom">REVIEWS</a>
+    <div class="nav-right">
+      <span class="nav-tag">ISSUE 07.03</span>
+      <span class="nav-tag">LIVE</span>
+    </div>
+  </nav>
+</header>
+
+<!-- ─── COVER LINE STRIP ─── -->
+<div class="coverline-strip">
+  <span class="coverline">THE INTERNET IS NOT THE FUTURE — IT IS THE PRESENT</span>
+  <span class="coverline-dot"></span>
+  <span class="coverline">INSIDE THE SILICON VALLEY MYTH MACHINE</span>
+  <span class="coverline-dot"></span>
+  <span class="coverline">WHY YOUR BROWSER IS LYING TO YOU</span>
+  <span class="coverline-dot"></span>
+  <span class="coverline">MONDO'S LAST STAND: AN ORAL HISTORY</span>
+  <span class="coverline-dot"></span>
+  <span class="coverline">WEARABLES BEFORE WEARABLES WERE A THING</span>
+  <span class="coverline-dot"></span>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div class="page-wrapper">
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div class="hero-grid">
+      <div class="hero-main">
+        <div class="hero-image-block">
+          <canvas class="hero-bg-canvas" id="heroCanvas"></canvas>
+          <div class="hero-image-overlay"></div>
+        </div>
+        <div class="hero-headline">
+          <span class="hero-kicker">COVER STORY &nbsp;// &nbsp; ISSUE 07.03</span>
+          <span class="hero-title">THE<br><span class="accent-cyan">DIGITAL</span><br><span class="accent-mag">REVOLU</span><span class="accent-yel">TION</span><br>WAS<br>TELEVISED</span>
+        </div>
+      </div>
+
+      <aside class="hero-sidebar">
+        <div class="data-stream cyan-accent" data-label="Data Stream">
+          <div class="ds-content">
+            <strong>NETWORK METRICS 1997</strong>
+            <div class="stat-block">
+              <span class="stat-num">19.5M</span>
+              <span class="stat-label">US INTERNET USERS</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-num">882K</span>
+              <span class="stat-label">WEBSITES ONLINE</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-num">$0.09</span>
+              <span class="stat-label">COST PER MB STORAGE</span>
+            </div>
+            <div class="stat-block">
+              <span class="stat-num">28.8</span>
+              <span class="stat-label">AVG MODEM KBPS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-stream mag-accent" data-label="Quick Facts">
+          <div class="ds-content">
+            <strong>WIRED MAGAZINE</strong>
+            Founded San Francisco, 1993. Louis Rossetto & Jane Metcalfe. Peak circulation: 500,000+ copies. Sold to Condé Nast 1998 for $80M.
+            <strong>MONDO 2000</strong>
+            Berkeley, CA. R.U. Sirius & Queen Mu. Called "the Rolling Stone of the cyberculture revolution." 17 issues, 1989–1998.
+            <strong>2600: THE HACKER QUARTERLY</strong>
+            Emmanuel Goldstein. Still publishing. Named for the 2600 Hz tone used to hack AT&T long distance.
+          </div>
+        </div>
+
+        <div class="data-stream yel-accent" data-label="Processing">
+          <div class="ds-content">
+            <strong>CURRENT STATUS</strong>
+            All featured publications are now archived digitally. Original print copies command $5–$200+ on secondary market. Wired.com receives ~22M monthly visitors. None have replicated the original editorial chaos.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- BARCODE DIVIDER -->
+  <div class="barcode-divider">
+    <span class="barcode-label">SEC.02 // STORIES</span>
+    <svg class="barcode-svg" viewBox="0 0 500 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="bc-bars" id="barcode1"></g>
+    </svg>
+    <span class="barcode-label">ISSN 1072-0030</span>
+    <svg class="barcode-svg" viewBox="0 0 500 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="bc-bars" id="barcode2"></g>
+    </svg>
+    <span class="barcode-label">SPRING 1997</span>
+  </div>
+
+  <!-- ─── STORIES ─── -->
+  <section id="stories">
+    <div class="section-header">
+      <span class="section-title">FEATURED STORIES</span>
+      <span class="section-number">SEC // 02</span>
+      <span class="section-tag">THIS ISSUE</span>
+    </div>
+
+    <div class="story-grid">
+      <!-- Featured card -->
+      <div class="story-card featured">
+        <div class="story-img-block">
+          <canvas class="story-canvas" id="sc1"></canvas>
+          <span class="story-category cat-cyan">COVER STORY</span>
+        </div>
+        <div class="story-body">
+          <div class="story-headline">THE WEB IS NOT JUST PAGES — IT'S A NERVOUS SYSTEM GOING LIVE</div>
+          <div class="story-deck">In 1994, Tim Berners-Lee handed us the keys to the kingdom and most people thought he was giving away free brochures. Three years later, the kingdom is very much awake, very much in motion, and nobody — not the VC firms, not the telcos, not the government — is fully in control of what happens next. This is the story of infrastructure, ideology, and the moment the network stopped being a tool and became a territory.</div>
+          <div class="story-byline">
+            <span>BY JAMES FELIX &amp; SARAH NOMURA</span>
+            <span>P. 44 — 61</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="story-card">
+        <div class="story-img-block" style="height:160px;">
+          <canvas class="story-canvas" id="sc2" style="height:160px;"></canvas>
+          <span class="story-category cat-mag">CULTURE</span>
+        </div>
+        <div class="story-body">
+          <div class="story-headline">RAVE CULTURE &amp; THE GUI</div>
+          <div class="story-deck">Why the rave scene and the GUI revolution share the same philosophical DNA — and why both terrified the establishment.</div>
+          <div class="story-byline">
+            <span>KIRA MOSS</span>
+            <span>P. 22</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="story-card">
+        <div class="story-img-block" style="height:160px;">
+          <canvas class="story-canvas" id="sc3" style="height:160px;"></canvas>
+          <span class="story-category cat-yel">TECHNOLOGY</span>
+        </div>
+        <div class="story-body">
+          <div class="story-headline">256-BIT CRYPTO VS. THE NSA</div>
+          <div class="story-deck">Phil Zimmermann didn't just write code. He started a war. The battle for strong encryption is far from over.</div>
+          <div class="story-byline">
+            <span>ALEX DARIO</span>
+            <span>P. 68</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="story-card">
+        <div class="story-img-block" style="height:130px;">
+          <canvas class="story-canvas" id="sc4" style="height:130px;"></canvas>
+          <span class="story-category cat-cyan">HARDWARE</span>
+        </div>
+        <div class="story-body">
+          <div class="story-headline">WEARABLE COMPUTERS: 2001 OR BUST</div>
+          <div class="story-deck">Steve Mann has been wearing a computer since 1980. We visited him in Toronto to ask: when does everyone else get one?</div>
+          <div class="story-byline">
+            <span>T. REINHOLT</span>
+            <span>P. 82</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="story-card">
+        <div class="story-img-block" style="height:130px;">
+          <canvas class="story-canvas" id="sc5" style="height:130px;"></canvas>
+          <span class="story-category cat-mag">INTERVIEW</span>
+        </div>
+        <div class="story-body">
+          <div class="story-headline">JARON LANIER REVISITED</div>
+          <div class="story-deck">VR's first prophet recants, sort of. We sit down with Lanier a decade after the hype to take honest stock.</div>
+          <div class="story-byline">
+            <span>EDITORIAL</span>
+            <span>P. 90</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-wrapper -->
+
+<!-- ─── FULL BLEED FEATURE ─── -->
+<section id="feature">
+  <div class="feature-bg-text">FUTURE</div>
+  <div class="feature-inner">
+    <span class="feature-label">/// DEEP DIVE — ISSUE 07.03 FEATURE</span>
+    <div class="feature-grid">
+      <div class="feature-left">
+        <div class="feature-headline">THE <em>MAGAZINE</em> AS A<br>DELIVERY SYSTEM<br>FOR DANGEROUS IDEAS</div>
+        <div class="feature-body">
+          <p>Before the algorithm, there was the editor. Before the feed, there was the layout. Before the engagement metric, there was the cover price — and the desperate, almost religious act of paying actual money to hold ideas in your hands on glossy, ink-soaked paper.</p>
+          <p>The tech magazines of the early-to-mid 1990s were not merely publications. They were polemics. They were dispatches from a war nobody had officially declared. Wired launched in 1993 with the energy of a manifesto and the production values of a Rem Koolhaas fever dream.</p>
+          <p>Designer John Plunkett and art director Barbara Kuhr built pages that hurt. Cyan on magenta. Text reversed out of photographs. Sidebar copy at 7 points. Pull quotes that jumped grids and ran diagonally. You could not read Wired passively. The medium demanded engagement.</p>
+          <p>Mondo 2000 was even more unhinged, in the best possible way. R.U. Sirius and Queen Mu ran a publication that looked like it had been assembled at 3am after a long night of interesting conversations. Articles about smart drugs sat next to interviews with William Gibson sat next to classified ads for brain machines.</p>
+          <div class="feature-pullquote">"Information density is not just a design choice. It is an editorial philosophy. The page that fights back is the page worth reading."</div>
+          <p>2600 represented a third mode entirely — the utilitarian screed. Cheap newsprint. No art direction to speak of. But inside: the actual technical details that the establishment wanted to suppress.</p>
+          <p>What united all three was a shared belief: that information, freely distributed and densely packed, was inherently political. The layout was not decoration. The layout was the argument.</p>
+        </div>
+      </div>
+
+      <div class="feature-sidebar">
+        <div class="quick-facts">
+          <div class="qf-title">// QUICK FACTS: THE GOLDEN ERA</div>
+          <div class="qf-item">Wired's first issue sold out its entire 100,000 copy print run within days of newsstand placement — March 1993</div>
+          <div class="qf-item">Mondo 2000's editorial collective operated out of a Victorian house in Berkeley; R.U. Sirius wrote much of it on a Macintosh SE</div>
+          <div class="qf-item">2600 takes its name from the 2600 Hz tone that unlocked free long-distance calls on AT&T's old analog network</div>
+          <div class="qf-item">Wired's early investors included Nicholas Negroponte of the MIT Media Lab, who had predicted the digital revolution in print since 1991</div>
+          <div class="qf-item">Designer John Plunkett was reportedly told the first Wired layout was "unreadable" by several legacy magazine veterans — he kept it anyway</div>
+          <div class="qf-item">Boing Boing began as a physical zine in 1988 before becoming the flagship blog of the early web era in 1995</div>
+          <div class="qf-item">The phrase "information wants to be free" was first said by Stewart Brand at the first Hackers Conference in 1984 — and immediately misquoted for the next 30 years</div>
+        </div>
+
+        <div class="feature-stat">
+          <div class="fstat">
+            <span class="fstat-num">17</span>
+            <span class="fstat-unit">Mondo Issues<br>Total Print Run</span>
+          </div>
+          <div class="fstat">
+            <span class="fstat-num">$80M</span>
+            <span class="fstat-unit">Wired Sale Price<br>Condé Nast 1998</span>
+          </div>
+          <div class="fstat">
+            <span class="fstat-num">33yr</span>
+            <span class="fstat-unit">2600 Still<br>Publishing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-wrapper">
+
+  <!-- BARCODE DIVIDER -->
+  <div class="barcode-divider">
+    <span class="barcode-label">SEC.04 // COLUMNS</span>
+    <svg class="barcode-svg" viewBox="0 0 500 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="bc-bars" id="barcode3"></g>
+    </svg>
+    <span class="barcode-label">0 45496 83098 1</span>
+    <svg class="barcode-svg" viewBox="0 0 500 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="bc-bars" id="barcode4"></g>
+    </svg>
+    <span class="barcode-label">DIGITAL PRESS</span>
+  </div>
+
+  <!-- ─── COLUMNS ─── -->
+  <section id="columns">
+    <div class="section-header">
+      <span class="section-title">REGULAR COLUMNS</span>
+      <span class="section-number">SEC // 04</span>
+    </div>
+
+    <div class="columns-grid">
+      <div class="column-block cyan-top">
+        <div class="col-label">/// COLUMN 01 — HARDWARE</div>
+        <div class="col-head">SILICON GOSSIP</div>
+        <div class="col-text">
+          <p>Intel has begun sampling its P6 to select OEMs and the benchmark numbers are, frankly, obscene. 200MHz with a new 256KB L2 cache architecture that sits on-die rather than on the motherboard. The old P5 bus bottleneck is dead. Whether this translates to actual real-world performance gains for anyone running Quake is another question entirely.</p>
+          <p>Meanwhile, the clone market is heating up. AMD's K6 looks credible for the first time in years. Cyrix is making noise about the M2. The days of Intel's monopoly on raw performance might, genuinely, be numbered.</p>
+          <p>But the real story is storage. The 4GB IDE drive has cracked the consumer price ceiling. $199 retail. Within 18 months the 10GB mark will fall and nobody will remember what "zipping to floppy" means.</p>
+        </div>
+      </div>
+
+      <div class="column-block mag-top">
+        <div class="col-label">/// COLUMN 02 — CULTURE</div>
+        <div class="col-head">SIGNAL / NOISE</div>
+        <div class="col-text">
+          <p>There is a peculiar class of person who believes that the correct response to "the internet" is to write a thinkpiece about it in a magazine. You are currently reading one. We acknowledge the irony without resolving it.</p>
+          <p>What is interesting is not the content of the internet — content has always been cheap, disposable, abundant. What is interesting is the protocol. TCP/IP is not a technology. It is a philosophy of distribution made executable. Every packet routed around censorship is a political act of the purest possible kind.</p>
+          <p>The culture writers who cover the net as a lifestyle story are missing the point in the most spectacular possible way. The net is not a lifestyle. The net is infrastructure. And infrastructure is always, eventually, political.</p>
+        </div>
+      </div>
+
+      <div class="column-block yel-top">
+        <div class="col-label">/// COLUMN 03 — SOFTWARE</div>
+        <div class="col-head">CODE REVIEW</div>
+        <div class="col-text">
+          <p>Netscape 4.0 is a bloated mess and Navigator is losing the war to Internet Explorer through a combination of Microsoft's licensing stranglehold on OEM hardware and the fact that IE 3.0 is genuinely not bad anymore. The browser wars are real. The casualties are standards compliance and anything approaching a coherent DOM.</p>
+          <p>JavaScript is six months old and already being abused in ways that Brendan Eich almost certainly did not intend when he wrote it in ten days in 1995. The web is becoming programmable. This is either the best or worst thing that has happened to it. Possibly both.</p>
+          <p>Meanwhile, Linux 2.0 quietly runs on everything. The kernel mailing list has more commits this month than all of Microsoft's public repositories combined. Open source is not a business model. It is a force of nature.</p>
+        </div>
+      </div>
+
+      <!-- Sidebar column -->
+      <div class="sidebar-col">
+        <div class="sc-header">/// DATA STREAM</div>
+        <div class="sc-item">
+          <span class="sc-item-num">256</span>
+          <span class="sc-item-label">bit PGP key length — Zimmermann's original</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">$0</span>
+          <span class="sc-item-label">Cost to download Linux 2.0 kernel — forever</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">72dpi</span>
+          <span class="sc-item-label">Screen resolution that broke print designers' brains</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">14.4K</span>
+          <span class="sc-item-label">Modem speed at launch of the web, 1991</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">17</span>
+          <span class="sc-item-label">Minutes to download a 3MB image at 28.8K</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">$9.99</span>
+          <span class="sc-item-label">Monthly cost of AOL dial-up, 1996 — unlimited</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">350K</span>
+          <span class="sc-item-label">Wired subscriber base at peak print circulation</span>
+        </div>
+        <div class="sc-item">
+          <span class="sc-item-num">1</span>
+          <span class="sc-item-label">Page in Wired Vol.1 that used pure black text on white</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BARCODE DIVIDER -->
+  <div class="barcode-divider">
+    <span class="barcode-label">SEC.05 // ARCHIVE</span>
+    <svg class="barcode-svg" viewBox="0 0 500 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="bc-bars" id="barcode5"></g>
+    </svg>
+    <span class="barcode-label">DIGITAL ARCHAEOLOGY PROJECT</span>
+  </div>
+
+  <!-- ─── ARCHIVE ─── -->
+  <section id="archive">
+    <div class="section-header">
+      <span class="section-title">TECH ARCHAEOLOGY</span>
+      <span class="section-number">SEC // 05</span>
+      <span class="section-tag">ARCHIVE 1989–1998</span>
+    </div>
+
+    <div class="arch-grid">
+      <div class="arch-toc">
+        <div class="toc-title">INDEX</div>
+        <a class="toc-item" href="#archive"><span>01</span> Wired Vol.1 No.1</a>
+        <a class="toc-item" href="#archive"><span>02</span> Mondo 2000 Issue 7</a>
+        <a class="toc-item" href="#archive"><span>03</span> 2600 Spring 1993</a>
+        <a class="toc-item" href="#archive"><span>04</span> Boing Boing Zine #11</a>
+        <a class="toc-item" href="#archive"><span>05</span> Wired 2.11 — "Be Afraid"</a>
+        <a class="toc-item" href="#archive"><span>06</span> Mondo 2000 Issue 14</a>
+        <a class="toc-item" href="#archive"><span>07</span> Wired 3.06 — Negroponte</a>
+        <a class="toc-item" href="#archive"><span>08</span> 2600 Vol.14 No.2</a>
+        <a class="toc-item" href="#archive"><span>09</span> Electric Word Magazine</a>
+        <a class="toc-item" href="#archive"><span>10</span> Boardwatch Magazine</a>
+      </div>
+
+      <div class="arch-content">
+        <div class="archive-entry" data-year="1993">
+          <div class="ae-pub">WIRED MAGAZINE</div>
+          <div class="ae-title">VOLUME 1, ISSUE 1 — THE BIRTH DOCUMENT</div>
+          <div class="ae-meta">MARCH/APRIL 1993 &nbsp;·&nbsp; SAN FRANCISCO, CA &nbsp;·&nbsp; 100K PRINT RUN</div>
+          <div class="ae-body">Manifesto disguised as a magazine. Mitch Kapor on the electronic frontier. Bruce Sterling on the shape of things to come. A design language that looked like nothing before it — fluorescent colors on coated stock, typography that treated the grid as a suggestion. The opening editorial claimed it was "for the people who created the digital revolution and for the people who are trying to adapt to it, survive it, and — if possible — control it."</div>
+          <div class="ae-tags">
+            <span class="ae-tag">FOUNDING ISSUE</span>
+            <span class="ae-tag">ROSSETTO</span>
+            <span class="ae-tag">PLUNKETT</span>
+            <span class="ae-tag">RARE</span>
+          </div>
+        </div>
+
+        <div class="archive-entry" data-year="1991">
+          <div class="ae-pub">MONDO 2000</div>
+          <div class="ae-title">ISSUE 7 — SMART DRUGS &amp; STEERING THE EVOLUTION</div>
+          <div class="ae-meta">SUMMER 1991 &nbsp;·&nbsp; BERKELEY, CA &nbsp;·&nbsp; 40K ESTIMATED CIRCULATION</div>
+          <div class="ae-body">Perhaps the strangest thing ever sold on newsstands. An interview with Timothy Leary sits adjacent to a technical piece on neural network theory. R.U. Sirius writes about the coming democratization of psychopharmacology. Queen Mu's editorial introduces the concept of the "cyberpunk lifestyle" — not as fiction, but as actionable philosophy. The typography was even more chaotic than Wired's and the paper quality even worse. The ideas were incandescent.</div>
+          <div class="ae-tags">
+            <span class="ae-tag">CYBERPUNK</span>
+            <span class="ae-tag">R.U. SIRIUS</span>
+            <span class="ae-tag">CLASSIC</span>
+          </div>
+        </div>
+
+        <div class="archive-entry" data-year="1993">
+          <div class="ae-pub">2600: THE HACKER QUARTERLY</div>
+          <div class="ae-title">SPRING 1993 — SYSTEMS &amp; SUBVERSIONS</div>
+          <div class="ae-meta">Q1 1993 &nbsp;·&nbsp; MIDDLE ISLAND, NY &nbsp;·&nbsp; NEWSPRINT, 48PP</div>
+          <div class="ae-body">Emmanuel Goldstein's quarterly bible of the phone phreaking and early hacking community. No art direction, no photography, no production values beyond the absolute functional minimum. And yet: arguably more important than Wired for the communities it served. Technical documentation for telephone system exploitation, bulletin board system directories, legal defense fund updates from arrested hackers, and the classified personals that served as pre-internet networking for people who needed to stay off the grid.</div>
+          <div class="ae-tags">
+            <span class="ae-tag">PHREAKING</span>
+            <span class="ae-tag">UNDERGROUND</span>
+            <span class="ae-tag">GOLDSTEIN</span>
+          </div>
+        </div>
+
+        <div class="archive-entry" data-year="1996">
+          <div class="ae-pub">WIRED MAGAZINE</div>
+          <div class="ae-title">3.12 — THE ENCYCLOPAEDIA OF THE NEW ECONOMY</div>
+          <div class="ae-meta">DECEMBER 1996 &nbsp;·&nbsp; SPECIAL ISSUE &nbsp;·&nbsp; 280PP</div>
+          <div class="ae-body">By 1996, Wired had codified its own vocabulary. This A-to-Z special issue defined the terms of the new digital economy — from "bandwidth" to "disintermediation" to "meme" (a word most readers encountered here for the first time, borrowed from Dawkins and redeployed for the internet age). Kevin Kelly's introductory essay argued that the new rules of the networked economy would overturn all previous models of value creation. He was approximately half right about everything, which in retrospect looks like prescience.</div>
+          <div class="ae-tags">
+            <span class="ae-tag">KEVIN KELLY</span>
+            <span class="ae-tag">NEW ECONOMY</span>
+            <span class="ae-tag">PROPHETIC</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-wrapper -->
+
+<!-- ─── MANIFESTO STRIP ─── -->
+<section id="manifesto">
+  <div class="manifesto-inner">
+    <div class="manifesto-num">07</div>
+    <div class="manifesto-text">
+      <div class="m-title">WHY WE PRINT<br>WHAT WE PRINT</div>
+      <div class="m-body">
+        <p>We produce this archive as a counter-argument to forgetting. The internet — the same internet that these magazines heralded, celebrated, and occasionally overhyped — has largely erased the print record of its own origin story.</p>
+        <p>You cannot Google your way into understanding what it felt like to hold Wired Issue 1 in 1993, or to find a copy of Mondo 2000 in a San Francisco bookstore in 1991 and feel, for the first time, that there were other people who thought about the world the way you did.</p>
+        <p>Print had density. Not just information density — though god knows it had that — but physical density. Weight. Smell. A tactile argument that the ideas inside were worth pressing into dead trees and shipping across the country.</p>
+        <p>What we are doing here is archaeology. We are brushing dirt off artifacts. We believe the artifacts matter — not as nostalgia, but as evidence. Evidence that ideas had urgency. That design could be political. That a magazine could be a weapon.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="page-wrapper">
+
+  <!-- BARCODE DIVIDER -->
+  <div class="barcode-divider">
+    <span class="barcode-label">SEC.07 // REVIEWS</span>
+    <svg class="barcode-svg" viewBox="0 0 500 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g class="bc-bars" id="barcode6"></g>
+    </svg>
+    <span class="barcode-label">0 77076 30110 6</span>
+  </div>
+
+  <!-- ─── BOTTOM ─── -->
+  <section id="bottom">
+    <div class="section-header">
+      <span class="section-title">REVIEWS &amp; NOTICES</span>
+      <span class="section-number">SEC // 07</span>
+    </div>
+
+    <div class="bottom-grid">
+      <div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="mini-review">
+            <div class="mr-title">BEING DIGITAL — NICHOLAS NEGROPONTE</div>
+            <div class="mr-meta">KNOPF, 1995 &nbsp;·&nbsp; NONFICTION &nbsp;·&nbsp; 256PP</div>
+            <div class="mr-score" style="color:var(--cyan)">9.1</div>
+            <div class="mr-body">The MIT Media Lab founder's crystallization of everything the Wired community believed in 1995. Prophetic about the shift from atoms to bits in ways that make uncomfortable reading now that we know which corporation collected all the bits. Essential primary source for understanding the idealism of the era.</div>
+          </div>
+          <div class="mini-review">
+            <div class="mr-title">NEUROMANCER — WILLIAM GIBSON</div>
+            <div class="mr-meta">ACE BOOKS, 1984 &nbsp;·&nbsp; FICTION &nbsp;·&nbsp; 271PP</div>
+            <div class="mr-score" style="color:var(--magenta)">10.0</div>
+            <div class="mr-body">Not a review. An acknowledgment. Gibson named cyberspace in 1984 before most people who would eventually live in it had heard of modems. The debt every magazine on this site owes to this book is incalculable and was acknowledged, constantly, by every editor involved.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <div class="mini-review">
+            <div class="mr-title">THE VIRTUAL COMMUNITY — HOWARD RHEINGOLD</div>
+            <div class="mr-meta">ADDISON-WESLEY, 1993 &nbsp;·&nbsp; NONFICTION &nbsp;·&nbsp; 325PP</div>
+            <div class="mr-score" style="color:var(--yellow); -webkit-text-stroke: 1px #333;">8.4</div>
+            <div class="mr-body">Rheingold's account of the WELL and the early online communities that preceded the web proper. Pre-internet social networks, pre-social media community drama, pre-everything we now accept as normal. Both more utopian and more honest than anything published since.</div>
+          </div>
+          <div class="mini-review">
+            <div class="mr-title">OUT OF CONTROL — KEVIN KELLY</div>
+            <div class="mr-meta">ADDISON-WESLEY, 1994 &nbsp;·&nbsp; NONFICTION &nbsp;·&nbsp; 521PP</div>
+            <div class="mr-score" style="color:var(--cyan)">8.8</div>
+            <div class="mr-body">Kelly's massive synthesis of evolutionary theory, network science, and cyberculture. The founding executive editor of Wired wrote this as a kind of grand unified theory of the digital age. 500 pages of dense, generous, occasionally wrong, always interesting thinking about emergence, complexity, and why the future will be grown rather than built.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-col">
+        <div class="ic-header">CONTACT / COLOPHON</div>
+        <div class="ic-item"><strong>SITE TITLE</strong>MAGAZINE//SCANT — A Tribute to Tech Print</div>
+        <div class="ic-item"><strong>PURPOSE</strong>Archival fan-site. Non-commercial. Educational use.</div>
+        <div class="ic-item"><strong>TYPOGRAPHY</strong>Bebas Neue · Barlow Condensed · IBM Plex Mono · Oswald</div>
+        <div class="ic-item"><strong>PALETTE</strong>Cyan #00E5FF · Magenta #FF006E · Yellow #FFE600 · Paper #F5F0E8</div>
+        <div class="ic-item"><strong>TRADEMARKS</strong>All publication names & trademarks are property of their respective owners</div>
+        <div class="ic-item"><strong>BUILT WITH</strong>Pure HTML/CSS/JS + Canvas API. Zero frameworks. Zero dependencies.</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-wrapper -->
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-logo">MAG<span class="slash">//</span>SCANT</div>
+      <div class="footer-tagline">Digital Archaeology of the Printed Techno-Culture Press</div>
+      <div class="footer-desc">A non-commercial tribute to the bold, chaotic, information-dense tech magazines of the late 20th century. In memory of Mondo 2000 (1989–1998). In honor of 2600, still printing since 1984.</div>
+    </div>
+    <div>
+      <div class="footer-col-title">PUBLICATIONS</div>
+      <a class="footer-link" href="https://www.wired.com" target="_blank" rel="noopener">Wired Magazine</a>
+      <a class="footer-link" href="https://www.2600.com" target="_blank" rel="noopener">2600: The Hacker Quarterly</a>
+      <a class="footer-link" href="https://boingboing.net" target="_blank" rel="noopener">Boing Boing</a>
+      <a class="footer-link" href="#archive">Mondo 2000 (Archived)</a>
+    </div>
+    <div>
+      <div class="footer-col-title">SECTIONS</div>
+      <a class="footer-link" href="#hero">Front Matter</a>
+      <a class="footer-link" href="#stories">Featured Stories</a>
+      <a class="footer-link" href="#feature">Deep Dive</a>
+      <a class="footer-link" href="#columns">Columns</a>
+      <a class="footer-link" href="#archive">Tech Archaeology</a>
+      <a class="footer-link" href="#manifesto">Editorial Manifesto</a>
+    </div>
+    <div>
+      <div class="footer-col-title">METADATA</div>
+      <a class="footer-link" href="#masthead">Volume 07, Issue 03</a>
+      <a class="footer-link" href="#masthead">Spring/Summer 1997</a>
+      <a class="footer-link" href="#bottom">Reviews &amp; Notices</a>
+      <a class="footer-link" href="#columns">Data Streams</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="copy">MAG//SCANT &nbsp;·&nbsp; V07.03 &nbsp;·&nbsp; SPRING 1997 &nbsp;·&nbsp; NON-COMMERCIAL TRIBUTE</span>
+    <span>ALL PUBLICATION NAMES ARE TRADEMARKS OF THEIR RESPECTIVE OWNERS &nbsp;·&nbsp; EDUCATIONAL USE</span>
+  </div>
+</footer>
+
+<script>
+// ─── BARCODE GENERATOR ───
+function generateBarcode(groupId, seed) {
+  const g = document.getElementById(groupId);
+  if (!g) return;
+  let x = 0;
+  const totalWidth = 500;
+  const rng = (s) => { let v = Math.sin(s) * 43758.5453; return v - Math.floor(v); };
+  let i = 0;
+  while (x < totalWidth) {
+    const w = Math.max(1, Math.floor(rng(seed + i * 7.3) * 6) + 1);
+    const isBlack = rng(seed + i * 3.7 + 100) > 0.45;
+    if (isBlack) {
+      const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      rect.setAttribute('x', x);
+      rect.setAttribute('y', 0);
+      rect.setAttribute('width', w);
+      rect.setAttribute('height', 40);
+      rect.setAttribute('fill', '#0A0A0A');
+      g.appendChild(rect);
+    }
+    x += w;
+    i++;
+  }
+}
+
+generateBarcode('barcode1', 42.1);
+generateBarcode('barcode2', 87.6);
+generateBarcode('barcode3', 13.4);
+generateBarcode('barcode4', 56.9);
+generateBarcode('barcode5', 29.3);
+generateBarcode('barcode6', 74.2);
+
+// ─── HERO CANVAS ───
+(function() {
+  const canvas = document.getElementById('heroCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, t = 0;
+  const CYAN = '#00E5FF', MAGENTA = '#FF006E', YELLOW = '#FFE600';
+
+  function resize() {
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight;
+    canvas.width = W;
+    canvas.height = H;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Grid points
+  const COLS = 24, ROWS = 16;
+
+  function draw() {
+    t += 0.008;
+    ctx.fillStyle = '#0A0A0A';
+    ctx.fillRect(0, 0, W, H);
+
+    // Warping grid
+    ctx.lineWidth = 0.5;
+    for (let r = 0; r <= ROWS; r++) {
+      ctx.beginPath();
+      for (let c = 0; c <= COLS; c++) {
+        const bx = (c / COLS) * W;
+        const by = (r / ROWS) * H;
+        const warp = Math.sin(c * 0.4 + t) * Math.cos(r * 0.3 + t * 0.7) * 18;
+        const x = bx + warp;
+        const y = by + Math.sin(r * 0.5 + t * 0.9) * 14;
+        if (c === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      const alpha = 0.08 + Math.sin(r * 0.3 + t) * 0.04;
+      ctx.strokeStyle = `rgba(0,229,255,${alpha})`;
+      ctx.stroke();
+    }
+    for (let c = 0; c <= COLS; c++) {
+      ctx.beginPath();
+      for (let r = 0; r <= ROWS; r++) {
+        const bx = (c / COLS) * W;
+        const by = (r / ROWS) * H;
+        const warp = Math.sin(c * 0.4 + t) * Math.cos(r * 0.3 + t * 0.7) * 18;
+        const x = bx + warp;
+        const y = by + Math.sin(r * 0.5 + t * 0.9) * 14;
+        if (r === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      const alpha = 0.06 + Math.cos(c * 0.25 + t * 1.1) * 0.03;
+      ctx.strokeStyle = `rgba(255,0,110,${alpha})`;
+      ctx.stroke();
+    }
+
+    // Glitch scan lines
+    const numGlitch = 3;
+    for (let g = 0; g < numGlitch; g++) {
+      const y = ((t * 60 + g * H / numGlitch) % H);
+      ctx.fillStyle = `rgba(0,229,255,0.04)`;
+      ctx.fillRect(0, y, W, 2);
+    }
+
+    // Floating data text
+    ctx.font = '8px "IBM Plex Mono"';
+    ctx.fillStyle = 'rgba(0,229,255,0.18)';
+    const texts = ['01001101','TCP/IP','ISDN','ROOT@HOST','KERNEL 2.0','//NETWORK','BROADCAST','SIGNAL'];
+    texts.forEach((tx, i) => {
+      const x = ((i * 137 + Math.sin(t * 0.3 + i) * 30 + 50) % (W - 80));
+      const y = ((i * 89 + Math.cos(t * 0.4 + i * 0.7) * 20 + 20) % (H - 20));
+      ctx.fillText(tx, x, y);
+    });
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ─── STORY CARD CANVASES ───
+function makeStoryCanvas(id, color1, color2) {
+  const canvas = document.getElementById(id);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, t = Math.random() * 100;
+  const speed = 0.004 + Math.random() * 0.006;
+
+  function resize() {
+    W = canvas.offsetWidth;
+    H = canvas.offsetHeight || 200;
+    canvas.width = W;
+    canvas.height = H;
+  }
+  resize();
+
+  function draw() {
+    t += speed;
+    ctx.fillStyle = '#0A0A0A';
+    ctx.fillRect(0, 0, W, H);
+
+    // Simple wave pattern
+    for (let x = 0; x < W; x += 3) {
+      const h1 = Math.sin(x * 0.02 + t) * H * 0.3;
+      const h2 = Math.cos(x * 0.015 + t * 0.8) * H * 0.2;
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, color1 + '33');
+      grad.addColorStop(1, color2 + '11');
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, H / 2 + h1 + h2, 2, H);
+    }
+
+    // Horizontal lines
+    for (let y = 0; y < H; y += 8) {
+      ctx.fillStyle = `rgba(245,240,232,${0.015 + Math.sin(y * 0.1 + t) * 0.008})`;
+      ctx.fillRect(0, y, W, 1);
+    }
+
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+makeStoryCanvas('sc1', '#00E5FF', '#FF006E');
+makeStoryCanvas('sc2', '#FF006E', '#FFE600');
+makeStoryCanvas('sc3', '#FFE600', '#00E5FF');
+makeStoryCanvas('sc4', '#00E5FF', '#FFE600');
+makeStoryCanvas('sc5', '#FF006E', '#00E5FF');
+</script>
+
+</body>
+</html>

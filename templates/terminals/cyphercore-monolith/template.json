@@ -1,0 +1,13 @@
+{
+  "title": "Cyphercore Monolith",
+  "slug": "cyphercore-monolith",
+  "category": "terminals",
+  "description": "Brutalist cyber terminal dashboard with status, protocols, logs, and an entity database.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/brutaliszt",
+  "source_commit": "477704cbbee2ba85c2c18fcb20a82c4c6cda680d",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

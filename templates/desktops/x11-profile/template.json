@@ -1,0 +1,13 @@
+{
+  "title": "X11 Profile Desktop",
+  "slug": "x11-profile",
+  "category": "desktops",
+  "description": "X11-style Neocities profile desktop with tags, file links, and personal-site slots.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/hlmdesktop",
+  "source_commit": "cfeeebdc61574c7eb2a64571237f7abef2138ad3",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

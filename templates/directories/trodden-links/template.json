@@ -1,0 +1,13 @@
+{
+  "title": "Trodden Links",
+  "slug": "trodden-links",
+  "category": "directories",
+  "description": "Digital-rhizome directory spanning indie-web and software resources.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/trodlinks",
+  "source_commit": "aa9a93f3ade33f18cc61a4e5d58d9a49ca54b439",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

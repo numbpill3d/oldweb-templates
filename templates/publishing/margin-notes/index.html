@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>margin notes</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+/* deliberately minimal. no framework. no three.js. commitment is total. */
+body{background:#0a0a0a;color:#c8c8c8;font-family:'Share Tech Mono',monospace;font-size:13px;
+  margin:0;padding:26px 0 60px;line-height:1.65}
+a{color:#b39ddb;text-decoration:none;border-bottom:1px solid transparent}
+a:hover{color:#fff;border-bottom-color:#5c2976}
+a:visited{color:#8a72a8}
+::-webkit-scrollbar{width:9px}::-webkit-scrollbar-track{background:#0a0a0a}
+::-webkit-scrollbar-thumb{background:#2a2a2a;border:1px solid #444}
+::-webkit-scrollbar-thumb:hover{background:#5c2976}
+table{border-collapse:collapse;margin:0 auto;width:760px}
+td{padding:0 16px;vertical-align:top}
+td.nav{border-right:1px solid #2a2a2a;width:160px;padding-right:18px}
+/* --- nav --- */
+.sitename{color:#ad6911;font-size:15px;letter-spacing:.05em}
+.ver{color:#3a3a3a;font-size:11px}
+.nav div.l{padding:1px 0}
+.nav .sec{color:#4a4a4a;font-size:11px;margin-top:14px;letter-spacing:.14em;border-bottom:1px solid #1a1a1a;padding-bottom:2px}
+.nav a.cur{color:#ad6911}
+.nav a.cur::before{content:'> '}
+.b88{width:88px;height:31px;display:block;margin-top:5px;border:1px solid #1a1a1a;
+  image-rendering:pixelated;opacity:.72}
+.b88:hover{opacity:1;border-color:#5c2976}
+.stat{color:#3a3a3a;font-size:11px;margin-top:14px;line-height:1.9}
+/* --- content --- */
+h1{font-size:15px;color:#c8c8c8;font-weight:normal;margin:0 0 2px;letter-spacing:.06em}
+.lede{color:#5a5a5a;font-size:12px;margin-bottom:18px}
+.view{display:none}.view.on{display:block}
+.rule{color:#2a2a2a;letter-spacing:0;margin:14px 0;user-select:none;font-size:12px}
+/* details tree — the signature */
+details{margin:0 0 1px}
+details>summary{cursor:pointer;list-style:none;padding:2px 0;color:#c8c8c8}
+details>summary::-webkit-details-marker{display:none}
+details>summary::before{content:'[+] ';color:#5c2976}
+details[open]>summary::before{content:'[-] ';color:#ad6911}
+details>summary:hover{color:#fff;background:#131313}
+details .body{padding:3px 0 8px 22px;border-left:1px solid #1a1a1a;margin-left:5px}
+details details>summary::before{content:'  + ';color:#3a5a4a}
+details details[open]>summary::before{content:'  - ';color:#6a8a5a}
+.item{padding:1px 0}
+.item .n{color:#5a5a5a}
+.note{color:#4a4a4a;font-size:11.5px;padding-left:14px}
+.warn{color:#a02630}
+.ok{color:#4a7a3a}
+/* plain entry list */
+.e{border-bottom:1px solid #151515;padding:8px 0}
+.e .d{color:#3a3a3a;font-size:11px}
+.e .t{color:#c8c8c8}
+.e .b{color:#5a5a5a;font-size:12px}
+.e:hover .t{color:#fff}
+/* raw block */
+pre{background:#0d0d0d;border:1px solid #1a1a1a;padding:10px 12px;color:#6a8a5a;font-size:12px;
+  overflow-x:auto;margin:10px 0}
+/* index table */
+.ix{width:100%;font-size:12px}
+.ix td{padding:2px 10px 2px 0;border-bottom:1px solid #131313}
+.ix td:first-child{color:#3a3a3a;width:90px}
+.ix td:nth-child(2){color:#b39ddb}
+.ix td:last-child{color:#4a4a4a}
+.ix tr:hover td{background:#111}
+footer{color:#2a2a2a;font-size:11px;margin-top:24px;border-top:1px solid #1a1a1a;padding-top:8px}
+</style>
+</head>
+<body>
+<table>
+<tr>
+<!-- ================= NAV ================= -->
+<td class="nav">
+  <div class="sitename">margin.notes</div>
+  <div class="ver">v2.1.14 // static</div>
+
+  <div class="sec">SECTIONS</div>
+  <div class="l"><a class="cur" data-v="v-index" href="#">_index</a></div>
+  <div class="l"><a data-v="v-cabinet" href="#">cabinet</a></div>
+  <div class="l"><a data-v="v-marginalia" href="#">marginalia</a></div>
+  <div class="l"><a data-v="v-transcripts" href="#">transcripts</a></div>
+  <div class="l"><a data-v="v-colophon" href="#">colophon</a></div>
+
+  <div class="sec">EXTERNAL</div>
+  <div class="l"><a href="https://neocities.org" target="_blank" rel="noopener">neocities</a></div>
+  <div class="l"><a href="#" onclick="return false">webring</a></div>
+  <div class="l"><a href="#" onclick="return false">rss</a></div>
+
+  <div class="sec">BUTTON</div>
+  <img src="https://i.ibb.co/qLrkCygM/NUM.png" alt="margin.notes 88x31" class="b88">
+  <div class="sec">ELSEWHERE</div>
+  <img src="https://i.ibb.co/XZb1vJ5G/222.png" alt="" class="b88">
+  <img src="https://i.ibb.co/B2Q3qMyj/splic.png" alt="" class="b88">
+  <img src="https://i.ibb.co/4nbrn1nF/nolove4.png" alt="" class="b88">
+
+  <div class="stat">
+    entries: 214<br>
+    cabinet: 61 items<br>
+    updated: 2026.07.21<br>
+    size: 812kb<br>
+    js: 1.1kb
+  </div>
+</td>
+
+<!-- ================= CONTENT ================= -->
+<td>
+
+<!-- INDEX -->
+<div class="view on" id="v-index">
+  <h1>margin notes</h1>
+  <div class="lede">a storage area. things written in the edges of other people's pages.
+  no design. four images, all of them buttons. loads in under a second on a phone from 2011.</div>
+
+  <div class="rule">────────────────────────────────────────────────────────────</div>
+
+  <div class="e"><span class="d">2026.07.21</span> &nbsp; <span class="t">cabinet restructured — 61 items now filed by <a data-v="v-cabinet" href="#">weight</a>, not date</span></div>
+  <div class="e"><span class="d">2026.07.11</span> &nbsp; <span class="t">added 14 transcripts from the tape box</span><br>
+    <span class="b">most are unlabelled. two are in a language I can't place. see <a data-v="v-transcripts" href="#">transcripts</a>.</span></div>
+  <div class="e"><span class="d">2026.06.28</span> &nbsp; <span class="t">marginalia section opened</span><br>
+    <span class="b">notes found in secondhand books, transcribed exactly, including the ones that are wrong.</span></div>
+  <div class="e"><span class="d">2026.06.02</span> &nbsp; <span class="t">removed the stylesheet's last decorative rule</span><br>
+    <span class="b">it was a gradient. it has been dealt with.</span></div>
+
+  <div class="rule">────────────────────────────────────────────────────────────</div>
+
+  <table class="ix">
+    <tr><td>SIZE</td><td>760px fixed</td><td>desktop only, unapologetically</td></tr>
+    <tr><td>FONT</td><td>one</td><td>share tech mono, no fallback chain worth writing</td></tr>
+    <tr><td>COLOR</td><td>four</td><td>#0a0a0a #c8c8c8 #b39ddb #ad6911</td></tr>
+    <tr><td>IMAGES</td><td>four</td><td>88x31 buttons. nothing decorative. nothing above 9kb.</td></tr>
+    <tr><td>TRACKING</td><td>none</td><td>I do not want to know that you were here</td></tr>
+  </table>
+</div>
+
+<!-- CABINET (the details tree) -->
+<div class="view" id="v-cabinet">
+  <h1>cabinet</h1>
+  <div class="lede">61 items. click to open a drawer. drawers contain drawers.</div>
+  <div class="rule">────────────────────────────────────────────────────────────</div>
+
+  <details open>
+    <summary>paper</summary>
+    <div class="body">
+      <details>
+        <summary>found notes</summary>
+        <div class="body">
+          <div class="item"><span class="n">01</span> receipt, 1994, for one item: "the usual"</div>
+          <div class="item"><span class="n">02</span> a shopping list ending in "and tell her"</div>
+          <div class="item"><span class="n">03</span> half a letter, torn on purpose <span class="note">// the torn half is the polite half</span></div>
+          <div class="item"><span class="n">04</span> library card, expired, someone else's name in my handwriting <span class="warn">// unresolved</span></div>
+        </div>
+      </details>
+      <details>
+        <summary>marginalia (transcribed)</summary>
+        <div class="body">
+          <div class="item"><span class="n">05</span> "he doesn't mean this" — pencil, p.114 of a novel about ships</div>
+          <div class="item"><span class="n">06</span> "ask mother" — pen, twice, different decades, same hand</div>
+          <div class="item"><span class="n">07</span> a single underline under the word <i>eventually</i> <span class="note">// pressed hard enough to tear</span></div>
+          <div class="item">→ full set under <a data-v="v-marginalia" href="#">marginalia</a></div>
+        </div>
+      </details>
+      <details>
+        <summary>maps</summary>
+        <div class="body">
+          <div class="item"><span class="n">08</span> hand-drawn, no legend, one X <span class="ok">// verified: it's a bus stop</span></div>
+          <div class="item"><span class="n">09</span> street map of a town with one street too many</div>
+        </div>
+      </details>
+    </div>
+  </details>
+
+  <details>
+    <summary>magnetic</summary>
+    <div class="body">
+      <details>
+        <summary>tapes</summary>
+        <div class="body">
+          <div class="item"><span class="n">10</span> C90, label reads "DO NOT RECORD OVER" <span class="warn">// recorded over</span></div>
+          <div class="item"><span class="n">11</span> C60, 44 seconds of a room, then nothing</div>
+          <div class="item"><span class="n">12</span> microcassette, dictation, speaker unidentified <span class="note">// see transcripts 07-09</span></div>
+        </div>
+      </details>
+      <details>
+        <summary>floppies</summary>
+        <div class="body">
+          <div class="item"><span class="n">13</span> 3.5" — one file, 1.44mb, named PRAYERS.BAK <span class="warn">// won't open</span></div>
+          <div class="item"><span class="n">14</span> 3.5" — 400 identical text files, all empty <span class="ok">// checksummed, genuinely identical</span></div>
+          <div class="item"><span class="n">15</span> 5.25" — no drive available. unopened since 1997.</div>
+        </div>
+      </details>
+    </div>
+  </details>
+
+  <details>
+    <summary>objects</summary>
+    <div class="body">
+      <div class="item"><span class="n">16</span> a key that fits nothing in this building</div>
+      <div class="item"><span class="n">17</span> a doorbell, wired to nothing, occasionally rings <span class="warn">// logged 9 times</span></div>
+      <div class="item"><span class="n">18</span> a mirror shard with no reflective coating</div>
+      <div class="item"><span class="n">19</span> a small brass weight, 1oz, marked "NOT FOR TRADE"</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>unfiled <span style="color:#a02630">(do not open at night)</span></summary>
+    <div class="body">
+      <div class="item"><span class="n">20</span> <span class="warn">[ withheld ]</span></div>
+      <div class="item"><span class="n">21</span> <span class="warn">[ withheld ]</span></div>
+      <div class="item"><span class="n">22</span> the reason items 20 and 21 are withheld</div>
+      <div class="note">this drawer is why the cabinet is filed by weight now.</div>
+    </div>
+  </details>
+</div>
+
+<!-- MARGINALIA -->
+<div class="view" id="v-marginalia">
+  <h1>marginalia</h1>
+  <div class="lede">notes found in secondhand books. transcribed exactly. the errors are theirs and are kept.</div>
+  <div class="rule">────────────────────────────────────────────────────────────</div>
+  <div class="e"><span class="d">p.114 · pencil · a novel about ships</span><br>
+    <span class="t">"he doesn't mean this"</span><br>
+    <span class="b">written beside a paragraph in which nobody says anything. the reader knew something the book didn't.</span></div>
+  <div class="e"><span class="d">endpaper · two pens · two decades</span><br>
+    <span class="t">"ask mother" / "ask mother"</span><br>
+    <span class="b">same hand, twenty years apart, judging by the ink. the second is smaller. she did not, I think, ask.</span></div>
+  <div class="e"><span class="d">p.3 · pressed hard enough to tear</span><br>
+    <span class="t">a single underline beneath the word <i>eventually</i></span><br>
+    <span class="b">no comment written. none needed. the tear is the comment.</span></div>
+  <div class="e"><span class="d">inside cover · biro · a cookbook</span><br>
+    <span class="t">"for when you have a kitchen again"</span><br>
+    <span class="b">unsigned. the book is unused. that's the whole story and it's plenty.</span></div>
+  <div class="e"><span class="d">last page · pencil, erased, still legible</span><br>
+    <span class="t">"I finished it. that's all I wanted to tell you."</span><br>
+    <span class="b">erased carefully, which takes longer than writing it. filed under things meant and unsent.</span></div>
+</div>
+
+<!-- TRANSCRIPTS -->
+<div class="view" id="v-transcripts">
+  <h1>transcripts</h1>
+  <div class="lede">tape box, 14 items. transcribed by ear. [??] marks an inaudible word. nothing is corrected.</div>
+  <div class="rule">────────────────────────────────────────────────────────────</div>
+  <pre>TRANSCRIPT 07  ·  microcassette, unlabelled  ·  00:00-00:44
+------------------------------------------------------------
+[room tone, approx. 11s]
+SPEAKER A:  is it going
+SPEAKER B:  it's going
+SPEAKER A:  alright. alright. so if anyone finds this
+            [pause 4s]
+            no. start again.
+[click]
+[end of recording]</pre>
+  <pre>TRANSCRIPT 08  ·  C60, side B  ·  00:00-00:44
+------------------------------------------------------------
+[44 seconds of a room in which nothing happens]
+[the room is the same room as transcript 07]
+[nobody speaks]
+[end of recording]
+
+NOTE: identical length to 07. to the frame. I have checked
+      this four times and would prefer not to check again.</pre>
+  <pre>TRANSCRIPT 09  ·  C90, "DO NOT RECORD OVER"  ·  fragment
+------------------------------------------------------------
+SPEAKER A:  — told you not to record over it
+SPEAKER B:  I know
+SPEAKER A:  so what's underneath now
+SPEAKER B:  [??]
+SPEAKER A:  say it properly
+SPEAKER B:  the same thing. it's the same thing underneath.
+[tape ends abruptly]</pre>
+  <div class="note">transcripts 01-06 and 10-14 are being cleaned and will be added as they're finished.</div>
+</div>
+
+<!-- COLOPHON -->
+<div class="view" id="v-colophon">
+  <h1>colophon</h1>
+  <div class="lede">how and why this page is like this.</div>
+  <div class="rule">────────────────────────────────────────────────────────────</div>
+  <p>Written in a text editor. No build step. No framework. No package.json. The whole site is four files
+  and one of them is the button.</p>
+  <p>The layout is a <code style="color:#6a8a5a">&lt;table&gt;</code>. This is not irony. It is the correct tool for a
+  two-column document that will never be responsive, and I would like the record to show that it has
+  never once broken.</p>
+  <table class="ix">
+    <tr><td>WRITTEN</td><td>by hand</td><td>2019 — ongoing</td></tr>
+    <tr><td>HOSTED</td><td>static</td><td>no database, nothing to breach</td></tr>
+    <tr><td>LICENCE</td><td>take it</td><td>credit is nice, silence is fine</td></tr>
+    <tr><td>CONTACT</td><td><a href="#" onclick="return false">margin@notes.local</a></td><td>replies are slow and long</td></tr>
+  </table>
+  <p style="color:#4a4a4a;margin-top:16px">If you found this by accident: the <a data-v="v-cabinet" href="#">cabinet</a> is the
+  reason the site exists. Everything else is filing.</p>
+</div>
+
+<footer>margin.notes v2.1.14 · static · no tracking · four images · 760px forever</footer>
+</td>
+</tr>
+</table>
+
+<script>
+document.querySelectorAll('[data-v]').forEach(a=>a.addEventListener('click',e=>{
+  e.preventDefault();
+  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id===a.dataset.v));
+  document.querySelectorAll('.nav a').forEach(n=>n.classList.toggle('cur',n.dataset.v===a.dataset.v));
+  scrollTo(0,0);
+}));
+</script>
+</body>
+</html>

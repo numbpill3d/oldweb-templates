@@ -1,0 +1,13 @@
+{
+  "title": "Digital Soul",
+  "slug": "digital-soul",
+  "category": "profiles",
+  "description": "Pink digital-soul profile sanctuary with profile and toolkit sections.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/pinkthem",
+  "source_commit": "55f2be4f22185df3f0fd990f10e8aaaa88a5b444",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Dial-up Aquarium",
+  "slug": "dialup-aquarium",
+  "category": "nature",
+  "description": "Deliberately low-bandwidth personal aquarium homepage.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/dialup-aquarium",
+  "source_commit": "1f19362b2d09466413585076ab9988d0924d51a0",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

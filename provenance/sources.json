@@ -1,0 +1,454 @@
+[
+  {
+    "repository": "numbpill3d/fruitiger_aero_template",
+    "url": "https://github.com/numbpill3d/fruitiger_aero_template",
+    "branch": "main",
+    "commit": "3681d87949e1f173cd0c2a73cc5e1da4426a631e",
+    "destination": "templates/profiles/fruitiger-aero",
+    "files": [
+      {
+        "path": "Nightcall.mp3",
+        "sha256": "ddc100885b6e8cbd7654b08056b2200b947d58555bd358f5d50565025c3f61d5",
+        "size": 89687
+      },
+      {
+        "path": "README.md",
+        "sha256": "b94d43bb641809596af996c02e9097daa0c4483246aa82b8f5da278695167664",
+        "size": 62
+      },
+      {
+        "path": "errant1.gif",
+        "sha256": "46fac6f2cea0ebcdbcc45ad29c7b5669314cdcdff072e1c16c7cbc3d3dadac4c",
+        "size": 276576
+      },
+      {
+        "path": "floating2.png",
+        "sha256": "52ecdbf2ac2abb0c81dfe699906a4373209361f42844d7c3982d19b61e92dd12",
+        "size": 13808
+      },
+      {
+        "path": "index.html",
+        "sha256": "cb641d58eb005007ab147053881facdbaab7b619b844a68b6121f2035bd9e265",
+        "size": 3892
+      },
+      {
+        "path": "list.jpg",
+        "sha256": "1e0f5b8ee9eb09e0c252e8d07756faaf11c33678a597ac00aa6d9ae9689e537c",
+        "size": 54439
+      },
+      {
+        "path": "pfp.jpg",
+        "sha256": "0c00a1c95bfa98195df223a3a03b474b4e17cc31ea743035c38d894924dd60ab",
+        "size": 12077
+      },
+      {
+        "path": "tile-bg1.jpg",
+        "sha256": "0bdbd353840461a4ebbec782466064a2db035b1d1a91e187509f0b0bce703529",
+        "size": 33572
+      },
+      {
+        "path": "tiledbg.webp",
+        "sha256": "400411ac79fae8eaee3518dc8af70c183d3bbc37d3042eb8f793a21963f2bc03",
+        "size": 2000
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/pastelprofile",
+    "url": "https://github.com/numbpill3d/pastelprofile",
+    "branch": "main",
+    "commit": "f737250fdf325de7c49b3e488fc42bbf73717c2c",
+    "destination": "templates/profiles/pastel-neurocore",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "c03c2669227d6ecf64a3168b7d3dfbe266749717fc66fab27feb9addf6ad6111",
+        "size": 40144
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/pinkthem",
+    "url": "https://github.com/numbpill3d/pinkthem",
+    "branch": "main",
+    "commit": "55f2be4f22185df3f0fd990f10e8aaaa88a5b444",
+    "destination": "templates/profiles/digital-soul",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "4721b27db70cb89e7fd4f88c71d6cdc0034f50f0cca489cda3d07837b60c7779",
+        "size": 26702
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/purplesanctum",
+    "url": "https://github.com/numbpill3d/purplesanctum",
+    "branch": "main",
+    "commit": "e0446ed53b65ac571cd8f2ccfdba7cb1ffbda33d",
+    "destination": "templates/shrines/purple-digital-sanctum",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "16df3bac76fc7d954bcd08a21276bd80c38be9fdbf8642a45e84cc65fcf29c2a",
+        "size": 67631
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/laintheme",
+    "url": "https://github.com/numbpill3d/laintheme",
+    "branch": "main",
+    "commit": "58bdb5941bfa7abd6142561fe4142a6ac35533d1",
+    "destination": "templates/terminals/lain-profile-node",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "e36266804265b91b03774b939fbdb6f391e16ce2bc6d6453897ff676be0e77a8",
+        "size": 27382
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/brutaliszt",
+    "url": "https://github.com/numbpill3d/brutaliszt",
+    "branch": "main",
+    "commit": "477704cbbee2ba85c2c18fcb20a82c4c6cda680d",
+    "destination": "templates/terminals/cyphercore-monolith",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "346fc85ce5d04bb8017a406623d3fac03f77eac4ace6dc31c143b368d61b862f",
+        "size": 54659
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/dreamsequence",
+    "url": "https://github.com/numbpill3d/dreamsequence",
+    "branch": "main",
+    "commit": "cdecd6152e11c06685a9707ba2cb237a8a962e4d",
+    "destination": "templates/terminals/temporal-breach",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "bd88c41996cba1c674e24a33e338fe9e31933ef57c9ca599a9dd3a7edf832ea6",
+        "size": 131715
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/psychical",
+    "url": "https://github.com/numbpill3d/psychical",
+    "branch": "main",
+    "commit": "33162fe25d29d8a2e71478b7d5013431468d2719",
+    "destination": "templates/terminals/neurodigital-prayer-device",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "d08c7966ed2babb81a3edf813585cac3fd8f289ac67969c4c9d7d02981405058",
+        "size": 79782
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/oracle",
+    "url": "https://github.com/numbpill3d/oracle",
+    "branch": "main",
+    "commit": "025688d3a12b094d04affebaecc5df4a5dcfe810",
+    "destination": "templates/terminals/oracle-chorus",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "740707102e233190e392b8662f028e4b881a495a00f69c502414b6db88292a24",
+        "size": 96181
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/darknetbaztheme",
+    "url": "https://github.com/numbpill3d/darknetbaztheme",
+    "branch": "main",
+    "commit": "8d43532d2f08897df37da4fd1b5124722eb53eb6",
+    "destination": "templates/terminals/darknet-bazaar",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "6ddf8c8fc4d411716fd410d6aa1ca5268b5dc327409845c50152ed72c1af3e47",
+        "size": 26508
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/deadcityradio",
+    "url": "https://github.com/numbpill3d/deadcityradio",
+    "branch": "main",
+    "commit": "1679266d6dd44b6b6675e197c2ed608a8ad8baa6",
+    "destination": "templates/publishing/dead-city-radio",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "1bb3ae2c3d81467b144b28ad4f848e0534f6642eb4af27be0f24ccd920d4d021",
+        "size": 80842
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/strawberrytheme",
+    "url": "https://github.com/numbpill3d/strawberrytheme",
+    "branch": "main",
+    "commit": "ff753d641f00dad518711e7ac1c7554698e097de",
+    "destination": "templates/desktops/strawberry-desktop",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "13d61f65b65e4ab887f688e8981e25ab9539c9dfc3bc165d4b891e7ef69b0d75",
+        "size": 126769
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/hlmdesktop",
+    "url": "https://github.com/numbpill3d/hlmdesktop",
+    "branch": "main",
+    "commit": "cfeeebdc61574c7eb2a64571237f7abef2138ad3",
+    "destination": "templates/desktops/x11-profile",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "48e2ca50c482a1984106f309549727c3ab8d78852aeeddafe2f4f99ef3070acb",
+        "size": 48948
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/amiga",
+    "url": "https://github.com/numbpill3d/amiga",
+    "branch": "main",
+    "commit": "35c52abfe87923cf0fefce2875961f57d30fd734",
+    "destination": "templates/desktops/amiga-workbench",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "40888e10e56ded4ec1569921b42c2c91bf45eb55803abf705f3860f3a5a2f2fc",
+        "size": 31465
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/oldwebtime",
+    "url": "https://github.com/numbpill3d/oldwebtime",
+    "branch": "main",
+    "commit": "a0a62c02528bc2bc85d20f1ea1959c6aa31a719f",
+    "destination": "templates/desktops/win98-homepage",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "ecd9bbd926276f2e9a433306c6e0c279f9398dece767428488caa6ca9663aa48",
+        "size": 69310
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/decora-desktop-os",
+    "url": "https://github.com/numbpill3d/decora-desktop-os",
+    "branch": "main",
+    "commit": "fcaae9d6057035c78b451a74dcbbd6af66606526",
+    "destination": "templates/desktops/decora-yumetwint",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "8f173c02f8ab4c61269d7d4a373844b154ca6b69901e55067f34b543d47af7f7",
+        "size": 56315
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/marginnotes",
+    "url": "https://github.com/numbpill3d/marginnotes",
+    "branch": "main",
+    "commit": "f652274d027a287b7f38d11d7ed4389d0fe5a154",
+    "destination": "templates/publishing/margin-notes",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "db17cb4bd1132e32f7e74223ec124e19f794c778bc37ba84efac3d09e350e7dc",
+        "size": 16116
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/ashengallery",
+    "url": "https://github.com/numbpill3d/ashengallery",
+    "branch": "main",
+    "commit": "511bc5c172d3239bb35b501f577d2b20d973fbdd",
+    "destination": "templates/publishing/ashen-gallery",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "63c1adc67c1502801d6cfbb1f91fadd353b7916c0690072db96b061bf8c8625b",
+        "size": 35809
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/retronewsroom1",
+    "url": "https://github.com/numbpill3d/retronewsroom1",
+    "branch": "main",
+    "commit": "1e8909e269d48f3ae8a80db921bfeabd9b368a49",
+    "destination": "templates/publishing/retro-newsroom",
+    "files": [
+      {
+        "path": "data/books.json",
+        "sha256": "387f1339029cb753305b9f22b58952479945bf5fb4e789a855ab14cfc5624762",
+        "size": 245
+      },
+      {
+        "path": "data/favorites.json",
+        "sha256": "a3ae5a88a97bb58a1bdc7bd835ced5d47204e7563a1165035be1d4e5f00ff01a",
+        "size": 199
+      },
+      {
+        "path": "index.html",
+        "sha256": "71e9d0ef9dd0d71a01ac8df52a1907ffac9c18f981751dfa897399d7d8ba12aa",
+        "size": 3896
+      },
+      {
+        "path": "scripts.js",
+        "sha256": "925bb2f17cfe7c87a49cb204b64c01ec59cc9cf3d92270c24e586fc7001f1cbb",
+        "size": 2433
+      },
+      {
+        "path": "styles.css",
+        "sha256": "ec9a4e2935397848b10b2ba74b698a102c37cca80def91ad42e3ece7f2963644",
+        "size": 2822
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/scant-mag",
+    "url": "https://github.com/numbpill3d/scant-mag",
+    "branch": "main",
+    "commit": "7165e29fb6bbbfaa74dbaee3b872147aaacf15ae",
+    "destination": "templates/publishing/scant-magazine",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "d2426a319a23bffdbb3e8b7616aecd881cf3b6faf80efa9ea9b463b0cafad09d",
+        "size": 60006
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/trodlinks",
+    "url": "https://github.com/numbpill3d/trodlinks",
+    "branch": "main",
+    "commit": "aa9a93f3ade33f18cc61a4e5d58d9a49ca54b439",
+    "destination": "templates/directories/trodden-links",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "cf56d44e48f1db50cb89326ce99e1d2690eba41a048f86322f5a9e44e1380b64",
+        "size": 220851
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/heartwyrmdiwary",
+    "url": "https://github.com/numbpill3d/heartwyrmdiwary",
+    "branch": "main",
+    "commit": "4f6f79ee3fe3826f6089498e635228aeb47ba191",
+    "destination": "templates/diaries/heartworm",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "ac2a6261bd4227dc364acaea9b68696bd208c9f749769f0ebbb358bcf2fd2dd6",
+        "size": 50748
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/forestarchive",
+    "url": "https://github.com/numbpill3d/forestarchive",
+    "branch": "main",
+    "commit": "76bba0619741c4402c00860ed840c3ac58f910da",
+    "destination": "templates/nature/digital-grimoire",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "417d4a72e1f3c3dc97efba2fc96c56495c6f3a1afef1310014553f54d3d9f3a5",
+        "size": 40224
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/dialup-aquarium",
+    "url": "https://github.com/numbpill3d/dialup-aquarium",
+    "branch": "main",
+    "commit": "1f19362b2d09466413585076ab9988d0924d51a0",
+    "destination": "templates/nature/dialup-aquarium",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "0e4ca3c998ffbc131e9ea5f9ead9296c16a1ea4f24cd9a3c0a70a72933131b98",
+        "size": 41229
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/vrane_alpha",
+    "url": "https://github.com/numbpill3d/vrane_alpha",
+    "branch": "main",
+    "commit": "f573706af40c6b35fcb5ce1a9a87f031db89e653",
+    "destination": "templates/nature/solarpunk-nexus",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "df9626030297d1ed6a912ea17b4683a5ac57bf3b2eff68eda839ae993fc2c86c",
+        "size": 35950
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/verdant",
+    "url": "https://github.com/numbpill3d/verdant",
+    "branch": "main",
+    "commit": "fb76ec350655f485ca3a95b212e60bd4037231b9",
+    "destination": "templates/shrines/moss-altar",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "3b62d3d910010142e8100d6bcc21a4cb880c564b3602c22cf6aee93142beec42",
+        "size": 33847
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/umbral",
+    "url": "https://github.com/numbpill3d/umbral",
+    "branch": "main",
+    "commit": "e8a1850e6dfe18abba1831d65234f99427dc10d0",
+    "destination": "templates/shrines/aetheros-umbralath",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "b70e6e00c9f59f25dbddfa5cf4b7b9470cfe8bd531ee872bb46726602322e726",
+        "size": 87555
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/celebitime",
+    "url": "https://github.com/numbpill3d/celebitime",
+    "branch": "main",
+    "commit": "948c2c51276f713602366f471293bb835974b1f7",
+    "destination": "templates/fandom/celebi-temporal-rift",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "d6637b12de302faa161f6b70e175a5b9f83fc77b8c85ceae348e69bd1e523789",
+        "size": 78939
+      }
+    ]
+  }
+]

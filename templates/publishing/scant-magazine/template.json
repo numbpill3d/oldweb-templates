@@ -1,0 +1,13 @@
+{
+  "title": "Scant Magazine",
+  "slug": "scant-magazine",
+  "category": "publishing",
+  "description": "Print-inspired digital-archaeology magazine layout.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/scant-mag",
+  "source_commit": "7165e29fb6bbbfaa74dbaee3b872147aaacf15ae",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

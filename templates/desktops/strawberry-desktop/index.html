@@ -1,0 +1,2932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strawberry Desktop - Enhanced 3D Experience</title>
+    <style>
+        /* Import retro fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Ms+Mdf&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Ms Mdf', 'Tahoma', sans-serif;
+            font-size: 11px;
+            background: linear-gradient(45deg, #ffb3d9 0%, #ffccec 25%, #ffe6f5 50%, #ffccec 75%, #ffb3d9 100%);
+            background-size: 20px 20px;
+            background-image: 
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.1) 0px, rgba(255,255,255,0.1) 1px, transparent 1px, transparent 10px),
+                repeating-linear-gradient(-45deg, rgba(255,192,203,0.1) 0px, rgba(255,192,203,0.1) 1px, transparent 1px, transparent 10px);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        /* Three.js Canvas Background */
+        #threejs-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        /* Floating hearts animation - enhanced */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.4);
+            animation: float 20s infinite linear;
+            font-size: 12px;
+            filter: drop-shadow(0 0 3px rgba(255, 105, 180, 0.5));
+        }
+        
+        @keyframes float {
+            0% { 
+                transform: translateY(100vh) rotate(0deg) scale(0.5); 
+                opacity: 0; 
+            }
+            10% { 
+                opacity: 1; 
+                transform: translateY(90vh) rotate(36deg) scale(1); 
+            }
+            50% { 
+                transform: translateY(50vh) rotate(180deg) scale(1.2); 
+            }
+            90% { 
+                opacity: 1; 
+                transform: translateY(10vh) rotate(324deg) scale(0.8); 
+            }
+            100% { 
+                transform: translateY(-100px) rotate(360deg) scale(0.3); 
+                opacity: 0; 
+            }
+        }
+        
+        /* Parallax layers */
+        .parallax-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 120%;
+            height: 120%;
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .parallax-layer-1 {
+            background-image: radial-gradient(circle at 20px 20px, rgba(255, 182, 193, 0.1) 2px, transparent 2px);
+            animation: parallaxFloat1 30s infinite linear;
+        }
+        
+        .parallax-layer-2 {
+            background-image: radial-gradient(circle at 20px 20px, rgba(255, 105, 180, 0.05) 1px, transparent 1px);
+            animation: parallaxFloat2 45s infinite linear reverse;
+        }
+        
+        @keyframes parallaxFloat1 {
+            0% { transform: translate(-10%, -10%) rotate(0deg); }
+            100% { transform: translate(10%, 10%) rotate(360deg); }
+        }
+        
+        @keyframes parallaxFloat2 {
+            0% { transform: translate(5%, 5%) rotate(0deg); }
+            100% { transform: translate(-5%, -5%) rotate(-360deg); }
+        }
+        
+        /* Enhanced taskbar with 3D effect */
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: linear-gradient(to bottom, #f0c0d0, #e0a0c0);
+            border-top: 2px solid #ffffff;
+            border-bottom: 1px solid #8080c0;
+            display: flex;
+            align-items: center;
+            padding: 0 5px;
+            z-index: 1000;
+            box-shadow: 
+                inset 1px 1px 0 rgba(255,255,255,0.8), 
+                inset -1px -1px 0 rgba(0,0,0,0.2),
+                0 -5px 15px rgba(255, 105, 180, 0.3);
+            backdrop-filter: blur(2px);
+        }
+        
+        .start-button {
+            background: linear-gradient(to bottom, #ffb3d9, #ff99cc);
+            border: 2px outset #ff99cc;
+            padding: 2px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-right: 5px;
+            border-radius: 3px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            transition: all 0.3s;
+            opacity: 0;
+        }
+        
+        .start-button:hover {
+            background: linear-gradient(to bottom, #ffccec, #ffb3d9);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(255, 105, 180, 0.4);
+        }
+        
+        .start-button:hover::before {
+            opacity: 1;
+            animation: shimmer 0.6s ease-in-out;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .start-button:active {
+            border: 2px inset #ff99cc;
+            transform: translateY(0);
+        }
+        
+        .clock {
+            margin-left: auto;
+            background: linear-gradient(to bottom, #ffe6f5, #ffccec);
+            border: 1px inset #ff99cc;
+            padding: 2px 8px;
+            font-size: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .clock::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: clockShine 3s infinite;
+        }
+        
+        @keyframes clockShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Enhanced desktop icons with 3D transforms */
+        .desktop {
+            position: relative;
+            z-index: 3;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, 80px);
+            grid-gap: 20px;
+            justify-content: start;
+            align-content: start;
+            min-height: calc(100vh - 30px);
+            perspective: 1000px;
+        }
+        
+        .desktop-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 3px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        
+        .desktop-icon:hover {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 10px 25px rgba(255, 182, 193, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: translateY(-5px) rotateX(10deg) rotateY(5deg);
+        }
+        
+        .desktop-icon:hover::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.6) 0%, transparent 50%),
+                radial-gradient(circle at 70% 70%, rgba(255,182,193,0.4) 0%, transparent 50%);
+            animation: iconSparkle 0.8s ease-in-out;
+            pointer-events: none;
+        }
+        
+        .desktop-icon:active {
+            transform: translateY(-2px) rotateX(5deg) scale(0.95);
+        }
+        
+        @keyframes iconSparkle {
+            0%, 100% { 
+                opacity: 0; 
+                transform: scale(0.8) rotate(0deg); 
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.2) rotate(180deg); 
+            }
+        }
+        
+        .icon-image {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #ff6bb3, #ff1493, #ff69b4);
+            border: 2px solid #ffffff;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            text-shadow: 
+                1px 1px 1px rgba(0,0,0,0.5),
+                0 0 5px rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                2px 2px 4px rgba(0,0,0,0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+            margin-bottom: 4px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .icon-image::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .desktop-icon:hover .icon-image {
+            transform: rotateY(15deg) rotateX(10deg);
+            box-shadow: 
+                3px 3px 8px rgba(0,0,0,0.4),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.5),
+                0 0 15px rgba(255, 105, 180, 0.5);
+        }
+        
+        .desktop-icon:hover .icon-image::before {
+            opacity: 1;
+            animation: iconShimmer 0.6s ease-in-out;
+        }
+        
+        @keyframes iconShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .icon-label {
+            font-size: 9px;
+            color: #000;
+            text-align: center;
+            text-shadow: 
+                1px 1px 0 rgba(255,255,255,0.8),
+                0 0 3px rgba(255, 255, 255, 0.6);
+            line-height: 1.2;
+            max-width: 60px;
+            word-wrap: break-word;
+            transition: all 0.3s;
+        }
+        
+        .desktop-icon:hover .icon-label {
+            transform: translateZ(10px);
+            text-shadow: 
+                1px 1px 0 rgba(255,255,255,0.9),
+                0 0 8px rgba(255, 105, 180, 0.6);
+        }
+        
+        /* Enhanced modal windows with 3D depth */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) perspective(1000px) rotateX(0deg);
+            background: linear-gradient(to bottom, #ffe6f5, #ffccec);
+            border: 2px outset #ff99cc;
+            border-radius: 8px 8px 0 0;
+            box-shadow: 
+                4px 4px 8px rgba(0,0,0,0.3),
+                0 10px 30px rgba(255, 105, 180, 0.4),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.6);
+            z-index: 1001;
+            min-width: 500px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes modalSlideIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -60%) perspective(1000px) rotateX(-20deg) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) perspective(1000px) rotateX(0deg) scale(1);
+            }
+        }
+        
+        .modal.active {
+            display: block;
+        }
+        
+        .modal-header {
+            background: linear-gradient(to right, #ff69b4, #ff1493, #ff69b4);
+            color: white;
+            padding: 4px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 11px;
+            border-bottom: 1px solid #cc1177;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: headerGlow 4s infinite;
+        }
+        
+        @keyframes headerGlow {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .modal-controls {
+            display: flex;
+            gap: 2px;
+            z-index: 1;
+            position: relative;
+        }
+        
+        .modal-button {
+            width: 16px;
+            height: 14px;
+            background: linear-gradient(to bottom, #ffb3d9, #ff99cc);
+            border: 1px outset #ff99cc;
+            font-size: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .modal-button:hover {
+            background: linear-gradient(to bottom, #ffccec, #ffb3d9);
+            transform: scale(1.1);
+            box-shadow: 0 2px 4px rgba(255, 105, 180, 0.4);
+        }
+        
+        .modal-button:active {
+            border: 1px inset #ff99cc;
+            transform: scale(0.95);
+        }
+        
+        .modal-content {
+            padding: 15px;
+            max-height: 60vh;
+            overflow-y: auto;
+            background: linear-gradient(to bottom, #ffe6f5, #ffccec);
+            position: relative;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                radial-gradient(circle at 80% 80%, rgba(255,182,193,0.2) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            animation: backgroundFloat 20s infinite linear;
+        }
+        
+        @keyframes backgroundFloat {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(30px, 30px); }
+        }
+        
+        /* Enhanced tabbed interface with 3D effects */
+        .tab-container {
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 2px solid #ff99cc;
+            margin-bottom: 10px;
+            perspective: 500px;
+        }
+        
+        .tab-button {
+            padding: 8px 15px;
+            background: linear-gradient(to bottom, #ffccec, #ffb3d9);
+            border: 2px outset #ff99cc;
+            border-bottom: none;
+            cursor: pointer;
+            font-size: 10px;
+            margin-right: 2px;
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+        
+        .tab-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: all 0.3s;
+        }
+        
+        .tab-button:hover {
+            background: linear-gradient(to bottom, #ffe6f5, #ffccec);
+            transform: translateY(-2px) rotateX(5deg);
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
+        }
+        
+        .tab-button:hover::before {
+            left: 100%;
+        }
+        
+        .tab-button.active {
+            background: linear-gradient(to bottom, #ffe6f5, #ffccec);
+            border: 2px inset #ff99cc;
+            border-bottom: none;
+            transform: translateY(-1px);
+            box-shadow: 
+                0 3px 10px rgba(255, 105, 180, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px inset #ff99cc;
+            border-radius: 0 4px 4px 4px;
+            min-height: 250px;
+            position: relative;
+            backdrop-filter: blur(5px);
+            animation: tabSlideIn 0.3s ease-out;
+        }
+        
+        @keyframes tabSlideIn {
+            0% {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Enhanced widgets with floating animations */
+        .widget-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+            perspective: 1000px;
+        }
+        
+        .widget {
+            background: linear-gradient(135deg, #ffe6f5, #ffccec, #ffe6f5);
+            border: 2px outset #ff99cc;
+            border-radius: 8px;
+            padding: 10px;
+            min-width: 180px;
+            box-shadow: 
+                2px 2px 4px rgba(0,0,0,0.2),
+                0 5px 20px rgba(255, 105, 180, 0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            animation: widgetFloat 6s ease-in-out infinite;
+        }
+        
+        @keyframes widgetFloat {
+            0%, 100% { transform: translateY(0) rotateY(0deg); }
+            50% { transform: translateY(-5px) rotateY(2deg); }
+        }
+        
+        .widget:nth-child(2n) {
+            animation-delay: -2s;
+        }
+        
+        .widget:nth-child(3n) {
+            animation-delay: -4s;
+        }
+        
+        .widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: widgetShimmer 8s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes widgetShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        .widget:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(5deg) scale(1.05);
+            box-shadow: 
+                5px 5px 15px rgba(0,0,0,0.3),
+                0 10px 30px rgba(255, 105, 180, 0.5),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.7);
+        }
+        
+        .widget-title {
+            font-weight: bold;
+            font-size: 11px;
+            color: #cc1177;
+            border-bottom: 1px solid #ff99cc;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+            position: relative;
+        }
+        
+        .widget-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, #ff69b4, #ff1493);
+            transition: width 0.3s ease;
+        }
+        
+        .widget:hover .widget-title::after {
+            width: 100%;
+        }
+        
+        .widget-content {
+            font-size: 9px;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* Enhanced status widget with animated indicator */
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #00ff00, #00cc00);
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: statusPulse 2s infinite;
+            box-shadow: 
+                0 0 5px #00ff00,
+                inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { 
+                opacity: 1; 
+                transform: scale(1);
+                box-shadow: 0 0 5px #00ff00, inset 1px 1px 0 rgba(255, 255, 255, 0.5);
+            }
+            50% { 
+                opacity: 0.6; 
+                transform: scale(1.2);
+                box-shadow: 0 0 15px #00ff00, inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        /* Enhanced music player with 3D controls */
+        .music-player {
+            text-align: center;
+            position: relative;
+        }
+        
+        .album-art {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(45deg, #ff6bb3, #ff1493, #ff69b4, #ff6bb3);
+            border: 2px solid #ffffff;
+            border-radius: 6px;
+            margin: 5px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            box-shadow: 
+                0 4px 8px rgba(0,0,0,0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+            animation: albumSpin 10s linear infinite;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        @keyframes albumSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .album-art::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20%;
+            height: 20%;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .player-controls {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 8px 0;
+            perspective: 300px;
+        }
+        
+        .player-btn {
+            width: 24px;
+            height: 20px;
+            background: linear-gradient(to bottom, #ffb3d9, #ff99cc);
+            border: 1px outset #ff99cc;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 3px;
+            transition: all 0.2s;
+            transform-style: preserve-3d;
+        }
+        
+        .player-btn:hover {
+            background: linear-gradient(to bottom, #ffccec, #ffb3d9);
+            transform: translateY(-2px) rotateX(15deg);
+            box-shadow: 0 4px 8px rgba(255, 105, 180, 0.4);
+        }
+        
+        .player-btn:active {
+            transform: translateY(0) rotateX(0deg) scale(0.95);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(to right, #ffffff, #ffe6f5);
+            border: 1px inset #ff99cc;
+            margin: 5px 0;
+            position: relative;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #ff69b4, #ff1493, #ff69b4);
+            width: 60%;
+            animation: progressFlow 4s infinite linear;
+            position: relative;
+        }
+        
+        .progress-fill::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+            animation: progressShine 2s infinite;
+        }
+        
+        @keyframes progressFlow {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+        
+        @keyframes progressShine {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Enhanced gallery with image transitions */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+            perspective: 1000px;
+        }
+        
+        .gallery-item {
+            aspect-ratio: 1;
+            background: linear-gradient(45deg, #ffb3d9, #ff99cc, #ffccec, #ffb3d9);
+            background-size: 200% 200%;
+            border: 2px outset #ff99cc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 6px;
+            position: relative;
+            overflow: hidden;
+            animation: galleryItemFloat 8s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+        
+        @keyframes galleryItemFloat {
+            0%, 100% { 
+                background-position: 0% 50%;
+                transform: rotateY(0deg);
+            }
+            50% { 
+                background-position: 100% 50%;
+                transform: rotateY(5deg);
+            }
+        }
+        
+        .gallery-item:nth-child(2n) {
+            animation-delay: -2s;
+        }
+        
+        .gallery-item:nth-child(3n) {
+            animation-delay: -4s;
+        }
+        
+        .gallery-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-10px) rotateX(15deg) rotateY(10deg) scale(1.1);
+            box-shadow: 
+                0 15px 30px rgba(255, 105, 180, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            animation-play-state: paused;
+        }
+        
+        .gallery-item:hover::before {
+            opacity: 1;
+            animation: galleryShimmer 0.6s ease-in-out;
+        }
+        
+        @keyframes galleryShimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+        
+        /* Enhanced scrollbox with custom scrollbar */
+        .scrollbox {
+            height: 120px;
+            overflow-y: auto;
+            border: 2px inset #ff99cc;
+            padding: 8px;
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+                radial-gradient(circle at 20% 20%, rgba(255, 182, 193, 0.1) 1px, transparent 1px);
+            background-size: auto, 20px 20px;
+            font-size: 9px;
+            line-height: 1.5;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .scrollbox::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+            animation: scrollboxShine 5s infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes scrollboxShine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .scrollbox::-webkit-scrollbar {
+            width: 14px;
+        }
+        
+        .scrollbox::-webkit-scrollbar-track {
+            background: linear-gradient(to bottom, #ffccec, #ffe6f5);
+            border: 1px inset #ff99cc;
+            border-radius: 7px;
+        }
+        
+        .scrollbox::-webkit-scrollbar-thumb {
+            background: linear-gradient(to bottom, #ffb3d9, #ff99cc, #ffb3d9);
+            border: 1px outset #ff99cc;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .scrollbox::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(to bottom, #ffccec, #ffb3d9, #ffccec);
+            box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+        }
+        
+        /* Enhanced guestbook entries */
+        .guestbook-entry {
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
+                linear-gradient(45deg, rgba(255, 182, 193, 0.1), rgba(255, 105, 180, 0.1));
+            border: 1px solid #ff99cc;
+            margin: 8px 0;
+            padding: 10px;
+            border-radius: 6px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .guestbook-entry::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: all 0.5s;
+        }
+        
+        .guestbook-entry:hover {
+            transform: translateX(5px);
+            box-shadow: 
+                -5px 5px 15px rgba(255, 105, 180, 0.3),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        
+        .guestbook-entry:hover::before {
+            left: 100%;
+        }
+        
+        .entry-header {
+            font-weight: bold;
+            color: #cc1177;
+            font-size: 10px;
+            border-bottom: 1px dotted #ff99cc;
+            padding-bottom: 3px;
+            margin-bottom: 5px;
+            text-shadow: 0 0 3px rgba(255, 255, 255, 0.8);
+        }
+        
+        /* Enhanced chat with typing indicator */
+        .hidden-chat {
+            position: fixed;
+            bottom: 40px;
+            left: 20px;
+            width: 280px;
+            height: 220px;
+            background: linear-gradient(135deg, #ffe6f5, #ffccec, #ffe6f5);
+            border: 2px outset #ff99cc;
+            border-radius: 8px;
+            display: none;
+            z-index: 500;
+            box-shadow: 
+                4px 4px 12px rgba(0,0,0,0.3),
+                0 5px 20px rgba(255, 105, 180, 0.4),
+                inset 1px 1px 0 rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            animation: chatSlideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes chatSlideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100px) scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        
+        .chat-header {
+            background: linear-gradient(to right, #ff69b4, #ff1493, #ff69b4);
+            color: white;
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 6px 6px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chat-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            animation: chatHeaderGlow 3s infinite;
+        }
+        
+        @keyframes chatHeaderGlow {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .chat-messages {
+            height: 150px;
+            overflow-y: auto;
+            padding: 8px;
+            font-size: 9px;
+            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+        }
+        
+        .chat-messages::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 25% 25%, rgba(255, 182, 193, 0.1) 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, rgba(255, 105, 180, 0.05) 1px, transparent 1px);
+            background-size: 15px 15px;
+            pointer-events: none;
+            animation: chatBgFloat 15s infinite linear;
+        }
+        
+        @keyframes chatBgFloat {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(15px, 15px); }
+        }
+        
+        .typing-indicator {
+            display: none;
+            padding: 5px;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .typing-dots {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background: #ff69b4;
+            border-radius: 50%;
+            margin: 0 1px;
+            animation: typingDots 1.4s infinite;
+        }
+        
+        .typing-dots:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dots:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typingDots {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-10px);
+                opacity: 1;
+            }
+        }
+        
+        .chat-input {
+            border-top: 1px solid #ff99cc;
+            padding: 5px;
+            display: flex;
+            gap: 5px;
+        }
+        
+        .chat-textbox {
+            flex: 1;
+            border: 1px inset #ff99cc;
+            padding: 3px 6px;
+            font-size: 9px;
+            background: #ffffff;
+            border-radius: 3px;
+            transition: all 0.3s;
+        }
+        
+        .chat-textbox:focus {
+            outline: none;
+            border: 1px solid #ff69b4;
+            box-shadow: 0 0 5px rgba(255, 105, 180, 0.5);
+        }
+        
+        .chat-send {
+            background: linear-gradient(to bottom, #ffb3d9, #ff99cc);
+            border: 1px outset #ff99cc;
+            padding: 3px 8px;
+            font-size: 8px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        
+        .chat-send:hover {
+            background: linear-gradient(to bottom, #ffccec, #ffb3d9);
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(255, 105, 180, 0.4);
+        }
+        
+        .chat-send:active {
+            transform: translateY(0);
+            border: 1px inset #ff99cc;
+        }
+        
+        /* Responsive design enhancements */
+        @media (max-width: 768px) {
+            .desktop {
+                grid-template-columns: repeat(auto-fit, 70px);
+                grid-gap: 15px;
+                padding: 15px;
+            }
+            
+            .widget-container {
+                position: static;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                margin: 10px;
+                gap: 10px;
+            }
+            
+            .widget {
+                min-width: 150px;
+                animation: none;
+            }
+            
+            .modal {
+                min-width: 320px;
+                width: 95%;
+                max-height: 90vh;
+            }
+            
+            .tab-buttons {
+                flex-wrap: wrap;
+            }
+            
+            .tab-button {
+                flex: 1;
+                min-width: 70px;
+                padding: 6px 10px;
+            }
+            
+            .hidden-chat {
+                width: calc(100% - 40px);
+                left: 20px;
+                right: 20px;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+                gap: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .desktop {
+                grid-template-columns: repeat(auto-fit, 60px);
+                grid-gap: 12px;
+                padding: 10px;
+            }
+            
+            .widget {
+                min-width: 130px;
+            }
+            
+            .modal {
+                min-width: 280px;
+                padding: 0;
+            }
+            
+            .modal-content {
+                padding: 10px;
+            }
+            
+            .tab-content {
+                padding: 10px;
+                min-height: 200px;
+            }
+        }
+        
+        /* New link styles with hover effects */
+        a {
+            color: #cc1177;
+            text-decoration: underline;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        a::before {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, #ff69b4, #ff1493);
+            transition: width 0.3s ease;
+        }
+        
+        a:hover {
+            color: #ff1493;
+            text-shadow: 
+                1px 1px 1px rgba(255, 182, 193, 0.5),
+                0 0 5px rgba(255, 105, 180, 0.6);
+            transform: translateY(-1px);
+        }
+        
+        a:hover::before {
+            width: 100%;
+        }
+        
+        /* Loading screen animation */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ffb3d9, #ffccec, #ffe6f5, #ffccec);
+            background-size: 400% 400%;
+            animation: loadingGradient 3s ease infinite;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            opacity: 1;
+            transition: opacity 1s ease;
+        }
+        
+        .loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        @keyframes loadingGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .loading-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #cc1177;
+            text-shadow: 
+                2px 2px 0 rgba(255, 255, 255, 0.8),
+                0 0 10px rgba(255, 105, 180, 0.6);
+            margin-bottom: 20px;
+            animation: loadingPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes loadingPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .loading-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 2px inset #ff99cc;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(to right, #ff69b4, #ff1493, #ff69b4);
+            animation: loadingProgress 3s ease-in-out;
+        }
+        
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-text">Loading Strawberry Desktop...</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+    </div>
+    
+    <!-- Three.js Canvas Background -->
+    <canvas id="threejs-canvas"></canvas>
+    
+    <!-- Parallax Background Layers -->
+    <div class="parallax-layer parallax-layer-1"></div>
+    <div class="parallax-layer parallax-layer-2"></div>
+    
+    <!-- Floating Hearts Background -->
+    <div class="hearts-bg" id="heartsContainer"></div>
+    
+    <!-- Desktop Icons -->
+    <div class="desktop">
+        <!-- My Computer Icon -->
+        <div class="desktop-icon" onclick="openModal('aboutModal')">
+            <div class="icon-image">PC</div>
+            <div class="icon-label">My Computer</div>
+        </div>
+        
+        <!-- Gallery Folder -->
+        <div class="desktop-icon" onclick="openModal('galleryModal')">
+            <div class="icon-image">♥</div>
+            <div class="icon-label">Gallery</div>
+        </div>
+        
+        <!-- Journal Folder -->
+        <div class="desktop-icon" onclick="openModal('journalModal')">
+            <div class="icon-image">☆</div>
+            <div class="icon-label">Journal</div>
+        </div>
+        
+        <!-- Links Folder -->
+        <div class="desktop-icon" onclick="openModal('linksModal')">
+            <div class="icon-image">@</div>
+            <div class="icon-label">Links</div>
+        </div>
+        
+        <!-- Guestbook -->
+        <div class="desktop-icon" onclick="openModal('guestbookModal')">
+            <div class="icon-image">♪</div>
+            <div class="icon-label">Guestbook</div>
+        </div>
+        
+        <!-- Music Player -->
+        <div class="desktop-icon" onclick="openModal('musicModal')">
+            <div class="icon-image">♫</div>
+            <div class="icon-label">Music</div>
+        </div>
+        
+        <!-- Games -->
+        <div class="desktop-icon" onclick="openModal('gamesModal')">
+            <div class="icon-image">◆</div>
+            <div class="icon-label">Games</div>
+        </div>
+        
+        <!-- Secret Chat (Easter Egg) -->
+        <div class="desktop-icon" onclick="toggleChat()" style="grid-column: 1; grid-row: 8;">
+            <div class="icon-image">?</div>
+            <div class="icon-label">Secret</div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Widgets Container -->
+    <div class="widget-container">
+        <!-- Status Widget -->
+        <div class="widget">
+            <div class="widget-title">~ Status ~</div>
+            <div class="widget-content">
+                <span class="status-indicator"></span>Online & Vibing<br>
+                Mood: Dreamy ♡<br>
+                Currently: Building magical sites<br>
+                Weather: Sunny with sparkles<br>
+                <small>Last updated: 2min ago</small>
+            </div>
+        </div>
+        
+        <!-- Enhanced Music Player Widget -->
+        <div class="widget">
+            <div class="widget-title">~ Now Playing ~</div>
+            <div class="widget-content music-player">
+                <div class="album-art">♪</div>
+                <div style="font-weight: bold; margin: 5px 0;">Strawberry Fields Forever</div>
+                <div class="player-controls">
+                    <div class="player-btn" onclick="musicControl('prev')">|&lt;</div>
+                    <div class="player-btn" onclick="musicControl('play')">▐▐</div>
+                    <div class="player-btn" onclick="musicControl('next')">&gt;|</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div style="font-size: 8px; margin-top: 3px;">2:34 / 4:12</div>
+            </div>
+        </div>
+        
+        <!-- Visitor Counter Widget -->
+        <div class="widget">
+            <div class="widget-title">~ Visitors ~</div>
+            <div class="widget-content">
+                You are visitor #<br>
+                <span style="color: #ff1493; font-weight: bold; font-size: 12px;">001337</span><br>
+                Thanks for visiting! ♡<br>
+                <small>Today: 42 | Total: 1337</small>
+            </div>
+        </div>
+        
+        <!-- Weather Widget -->
+        <div class="widget">
+            <div class="widget-title">~ Weather ~</div>
+            <div class="widget-content">
+                <div style="font-size: 16px; margin: 3px 0;">☀</div>
+                <strong>Sunny & Sweet</strong><br>
+                72°F / 22°C<br>
+                Humidity: 45%<br>
+                Perfect for web design!
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Modal Windows -->
+    
+    <!-- About/My Computer Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>PC</span> My Computer Properties
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('aboutModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="switchTab(event, 'aboutTab')">About Me</div>
+                    <div class="tab-button" onclick="switchTab(event, 'systemTab')">System Info</div>
+                    <div class="tab-button" onclick="switchTab(event, 'contactTab')">Contact</div>
+                    <div class="tab-button" onclick="switchTab(event, 'skillsTab')">Skills</div>
+                    <div class="tab-button" onclick="switchTab(event, 'projectsTab')">Projects</div>
+                </div>
+                
+                <div id="aboutTab" class="tab-content active">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Welcome to my digital wonderland! ~</h3>
+                    <p>Hello there, lovely visitor! ♡ You've discovered my cozy corner of the internet where everything sparkles with retro magic and kawaii aesthetics.</p>
+                    <br>
+                    <p><strong>Name:</strong> Berry (but you can call me Strawberry!)</p>
+                    <p><strong>Age:</strong> Forever young at heart</p>
+                    <p><strong>Location:</strong> Floating somewhere in the digital clouds</p>
+                    <p><strong>Personality:</strong> Creative dreamer with a love for all things pink and nostalgic</p>
+                    <p><strong>Interests:</strong> Web design, pixel art, retro aesthetics, vintage computing, kawaii culture, and creating magical digital spaces!</p>
+                    <br>
+                    <p>I believe the internet should feel like a warm hug wrapped in rainbow sparkles. This site is my digital diary, creative playground, and love letter to the beautiful chaos of the early web! ✧</p>
+                </div>
+                
+                <div id="systemTab" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ System Specifications ~</h3>
+                    <p><strong>Operating System:</strong> Strawberry Desktop XP Professional v3.0</p>
+                    <p><strong>Processor:</strong> DreamCore i9-13900KF @ 3.5GHz (16 cores of pure imagination)</p>
+                    <p><strong>Memory:</strong> 32GB DDR5 Unicorn Tears @ 6000MHz</p>
+                    <p><strong>Graphics:</strong> PinkVision RTX 4090 SUPER (24GB VRAM of sparkles)</p>
+                    <p><strong>Storage:</strong> 4TB NVMe SSD of Memories & Magic</p>
+                    <p><strong>Network:</strong> Gigabit Love Connection with 5G backup</p>
+                    <p><strong>Display:</strong> 32" 4K IPS Dreamscreen with 144Hz refresh rate</p>
+                    <br>
+                    <p><strong>Installed Software:</strong></p>
+                    <div class="scrollbox" style="height: 100px;">
+                        ♡ DreamWeaver Pro 2024 - Advanced web design suite<br>
+                        ♡ Pixel Art Studio Ultimate - 16-bit graphics editor<br>
+                        ♡ Aesthetic Generator Plus - Vaporwave & kawaii themes<br>
+                        ♡ Heart Particle Engine v4.2 - 3D love simulations<br>
+                        ♡ Sparkle Effects Manager - Real-time glitter renderer<br>
+                        ♡ Nostalgic Sound Synthesizer - Y2K music production<br>
+                        ♡ Virtual Pet Collection - Digital companion system<br>
+                        ♡ Rainbow Color Picker - HSV harmony calculator<br>
+                    </div>
+                </div>
+                
+                <div id="contactTab" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Let's Connect! ~</h3>
+                    <p>I absolutely love meeting new friends and collaborating on magical projects!</p>
+                    <br>
+                    <p><strong>Primary Contact:</strong></p>
+                    <p>→ Email: hello@strawberrydesktop.net</p>
+                    <p>→ Discord: StrawberryDreams#1234</p>
+                    <br>
+                    <p><strong>Social Media:</strong></p>
+                    <p>→ Tumblr: @strawberry-pixels</p>
+                    <p>→ DeviantArt: StrawberryAesthetic</p>
+                    <p>→ Twitter: @BerryCodes</p>
+                    <p>→ Instagram: @strawberry.desktop</p>
+                    <br>
+                    <p><strong>Professional:</strong></p>
+                    <p>→ GitHub: github.com/strawberry-dev</p>
+                    <p>→ Portfolio: portfolio.strawberrydesktop.net</p>
+                    <br>
+                    <p><strong>Feel free to reach out if you:</strong></p>
+                    <div class="scrollbox" style="height: 80px;">
+                        ♡ Want to exchange cute website links!<br>
+                        ♡ Need help with retro web design projects<br>
+                        ♡ Just want to make a kawaii new friend<br>
+                        ♡ Have adorable pixel art to share<br>
+                        ♡ Want to collaborate on nostalgic projects<br>
+                        ♡ Need vintage computing advice<br>
+                        ♡ Want to join my web ring community<br>
+                    </div>
+                </div>
+                
+                <div id="skillsTab" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Technical Magic ~</h3>
+                    <p><strong>Web Development:</strong></p>
+                    <div style="margin: 5px 0;">
+                        → HTML5/CSS3 (Expert - 8+ years)<br>
+                        → JavaScript/ES6+ (Advanced)<br>
+                        → Three.js & WebGL (Intermediate)<br>
+                        → Node.js & Express (Intermediate)<br>
+                        → React & Vue.js (Intermediate)<br>
+                    </div>
+                    <br>
+                    <p><strong>Design & Art:</strong></p>
+                    <div style="margin: 5px 0;">
+                        → Pixel Art & Sprite Animation<br>
+                        → UI/UX Design (Aesthetic focus)<br>
+                        → Color Theory & Harmony<br>
+                        → Typography & Font Pairing<br>
+                        → Digital Illustration<br>
+                    </div>
+                    <br>
+                    <p><strong>Tools & Software:</strong></p>
+                    <div class="scrollbox" style="height: 90px;">
+                        ♡ Adobe Creative Suite (Photoshop, Illustrator, After Effects)<br>
+                        ♡ Figma & Sketch for prototyping<br>
+                        ♡ VS Code with custom pink themes<br>
+                        ♡ Git/GitHub for version control<br>
+                        ♡ Aseprite for pixel art creation<br>
+                        ♡ Blender for 3D modeling basics<br>
+                        ♡ FL Studio for chiptune music<br>
+                    </div>
+                </div>
+                
+                <div id="projectsTab" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Recent Creations ~</h3>
+                    <div class="scrollbox" style="height: 200px;">
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Kawaii Chat Bot - August 2025</div>
+                            A cute AI chatbot with personality! Features animated expressions, learning capabilities, and responds with kawaii emoticons. Built with Node.js and machine learning.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Retro Web Ring Portal - July 2025</div>
+                            A nostalgic web ring management system that brings back the magic of early internet communities. Features vintage graphics and classic navigation.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Pixel Art Gallery CMS - June 2025</div>
+                            Custom content management system specifically designed for pixel artists. Includes sprite sheet tools, color palette generators, and exhibition features.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Y2K Aesthetic Generator - May 2025</div>
+                            Web tool that generates authentic Y2K-era graphics, including gradients, patterns, and effects. Popular with vaporwave and aesthetic communities.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">3D Heart Particle System - April 2025</div>
+                            Interactive Three.js experience with floating hearts, sparkles, and rainbow effects. Used as backgrounds for multiple client projects.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Gallery Modal -->
+    <div id="galleryModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>♥</span> Visual Gallery
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('galleryModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="switchTab(event, 'recentGallery')">Recent</div>
+                    <div class="tab-button" onclick="switchTab(event, 'pixelGallery')">Pixel Art</div>
+                    <div class="tab-button" onclick="switchTab(event, 'webGallery')">Web Design</div>
+                    <div class="tab-button" onclick="switchTab(event, 'aestheticGallery')">Aesthetics</div>
+                </div>
+                
+                <div id="recentGallery" class="tab-content active">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Latest Creations ~</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">♡</div>
+                        <div class="gallery-item">☆</div>
+                        <div class="gallery-item">♪</div>
+                        <div class="gallery-item">♫</div>
+                        <div class="gallery-item">♥</div>
+                        <div class="gallery-item">★</div>
+                        <div class="gallery-item">♬</div>
+                        <div class="gallery-item">◆</div>
+                        <div class="gallery-item">●</div>
+                        <div class="gallery-item">▲</div>
+                        <div class="gallery-item">■</div>
+                        <div class="gallery-item">♠</div>
+                    </div>
+                </div>
+                
+                <div id="pixelGallery" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ 16-bit Dreams ~</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">♠</div>
+                        <div class="gallery-item">♣</div>
+                        <div class="gallery-item">♦</div>
+                        <div class="gallery-item">♥</div>
+                        <div class="gallery-item">◊</div>
+                        <div class="gallery-item">◘</div>
+                        <div class="gallery-item">○</div>
+                        <div class="gallery-item">◙</div>
+                        <div class="gallery-item">☻</div>
+                        <div class="gallery-item">☺</div>
+                        <div class="gallery-item">►</div>
+                        <div class="gallery-item">◄</div>
+                    </div>
+                    <div class="scrollbox" style="margin-top: 10px;">
+                        <strong>Featured Pixel Collections:</strong><br><br>
+                        → Strawberry Sprite Series (16x16, 32x32)<br>
+                        → Kawaii Character Set (24 unique designs)<br>
+                        → Retro UI Elements (buttons, borders, icons)<br>
+                        → Magical Effects Collection (sparkles, hearts)<br>
+                        → Food & Sweets Pixel Art (dessert themed)<br>
+                        → Vintage Computer Icons (90s nostalgia)<br>
+                    </div>
+                </div>
+                
+                <div id="webGallery" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Website Showcases ~</h3>
+                    <div class="scrollbox" style="height: 180px;">
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Dreamy Cafe Website - 2025</div>
+                            A whimsical coffee shop site with animated steam effects, pastel color schemes, and vintage typography. Features online ordering and loyalty program.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Pixel Artist Portfolio - 2024</div>
+                            Clean, gallery-focused design with sprite animation previews, downloadable assets, and commission request system. Mobile-optimized layout.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Retro Gaming Blog - 2024</div>
+                            Nostalgic blog design with CRT monitor effects, chiptune audio player, and retro gaming reviews. Built with custom CMS.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Kawaii Fashion Store - 2024</div>
+                            E-commerce site with cute product photography, size guides with illustrations, and kawaii-themed checkout process.
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="aestheticGallery" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Mood & Vibes ~</h3>
+                    <div class="gallery-grid">
+                        <div class="gallery-item">✧</div>
+                        <div class="gallery-item">✦</div>
+                        <div class="gallery-item">✨</div>
+                        <div class="gallery-item">⋆</div>
+                        <div class="gallery-item">｡</div>
+                        <div class="gallery-item">♡</div>
+                        <div class="gallery-item">☾</div>
+                        <div class="gallery-item">☽</div>
+                        <div class="gallery-item">❀</div>
+                        <div class="gallery-item">❁</div>
+                        <div class="gallery-item">✿</div>
+                        <div class="gallery-item">❃</div>
+                    </div>
+                    <div class="scrollbox" style="margin-top: 10px;">
+                        <strong>Aesthetic Mood Boards:</strong><br><br>
+                        → Strawberry Milk Dreams (soft pink palettes)<br>
+                        → Y2K Revival Collection (chrome & holograms)<br>
+                        → Cottagecore Web Elements (natural & cozy)<br>
+                        → Vaporwave Gradients (purple & cyan vibes)<br>
+                        → Kawaii Culture Inspiration (Japanese cute)<br>
+                        → Nostalgic Computing (beige & CRT aesthetics)<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Journal Modal -->
+    <div id="journalModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>☆</span> Digital Journal
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('journalModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="switchTab(event, 'recentEntries')">Recent</div>
+                    <div class="tab-button" onclick="switchTab(event, 'devLog')">Dev Log</div>
+                    <div class="tab-button" onclick="switchTab(event, 'inspiration')">Inspiration</div>
+                    <div class="tab-button" onclick="switchTab(event, 'memories')">Memories</div>
+                </div>
+                
+                <div id="recentEntries" class="tab-content active">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Recent Thoughts ~</h3>
+                    <div class="scrollbox" style="height: 220px;">
+                        <div class="guestbook-entry">
+                            <div class="entry-header">August 15, 2025 - 2:15 PM</div>
+                            Just finished adding Three.js animations to my desktop theme and WOW! ✧ The floating 3D hearts and particle effects turned out even more magical than I imagined. Sometimes I can't believe this is actually my job - creating beautiful, sparkly things on the internet!
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">August 14, 2025 - 6:33 PM</div>
+                            Had the most productive coding session today! Added enhanced hover effects, 3D transforms, and even more tabs to organize content. The new music player widget has this cute spinning album art that makes me so happy. ♪
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">August 12, 2025 - 11:11 AM</div>
+                            Make a wish time! ☆ Discovered some incredible retro websites today that totally inspired my next project. The creativity in the indie web community never stops amazing me. Planning to add even more interactive elements and hidden features.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">August 10, 2025 - 9:27 PM</div>
+                            Rainy evening vibes got me feeling extra nostalgic. Spent hours organizing my pixel art collection and found some gems from 2019! It's wild seeing how my style has evolved but the kawaii heart remains the same. ♡
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="devLog" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Development Notes ~</h3>
+                    <div class="scrollbox" style="height: 220px;">
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Three.js Integration - August 15, 2025</div>
+                            Successfully implemented 3D particle system with heart-shaped geometries. Added mouse interaction and performance optimization for mobile devices. Frame rate stays above 60fps even with 200+ particles!
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Enhanced Animations - August 14, 2025</div>
+                            Upgraded all hover effects with cubic-bezier timing functions. Added transform3d properties for hardware acceleration. The shimmer effects on buttons now use CSS keyframes instead of JS for better performance.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Mobile Optimization - August 12, 2025</div>
+                            Redesigned responsive breakpoints and added touch-friendly interaction zones. Widget animations now pause on mobile to preserve battery life. Testing on various devices shows excellent compatibility.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Performance Boost - August 10, 2025</div>
+                            Implemented backdrop-filter for glass morphism effects and optimized CSS animations. Reduced bundle size by 30% through smart asset loading. Page load time now under 2 seconds!
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="inspiration" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Creative Sparks ~</h3>
+                    <div class="scrollbox" style="height: 220px;">
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Kawaii Web Design Trends - August 2025</div>
+                            Noticed a huge resurgence in Y2K aesthetics mixed with modern kawaii elements. Gradients are back in a big way, especially holographic effects. Planning to incorporate more chrome textures and iridescent colors.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Retro Gaming Aesthetics - August 2025</div>
+                            Been studying pixel art from classic JRPGs for color palette inspiration. The way they used limited colors to create such emotional depth is incredible. Want to apply these techniques to web gradients.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Music & Code Connection - July 2025</div>
+                            Discovered that coding while listening to chiptune music actually improves my creative flow. There's something about 8-bit melodies that syncs perfectly with pixel-perfect design work. ♫
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Digital Minimalism vs Maximalism - July 2025</div>
+                            Thinking about the balance between clean design and expressive creativity. Sometimes the most beautiful sites are the ones that aren't afraid to be a little extra. Sparkles included! ✨
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="memories" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Digital Nostalgia ~</h3>
+                    <div class="scrollbox" style="height: 220px;">
+                        <div class="guestbook-entry">
+                            <div class="entry-header">First Website Memory - 2018</div>
+                            I still remember the excitement of publishing my first HTML page! It was just a pink background with Comic Sans text saying "Welcome to Berry's Page!" but I felt like I'd created magic. Seven years later and that feeling never gets old.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Discovery of Neocities - 2020</div>
+                            Finding Neocities was like discovering a secret garden of creativity. Suddenly I wasn't alone in wanting websites to be personal and expressive again. The community there taught me so much about indie web culture.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Learning JavaScript - 2021</div>
+                            The moment when I made my first interactive element work felt like casting a spell! A simple button that changed colors on click, but it opened up a whole world of possibilities. Interactive design became my passion.
+                        </div>
+                        
+                        <div class="guestbook-entry">
+                            <div class="entry-header">Building My First Web Ring - 2022</div>
+                            Connected with amazing artists and developers through shared aesthetics and values. The early web spirit of linking to friends and supporting each other's creativity is something we should never lose. ♡
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Links Modal -->
+    <div id="linksModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>@</span> Web Links & Friends
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('linksModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="switchTab(event, 'friendsLinks')">Friends</div>
+                    <div class="tab-button" onclick="switchTab(event, 'resourcesLinks')">Resources</div>
+                    <div class="tab-button" onclick="switchTab(event, 'inspirationLinks')">Inspiration</div>
+                    <div class="tab-button" onclick="switchTab(event, 'webringLinks')">Web Rings</div>
+                </div>
+                
+                <div id="friendsLinks" class="tab-content active">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ My Digital Family ~</h3>
+                    <div class="scrollbox" style="height: 200px;">
+                        → <a href="#">PinkDreamscape.net</a> - Fellow kawaii aesthetic enthusiast! Amazing pixel art tutorials and the sweetest person ever.<br><br>
+                        → <a href="#">RetroPixelGarden.com</a> - Master of 16-bit art with incredible sprite animation skills. We often collaborate on projects!<br><br>
+                        → <a href="#">NeonNostalgia.org</a> - 80s/90s vibes specialist with the most authentic CRT effects I've ever seen.<br><br>
+                        → <a href="#">CyberCafeMemories.net</a> - Digital archaeologist preserving vintage internet culture. Such important work!<br><br>
+                        → <a href="#">DigitalDiary.space</a> - Personal site inspiration central. Every visit sparks new creative ideas.<br><br>
+                        → <a href="#">AestheticArchive.net</a> - Curated visual content that never fails to inspire. Quality over quantity always.<br><br>
+                        → <a href="#">PixelPrincess.com</a> - Kawaii web design royalty! Check out her CSS tutorials - life-changing stuff.<br><br>
+                        → <a href="#">VaporwaveBabby.net</a> - Dreamy synthwave aesthetics and the chillest music recommendations.<br><br>
+                    </div>
+                </div>
+                
+                <div id="resourcesLinks" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Essential Tools ~</h3>
+                    <div class="scrollbox" style="height: 200px;">
+                        <strong>♡ Fonts & Typography:</strong><br>
+                        → <a href="#">RetroFonts.com</a> - Authentic 80s/90s typefaces<br>
+                        → <a href="#">PixelFonts.net</a> - Bitmap font library<br>
+                        → <a href="#">KawaiiType.org</a> - Cute Japanese-style fonts<br><br>
+                        
+                        <strong>♡ Graphics & Art:</strong><br>
+                        → <a href="#">PixelArtTools.net</a> - Free sprite editors<br>
+                        → <a href="#">OldSchoolGifs.com</a> - Animated GIF collections<br>
+                        → <a href="#">AestheticIcons.io</a> - Retro icon packs<br><br>
+                        
+                        <strong>♡ Color & Design:</strong><br>
+                        → <a href="#">CSSGradients.io</a> - Gradient generators<br>
+                        → <a href="#">ColorPalettes.net</a> - Curated color schemes<br>
+                        → <a href="#">RetroPatterns.com</a> - Vintage backgrounds<br><br>
+                        
+                        <strong>♡ Development:</strong><br>
+                        → <a href="#">NeocitiesGuide.org</a> - HTML/CSS tutorials<br>
+                        → <a href="#">HTMLSymbols.net</a> - Special characters<br>
+                        → <a href="#">CSSEffects.dev</a> - Animation libraries<br>
+                    </div>
+                </div>
+                
+                <div id="inspirationLinks" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Daily Eye Candy ~</h3>
+                    <div class="scrollbox" style="height: 200px;">
+                        <strong>♡ Visual Inspiration:</strong><br>
+                        → <a href="#">AestheticTumblr.com</a> - Endless mood boards<br>
+                        → <a href="#">VintageWebMuseum.org</a> - Internet archaeology<br>
+                        → <a href="#">KawaiiCollective.com</a> - Cute culture central<br><br>
+                        
+                        <strong>♡ Gaming Aesthetics:</strong><br>
+                        → <a href="#">RetroGameArt.net</a> - Classic pixel graphics<br>
+                        → <a href="#">PixelatedMemories.com</a> - 8-bit art gallery<br>
+                        → <a href="#">ChiptuneCentral.org</a> - Music inspiration<br><br>
+                        
+                        <strong>♡ Web Design History:</strong><br>
+                        → <a href="#">DigitalNostalgia.net</a> - Y2K revival hub<br>
+                        → <a href="#">WebcoreArchive.net</a> - Old internet feels<br>
+                        → <a href="#">CSSZenGarden.com</a> - Design evolution<br><br>
+                        
+                        <strong>♡ Creative Communities:</strong><br>
+                        → <a href="#">IndieWebMovement.org</a> - Personal web advocacy<br>
+                        → <a href="#">PixelArtists.net</a> - Sprite art community<br>
+                        → <a href="#">RetroWebRing.com</a> - Nostalgic sites<br>
+                    </div>
+                </div>
+                
+                <div id="webringLinks" class="tab-content">
+                    <h3 style="color: #cc1177; margin-bottom: 10px;">~ Web Ring Navigation ~</h3>
+                    <div style="text-align: center; margin: 15px 0;">
+                        <div style="background: linear-gradient(45deg, #ffb3d9, #ffccec); border: 2px outset #ff99cc; padding: 10px; border-radius: 8px; display: inline-block;">
+                            <div style="font-weight: bold; margin-bottom: 5px;">♡ Kawaii Web Ring ♡</div>
+                            <div style="display: flex; gap: 5px; justify-content: center;">
+                                <button style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 1px outset #ff99cc; padding: 3px 8px; font-size: 9px; cursor: pointer;">&lt; Prev</button>
+                                <button style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 1px outset #ff99cc; padding: 3px 8px; font-size: 9px; cursor: pointer;">Random</button>
+                                <button style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 1px outset #ff99cc; padding: 3px 8px; font-size: 9px; cursor: pointer;">Next &gt;</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="scrollbox" style="height: 150px;">
+                        <strong>Active Web Rings:</strong><br><br>
+                        
+                        ♡ <strong>Kawaii Web Ring</strong> - 47 members<br>
+                        Celebrating cute culture and pink aesthetics!<br><br>
+                        
+                        ♡ <strong>Pixel Perfect Ring</strong> - 23 members<br>
+                        Dedicated to pixel art and retro graphics.<br><br>
+                        
+                        ♡ <strong>Neocities Creative Circle</strong> - 156 members<br>
+                        Supporting personal websites and creativity.<br><br>
+                        
+                        ♡ <strong>Y2K Revival Network</strong> - 34 members<br>
+                        Bringing back millennium bug aesthetics.<br><br>
+                        
+                        ♡ <strong>Indie Web Collective</strong> - 89 members<br>
+                        Promoting decentralized web culture.<br><br>
+                        
+                        ♡ <strong>Retro Computing Ring</strong> - 67 members<br>
+                        Vintage hardware and software enthusiasts.<br>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Guestbook Modal -->
+    <div id="guestbookModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>♪</span> Sign My Guestbook!
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('guestbookModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <h3 style="color: #cc1177; margin-bottom: 10px;">~ Leave Your Mark ♡ ~</h3>
+            <p>Sign my guestbook and become part of this magical digital family! Your message will sparkle forever in my archives.</p>
+            
+            <div style="background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(255,255,255,0.8)); border: 2px inset #ff99cc; margin: 15px 0; border-radius: 8px; overflow: hidden;">
+                <div style="background: linear-gradient(to right, #ff69b4, #ff1493); color: white; padding: 5px 10px; font-weight: bold; font-size: 10px;">New Entry Form</div>
+                <div style="padding: 12px;">
+                    <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                        <input type="text" placeholder="Your name or handle..." style="flex: 1; padding: 4px 6px; border: 1px inset #ff99cc; font-size: 10px; border-radius: 3px;">
+                        <input type="email" placeholder="Email (optional)" style="flex: 1; padding: 4px 6px; border: 1px inset #ff99cc; font-size: 10px; border-radius: 3px;">
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                        <input type="url" placeholder="Your website (optional)" style="flex: 1; padding: 4px 6px; border: 1px inset #ff99cc; font-size: 10px; border-radius: 3px;">
+                        <select style="padding: 4px 6px; border: 1px inset #ff99cc; font-size: 10px; border-radius: 3px;">
+                            <option>Mood: Happy ♡</option>
+                            <option>Mood: Dreamy ☆</option>
+                            <option>Mood: Creative ♪</option>
+                            <option>Mood: Nostalgic ♫</option>
+                            <option>Mood: Excited ✧</option>
+                        </select>
+                    </div>
+                    <textarea placeholder="Share your thoughts, compliments, or just say hi! Sparkles and hearts encouraged ♡" style="width: 100%; height: 70px; padding: 6px; border: 1px inset #ff99cc; font-size: 10px; resize: none; font-family: inherit; border-radius: 3px;"></textarea>
+                    <div style="text-align: right; margin-top: 8px;">
+                        <button onclick="addGuestbookEntry()" style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 2px outset #ff99cc; padding: 4px 12px; font-size: 10px; cursor: pointer; border-radius: 3px; font-weight: bold;">✧ Sign Guestbook! ✧</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scrollbox" style="height: 180px;">
+                <div class="guestbook-entry">
+                    <div class="entry-header">CyberFairy ✧ Happy ♡ - August 15, 2025</div>
+                    OMG this site is absolutely MAGICAL! ♡ The 3D effects and sparkly animations are perfection. Your attention to detail is incredible and the kawaii vibes are off the charts! Keep being amazing, Berry! ✨
+                </div>
+                
+                <div class="guestbook-entry">
+                    <div class="entry-header">PixelDreamer ☆ Creative ♪ - August 14, 2025</div>
+                    This brings back ALL the good memories of the early web! Thank you for keeping the spirit alive with such beautiful design. Your sparkle effects are *chef's kiss* absolutely perfect! Adding you to my daily browse list! ♥
+                </div>
+                
+                <div class="guestbook-entry">
+                    <div class="entry-header">RetroVibes ♫ Nostalgic ♫ - August 13, 2025</div>
+                    Just discovered your site through the kawaii web ring and I'm completely obsessed! The Windows XP theme hits different when it's this adorable. Adding you to my bookmarks forever! ☆ The Three.js hearts are mesmerizing!
+                </div>
+                
+                <div class="guestbook-entry">
+                    <div class="entry-header">AestheticAngel ✨ Dreamy ☆ - August 12, 2025</div>
+                    Been following your work for ages and this new design is your masterpiece! The floating hearts and 3D transforms make everything feel so alive. Keep creating these beautiful magical spaces! ♡
+                </div>
+                
+                <div class="guestbook-entry">
+                    <div class="entry-header">WebWanderer ♪ Happy ♡ - August 11, 2025</div>
+                    Stumbled across your site randomly and WOW! This is what the internet should feel like - personal, creative, and bursting with personality. The enhanced animations are smooth as silk! Thank you for the inspiration!
+                </div>
+                
+                <div class="guestbook-entry">
+                    <div class="entry-header">KawaiiCoder ♥ Excited ✧ - August 10, 2025</div>
+                    Your CSS skills are incredible! The way you blend retro nostalgia with modern effects is chef's kiss perfection. Can't wait to see what magical creation you build next! ♫
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Music Player Modal -->
+    <div id="musicModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>♫</span> Music Player
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('musicModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div class="album-art" style="width: 120px; height: 120px; margin: 0 auto; font-size: 40px;">♪</div>
+                <h3 style="color: #cc1177; margin: 10px 0;">Now Playing</h3>
+                <div style="font-size: 12px; font-weight: bold;">Strawberry Fields Forever</div>
+                <div style="font-size: 10px; color: #666;">by The Digital Dreamers</div>
+            </div>
+            
+            <div class="player-controls" style="justify-content: center; margin: 15px 0;">
+                <div class="player-btn" style="width: 32px; height: 28px; font-size: 12px;" onclick="musicControl('shuffle')">⧩</div>
+                <div class="player-btn" style="width: 32px; height: 28px; font-size: 12px;" onclick="musicControl('prev')">⏮</div>
+                <div class="player-btn" style="width: 40px; height: 28px; font-size: 14px;" onclick="musicControl('play')">⏸</div>
+                <div class="player-btn" style="width: 32px; height: 28px; font-size: 12px;" onclick="musicControl('next')">⏭</div>
+                <div class="player-btn" style="width: 32px; height: 28px; font-size: 12px;" onclick="musicControl('repeat')">🔁</div>
+            </div>
+            
+            <div class="progress-bar" style="margin: 15px 0; height: 8px;">
+                <div class="progress-fill"></div>
+            </div>
+            
+            <div style="display: flex; justify-content: between; font-size: 9px; margin-bottom: 15px;">
+                <span>2:34</span>
+                <span style="margin-left: auto;">4:12</span>
+            </div>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="switchTab(event, 'currentPlaylist')">Now Playing</div>
+                    <div class="tab-button" onclick="switchTab(event, 'favorites')">Favorites</div>
+                    <div class="tab-button" onclick="switchTab(event, 'chiptunes')">Chiptunes</div>
+                </div>
+                
+                <div id="currentPlaylist" class="tab-content active">
+                    <div class="scrollbox" style="height: 150px;">
+                        <div style="background: rgba(255,105,180,0.2); padding: 5px; margin: 2px 0; border-radius: 3px;">
+                            <strong>♪ Strawberry Fields Forever</strong> - The Digital Dreamers<br>
+                            <small>4:12 | Dreamy Pop</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0; cursor: pointer;" onclick="changeTrack(1)">
+                            ♫ Cotton Candy Clouds - Sweet Synth<br>
+                            <small>3:45 | Ambient</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0; cursor: pointer;" onclick="changeTrack(2)">
+                            ♪ Pixel Dreams - 8-Bit Orchestra<br>
+                            <small>2:58 | Chiptune</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0; cursor: pointer;" onclick="changeTrack(3)">
+                            ♫ Neon Nostalgia - Retro Wave<br>
+                            <small>5:23 | Synthwave</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0; cursor: pointer;" onclick="changeTrack(4)">
+                            ♪ Kawaii Afternoon - J-Pop Collective<br>
+                            <small>3:31 | J-Pop</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="favorites" class="tab-content">
+                    <div class="scrollbox" style="height: 150px;">
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♥ My Heart Will Go On (8-bit Remix)<br>
+                            <small>Chiptune Legends | 4:05</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♥ Sailor Moon Theme (Lo-fi Version)<br>
+                            <small>Anime Chill | 3:22</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♥ Windows 95 Startup (Extended Mix)<br>
+                            <small>Vaporwave Artists | 6:12</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♥ Dial-Up Internet Symphony<br>
+                            <small>Digital Nostalgia | 2:47</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♥ Tamagotchi Lullaby<br>
+                            <small>Y2K Babies | 4:33</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="chiptunes" class="tab-content">
+                    <div class="scrollbox" style="height: 150px;">
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♪ Mega Girl Theme<br>
+                            <small>Retro Game Sounds | 2:15</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♪ Castle in the Clouds<br>
+                            <small>Fantasy Chiptunes | 3:44</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♪ Digital Heartbeat<br>
+                            <small>Love Arcade | 2:58</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♪ Pixel Paradise<br>
+                            <small>Dream Bits | 4:21</small>
+                        </div>
+                        <div style="padding: 5px; margin: 2px 0;">
+                            ♪ Game Over (But Make It Cute)<br>
+                            <small>Kawaii Gaming | 1:43</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Games Modal -->
+    <div id="gamesModal" class="modal">
+        <div class="modal-header">
+            <div class="modal-title">
+                <span>◆</span> Mini Games
+            </div>
+            <div class="modal-controls">
+                <div class="modal-button" onclick="closeModal('gamesModal')">×</div>
+            </div>
+        </div>
+        <div class="modal-content">
+            <h3 style="color: #cc1177; margin-bottom: 15px;">~ Kawaii Arcade ~</h3>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <div class="tab-button active" onclick="switchTab(event, 'memoryGame')">Memory</div>
+                    <div class="tab-button" onclick="switchTab(event, 'clickGame')">Clicker</div>
+                    <div class="tab-button" onclick="switchTab(event, 'puzzleGame')">Puzzle</div>
+                </div>
+                
+                <div id="memoryGame" class="tab-content active">
+                    <div style="text-align: center;">
+                        <h4 style="color: #ff1493;">♡ Memory Match ♡</h4>
+                        <p style="font-size: 9px; margin: 5px 0;">Match the kawaii symbols!</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; max-width: 200px; margin: 10px auto;" id="memoryGrid">
+                            <!-- Memory game cards will be generated by JavaScript -->
+                        </div>
+                        
+                        <div style="margin-top: 10px; font-size: 10px;">
+                            <span>Moves: <strong id="moveCounter">0</strong></span> | 
+                            <span>Time: <strong id="timeCounter">00:00</strong></span>
+                        </div>
+                        
+                        <button onclick="startMemoryGame()" style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 2px outset #ff99cc; padding: 5px 10px; font-size: 10px; cursor: pointer; margin: 10px; border-radius: 3px;">New Game</button>
+                    </div>
+                </div>
+                
+                <div id="clickGame" class="tab-content">
+                    <div style="text-align: center;">
+                        <h4 style="color: #ff1493;">♪ Heart Clicker ♪</h4>
+                        <p style="font-size: 9px; margin: 5px 0;">Click the heart to collect love!</p>
+                        
+                        <div style="margin: 15px 0;">
+                            <div id="clickHeart" onclick="clickHeart()" style="font-size: 60px; cursor: pointer; user-select: none; transition: all 0.1s; display: inline-block;">♥</div>
+                        </div>
+                        
+                        <div style="margin: 10px 0; font-size: 11px;">
+                            <div>Love Points: <strong id="lovePoints">0</strong></div>
+                            <div>Per Click: <strong id="clickPower">1</strong></div>
+                            <div>Auto Love: <strong id="autoLove">0</strong>/sec</div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 5px; justify-content: center; flex-wrap: wrap;">
+                            <button onclick="buyUpgrade('click')" style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 1px outset #ff99cc; padding: 3px 6px; font-size: 8px; cursor: pointer;">
+                                Click+1 (10♥)
+                            </button>
+                            <button onclick="buyUpgrade('auto')" style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 1px outset #ff99cc; padding: 3px 6px; font-size: 8px; cursor: pointer;">
+                                Auto+1 (50♥)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="puzzleGame" class="tab-content">
+                    <div style="text-align: center;">
+                        <h4 style="color: #ff1493;">☆ Slide Puzzle ☆</h4>
+                        <p style="font-size: 9px; margin: 5px 0;">Arrange the numbers in order!</p>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; max-width: 150px; margin: 10px auto; background: #ff99cc; padding: 5px; border: 2px inset #ff99cc;" id="puzzleGrid">
+                            <!-- Puzzle pieces will be generated by JavaScript -->
+                        </div>
+                        
+                        <div style="margin: 10px 0; font-size: 10px;">
+                            Moves: <strong id="puzzleMoves">0</strong>
+                        </div>
+                        
+                        <button onclick="shufflePuzzle()" style="background: linear-gradient(to bottom, #ffb3d9, #ff99cc); border: 2px outset #ff99cc; padding: 5px 10px; font-size: 10px; cursor: pointer; border-radius: 3px;">Shuffle</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Enhanced Hidden Chat Easter Egg -->
+    <div id="hiddenChat" class="hidden-chat">
+        <div class="chat-header">~ Secret Chat Room ~</div>
+        <div class="chat-messages" id="chatMessages">
+            <div style="color: #cc1177; font-weight: bold;">StrawberryBot has joined the chat</div>
+            <div><strong>StrawberryBot:</strong> Psst! You found the secret chat! ♡</div>
+            <div><strong>StrawberryBot:</strong> This is where the real magic happens...</div>
+            <div><strong>StrawberryBot:</strong> Type something and let's chat! ☆</div>
+        </div>
+        <div class="typing-indicator" id="typingIndicator">
+            <strong>StrawberryBot</strong> is typing
+            <span class="typing-dots"></span>
+            <span class="typing-dots"></span>
+            <span class="typing-dots"></span>
+        </div>
+        <div class="chat-input">
+            <input type="text" class="chat-textbox" id="chatInput" placeholder="Say something magical...">
+            <button class="chat-send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" onclick="showStartMenu()">Start</div>
+        <div class="clock" id="clock">12:34 PM</div>
+    </div>
+    
+    <!-- Three.js Script -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <script>
+        // Global variables
+        let scene, camera, renderer, hearts = [];
+        let memoryCards = [];
+        let gameStats = {
+            lovePoints: 0,
+            clickPower: 1,
+            autoLove: 0,
+            memoryMoves: 0,
+            puzzleMoves: 0
+        };
+        
+        // Three.js Scene Setup
+        function initThreeJS() {
+            const canvas = document.getElementById('threejs-canvas');
+            
+            // Scene setup
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: canvas, 
+                alpha: true,
+                antialias: true 
+            });
+            
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0);
+            
+            // Create heart geometry (using basic shapes since CapsuleGeometry isn't available)
+            const heartGeometry = new THREE.SphereGeometry(0.1, 8, 8);
+            
+            // Create floating hearts
+            for (let i = 0; i < 50; i++) {
+                const heartMaterial = new THREE.MeshBasicMaterial({ 
+                    color: new THREE.Color().setHSL(0.9 + Math.random() * 0.1, 0.7, 0.8),
+                    transparent: true,
+                    opacity: 0.6
+                });
+                
+                const heart = new THREE.Mesh(heartGeometry, heartMaterial);
+                
+                heart.position.set(
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 20,
+                    (Math.random() - 0.5) * 10
+                );
+                
+                heart.userData = {
+                    speed: 0.01 + Math.random() * 0.02,
+                    rotationSpeed: Math.random() * 0.05,
+                    amplitude: Math.random() * 2 + 1
+                };
+                
+                hearts.push(heart);
+                scene.add(heart);
+            }
+            
+            // Position camera
+            camera.position.z = 5;
+            
+            // Start animation loop
+            animate();
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize, false);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            
+            // Animate hearts
+            hearts.forEach((heart, index) => {
+                heart.rotation.y += heart.userData.rotationSpeed;
+                heart.position.y = Math.sin(time + index) * heart.userData.amplitude;
+                heart.position.x += Math.sin(time * 0.5 + index) * 0.01;
+                
+                // Reset position when heart goes off screen
+                if (heart.position.x > 10) heart.position.x = -10;
+                if (heart.position.x < -10) heart.position.x = 10;
+            });
+            
+            renderer.render(scene, camera);
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        // Enhanced floating hearts (HTML-based)
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('heartsContainer');
+            const hearts = ['♡', '♥', '☆', '★', '♪', '♫', '◆', '◊', '♠', '♣'];
+            
+            setInterval(() => {
+                if (document.querySelectorAll('.heart').length < 15) {
+                    const heart = document.createElement('div');
+                    heart.className = 'heart';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + '%';
+                    heart.style.animationDuration = (15 + Math.random() * 10) + 's';
+                    heart.style.fontSize = (10 + Math.random() * 8) + 'px';
+                    heart.style.color = `hsl(${300 + Math.random() * 60}, 70%, ${60 + Math.random() * 20}%)`;
+                    heartsContainer.appendChild(heart);
+                    
+                    setTimeout(() => {
+                        if (heart.parentNode) {
+                            heart.parentNode.removeChild(heart);
+                        }
+                    }, 25000);
+                }
+            }, 1500);
+        }
+        
+        // Enhanced clock update
+        function updateClock() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const dateString = now.toLocaleDateString([], {month: 'short', day: 'numeric'});
+            document.getElementById('clock').innerHTML = `${timeString}<br><small style="font-size: 8px;">${dateString}</small>`;
+        }
+        
+        // Modal functions with enhanced effects
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            
+            // Add modal opening sound effect (visual)
+            createSparkleEffect();
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+        }
+        
+        // Tab switching with smooth transitions
+        function switchTab(evt, tabName) {
+            const tabContainer = evt.target.closest('.tab-container');
+            const tabContents = tabContainer.querySelectorAll('.tab-content');
+            const tabButtons = tabContainer.querySelectorAll('.tab-button');
+            
+            tabContents.forEach(content => content.classList.remove('active'));
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            // Add slight delay for smooth transition
+            setTimeout(() => {
+                document.getElementById(tabName).classList.add('active');
+                evt.target.classList.add('active');
+            }, 50);
+        }
+        
+        // Enhanced chat functions with typing indicator
+        let chatVisible = false;
+        let chatResponses = [
+            "That's absolutely magical! ♡",
+            "Your energy is so kawaii! ☆",
+            "You're amazing! Keep exploring the magic!",
+            "Beep boop! *sparkles intensify*",
+            "Thanks for chatting with me! ♪",
+            "You've unlocked all the secrets! Incredible!",
+            "The strawberry magic flows strong in you!",
+            "Want more hidden features? Try clicking everything! ♥",
+            "You found the best easter egg! *happy bot noises*",
+            "Your vibes are immaculate! Keep spreading joy!",
+            "I love meeting new friends! You're the best! ♡",
+            "The digital realm welcomes you with open arms! ✧"
+        ];
+        
+        function toggleChat() {
+            const chat = document.getElementById('hiddenChat');
+            chatVisible = !chatVisible;
+            chat.style.display = chatVisible ? 'block' : 'none';
+            
+            if (chatVisible) {
+                document.getElementById('chatInput').focus();
+                createSparkleEffect();
+            }
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const messages = document.getElementById('chatMessages');
+            const typingIndicator = document.getElementById('typingIndicator');
+            
+            if (input.value.trim()) {
+                const userMsg = document.createElement('div');
+                userMsg.innerHTML = `<strong>You:</strong> ${input.value}`;
+                userMsg.style.animation = 'fadeIn 0.3s ease-in';
+                messages.appendChild(userMsg);
+                
+                // Show typing indicator
+                typingIndicator.style.display = 'block';
+                
+                // Bot response with realistic delay
+                setTimeout(() => {
+                    typingIndicator.style.display = 'none';
+                    
+                    const botMsg = document.createElement('div');
+                    const response = chatResponses[Math.floor(Math.random() * chatResponses.length)];
+                    botMsg.innerHTML = `<strong>StrawberryBot:</strong> ${response}`;
+                    botMsg.style.animation = 'fadeIn 0.3s ease-in';
+                    messages.appendChild(botMsg);
+                    messages.scrollTop = messages.scrollHeight;
+                    
+                    // Random chance for extra bot message
+                    if (Math.random() < 0.3) {
+                        setTimeout(() => {
+                            const extraMsg = document.createElement('div');
+                            extraMsg.innerHTML = `<strong>StrawberryBot:</strong> *sends virtual hugs* ♡`;
+                            extraMsg.style.animation = 'fadeIn 0.3s ease-in';
+                            extraMsg.style.fontStyle = 'italic';
+                            extraMsg.style.color = '#ff69b4';
+                            messages.appendChild(extraMsg);
+                            messages.scrollTop = messages.scrollHeight;
+                        }, 1000);
+                    }
+                }, 1500 + Math.random() * 2000);
+                
+                input.value = '';
+                messages.scrollTop = messages.scrollHeight;
+            }
+        }
+        
+        // Music player controls
+        let currentTrack = 0;
+        const tracks = [
+            { name: "Strawberry Fields Forever", artist: "The Digital Dreamers", duration: "4:12" },
+            { name: "Cotton Candy Clouds", artist: "Sweet Synth", duration: "3:45" },
+            { name: "Pixel Dreams", artist: "8-Bit Orchestra", duration: "2:58" },
+            { name: "Neon Nostalgia", artist: "Retro Wave", duration: "5:23" },
+            { name: "Kawaii Afternoon", artist: "J-Pop Collective", duration: "3:31" }
+        ];
+        
+        function musicControl(action) {
+            const playBtn = document.querySelector('.player-btn[onclick="musicControl(\'play\')"]');
+            
+            switch(action) {
+                case 'play':
+                    if (playBtn.textContent === '▐▐') {
+                        playBtn.textContent = '▶';
+                    } else {
+                        playBtn.textContent = '▐▐';
+                    }
+                    break;
+                case 'next':
+                    currentTrack = (currentTrack + 1) % tracks.length;
+                    updateTrackDisplay();
+                    break;
+                case 'prev':
+                    currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+                    updateTrackDisplay();
+                    break;
+                case 'shuffle':
+                    currentTrack = Math.floor(Math.random() * tracks.length);
+                    updateTrackDisplay();
+                    break;
+            }
+            createSparkleEffect();
+        }
+        
+        function changeTrack(trackIndex) {
+            currentTrack = trackIndex;
+            updateTrackDisplay();
+            createSparkleEffect();
+        }
+        
+        function updateTrackDisplay() {
+            // Update both widget and modal displays
+            const track = tracks[currentTrack];
+            const widgetTitle = document.querySelector('.music-player div');
+            if (widgetTitle) {
+                widgetTitle.textContent = track.name;
+            }
+            
+            // Update modal if open
+            const modalTitle = document.querySelector('#musicModal .modal-content h3 + div');
+            if (modalTitle) {
+                modalTitle.innerHTML = `
+                    <div style="font-size: 12px; font-weight: bold;">${track.name}</div>
+                    <div style="font-size: 10px; color: #666;">by ${track.artist}</div>
+                `;
+            }
+        }
+        
+        // Memory Game
+        const memorySymbols = ['♡', '♥', '☆', '★', '♪', '♫', '◆', '◊'];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let gameStartTime = 0;
+        let gameTimer = null;
+        
+        function startMemoryGame() {
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            flippedCards = [];
+            matchedPairs = 0;
+            gameStats.memoryMoves = 0;
+            gameStartTime = Date.now();
+            
+            // Create card pairs
+            const cards = [...memorySymbols, ...memorySymbols].sort(() => Math.random() - 0.5);
+            
+            cards.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.style.cssText = `
+                    width: 40px; height: 40px; background: linear-gradient(45deg, #ffb3d9, #ff99cc);
+                    border: 2px outset #ff99cc; display: flex; align-items: center;
+                    justify-content: center; cursor: pointer; font-size: 18px;
+                    border-radius: 4px; transition: all 0.3s;
+                `;
+                card.textContent = '?';
+                card.dataset.symbol = symbol;
+                card.dataset.index = index;
+                card.onclick = () => flipCard(card);
+                grid.appendChild(card);
+            });
+            
+            // Start timer
+            gameTimer = setInterval(updateGameTimer, 1000);
+            
+            document.getElementById('moveCounter').textContent = '0';
+            document.getElementById('timeCounter').textContent = '00:00';
+        }
+        
+        function flipCard(card) {
+            if (flippedCards.length < 2 && !card.classList.contains('flipped')) {
+                card.textContent = card.dataset.symbol;
+                card.style.background = 'linear-gradient(45deg, #ffe6f5, #ffccec)';
+                card.classList.add('flipped');
+                flippedCards.push(card);
+                
+                if (flippedCards.length === 2) {
+                    gameStats.memoryMoves++;
+                    document.getElementById('moveCounter').textContent = gameStats.memoryMoves;
+                    
+                    setTimeout(() => {
+                        if (flippedCards[0].dataset.symbol === flippedCards[1].dataset.symbol) {
+                            // Match!
+                            flippedCards.forEach(card => {
+                                card.style.background = 'linear-gradient(45deg, #90EE90, #98FB98)';
+                                card.style.transform = 'scale(1.1)';
+                            });
+                            matchedPairs++;
+                            
+                            if (matchedPairs === memorySymbols.length) {
+                                clearInterval(gameTimer);
+                                setTimeout(() => {
+                                    alert(`Congratulations! ♡\nCompleted in ${gameStats.memoryMoves} moves!`);
+                                }, 500);
+                            }
+                        } else {
+                            // No match
+                            flippedCards.forEach(card => {
+                                card.textContent = '?';
+                                card.style.background = 'linear-gradient(45deg, #ffb3d9, #ff99cc)';
+                                card.classList.remove('flipped');
+                            });
+                        }
+                        flippedCards = [];
+                    }, 1000);
+                }
+            }
+        }
+        
+        function updateGameTimer() {
+            const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+            const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+            const seconds = (elapsed % 60).toString().padStart(2, '0');
+            document.getElementById('timeCounter').textContent = `${minutes}:${seconds}`;
+        }
+        
+        // Heart Clicker Game
+        function clickHeart() {
+            const heart = document.getElementById('clickHeart');
+            gameStats.lovePoints += gameStats.clickPower;
+            
+            // Visual feedback
+            heart.style.transform = 'scale(1.2)';
+            heart.style.color = `hsl(${Math.random() * 360}, 70%, 60%)`;
+            
+            setTimeout(() => {
+                heart.style.transform = 'scale(1)';
+                heart.style.color = '';
+            }, 100);
+            
+            // Create floating number
+            const floatNum = document.createElement('div');
+            floatNum.textContent = `+${gameStats.clickPower}`;
+            floatNum.style.cssText = `
+                position: absolute; color: #ff69b4; font-weight: bold;
+                pointer-events: none; font-size: 12px; z-index: 1000;
+                left: ${Math.random() * 50 + 25}%; top: 30%;
+                animation: floatUp 1s ease-out forwards;
+            `;
+            document.body.appendChild(floatNum);
+            
+            setTimeout(() => floatNum.remove(), 1000);
+            
+            updateClickerDisplay();
+        }
+        
+        function buyUpgrade(type) {
+            if (type === 'click' && gameStats.lovePoints >= 10) {
+                gameStats.lovePoints -= 10;
+                gameStats.clickPower++;
+            } else if (type === 'auto' && gameStats.lovePoints >= 50) {
+                gameStats.lovePoints -= 50;
+                gameStats.autoLove++;
+            }
+            updateClickerDisplay();
+        }
+        
+        function updateClickerDisplay() {
+            document.getElementById('lovePoints').textContent = gameStats.lovePoints;
+            document.getElementById('clickPower').textContent = gameStats.clickPower;
+            document.getElementById('autoLove').textContent = gameStats.autoLove;
+        }
+        
+        // Slide Puzzle Game
+        let puzzleState = [1, 2, 3, 4, 5, 6, 7, 8, 0]; // 0 represents empty space
+        
+        function initPuzzle() {
+            const grid = document.getElementById('puzzleGrid');
+            grid.innerHTML = '';
+            
+            puzzleState.forEach((num, index) => {
+                const tile = document.createElement('div');
+                tile.style.cssText = `
+                    width: 45px; height: 45px; background: ${num === 0 ? 'transparent' : 'linear-gradient(45deg, #ffb3d9, #ff99cc)'};
+                    border: ${num === 0 ? 'none' : '2px outset #ff99cc'}; display: flex;
+                    align-items: center; justify-content: center; cursor: ${num === 0 ? 'default' : 'pointer'};
+                    font-weight: bold; font-size: 14px; border-radius: 3px;
+                    transition: all 0.2s;
+                `;
+                tile.textContent = num === 0 ? '' : num;
+                tile.onclick = () => moveTile(index);
+                grid.appendChild(tile);
+            });
+        }
+        
+        function moveTile(tileIndex) {
+            const emptyIndex = puzzleState.indexOf(0);
+            const validMoves = [
+                emptyIndex - 3, // up
+                emptyIndex + 3, // down
+                emptyIndex - 1, // left
+                emptyIndex + 1  // right
+            ].filter(i => {
+                if (i < 0 || i > 8) return false;
+                if ((emptyIndex % 3 === 0 && i === emptyIndex - 1) || 
+                    (emptyIndex % 3 === 2 && i === emptyIndex + 1)) return false;
+                return true;
+            });
+            
+            if (validMoves.includes(tileIndex)) {
+                [puzzleState[emptyIndex], puzzleState[tileIndex]] = [puzzleState[tileIndex], puzzleState[emptyIndex]];
+                gameStats.puzzleMoves++;
+                document.getElementById('puzzleMoves').textContent = gameStats.puzzleMoves;
+                initPuzzle();
+                
+                // Check for win
+                if (puzzleState.join('') === '123456780') {
+                    setTimeout(() => {
+                        alert(`Puzzle solved! ☆\nMoves: ${gameStats.puzzleMoves}`);
+                    }, 300);
+                }
+            }
+        }
+        
+        function shufflePuzzle() {
+            // Shuffle by making random valid moves
+            for (let i = 0; i < 100; i++) {
+                const emptyIndex = puzzleState.indexOf(0);
+                const validMoves = [
+                    emptyIndex - 3, emptyIndex + 3, emptyIndex - 1, emptyIndex + 1
+                ].filter(i => {
+                    if (i < 0 || i > 8) return false;
+                    if ((emptyIndex % 3 === 0 && i === emptyIndex - 1) || 
+                        (emptyIndex % 3 === 2 && i === emptyIndex + 1)) return false;
+                    return true;
+                });
+                
+                const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+                [puzzleState[emptyIndex], puzzleState[randomMove]] = [puzzleState[randomMove], puzzleState[emptyIndex]];
+            }
+            
+            gameStats.puzzleMoves = 0;
+            document.getElementById('puzzleMoves').textContent = '0';
+            initPuzzle();
+        }
+        
+        // Guestbook functionality
+        function addGuestbookEntry() {
+            const name = document.querySelector('#guestbookModal input[placeholder*="name"]').value;
+            const message = document.querySelector('#guestbookModal textarea').value;
+            
+            if (name.trim() && message.trim()) {
+                const scrollbox = document.querySelector('#guestbookModal .scrollbox');
+                const entry = document.createElement('div');
+                entry.className = 'guestbook-entry';
+                entry.innerHTML = `
+                    <div class="entry-header">${name} ♡ Happy ♡ - ${new Date().toLocaleDateString()}</div>
+                    ${message}
+                `;
+                entry.style.animation = 'slideIn 0.5s ease-out';
+                
+                scrollbox.insertBefore(entry, scrollbox.firstChild);
+                
+                // Clear form
+                document.querySelector('#guestbookModal input[placeholder*="name"]').value = '';
+                document.querySelector('#guestbookModal textarea').value = '';
+                
+                // Show success message
+                createSparkleEffect();
+                setTimeout(() => {
+                    alert('Thank you for signing my guestbook! ♡');
+                }, 500);
+            }
+        }
+        
+        // Start menu (enhanced)
+        function showStartMenu() {
+            const programs = [
+                '♡ Paint (with extra sparkles)',
+                '☆ Notepad (heart-shaped cursors)', 
+                '♪ Calculator (only does math in pink)',
+                '♫ Solitaire (kawaii card designs)',
+                '◆ Minesweeper (but with flowers)',
+                '♠ Internet Explorer (Y2K edition)',
+                '♥ Media Player (chiptune enhanced)',
+                '✧ Control Panel (aesthetic settings)'
+            ];
+            
+            let message = 'Welcome to Strawberry Desktop! ♡\n\n';
+            message += 'Available Programs:\n';
+            programs.forEach(program => message += `${program}\n`);
+            message += '\nThis is just a demo, but imagine all the magical software you could run here!\n\n';
+            message += 'Keep exploring for more hidden secrets! ☆';
+            
+            alert(message);
+            createSparkleEffect();
+        }
+        
+        // Sparkle effect function
+        function createSparkleEffect() {
+            const sparkles = ['✧', '✦', '✨', '⋆', '｡', '♡', '☆', '★'];
+            
+            for (let i = 0; i < 12; i++) {
+                setTimeout(() => {
+                    const sparkle = document.createElement('div');
+                    sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+                    sparkle.style.cssText = `
+                        position: fixed; left: ${Math.random() * window.innerWidth}px;
+                        top: ${Math.random() * window.innerHeight}px;
+                        color: hsl(${Math.random() * 360}, 70%, 60%);
+                        pointer-events: none; z-index: 9999; font-size: ${10 + Math.random() * 8}px;
+                        animation: sparkleFloat 2s ease-out forwards;
+                    `;
+                    document.body.appendChild(sparkle);
+                    
+                    setTimeout(() => sparkle.remove(), 2000);
+                }, i * 50);
+            }
+        }
+        
+        // Auto-clicker for heart game
+        setInterval(() => {
+            if (gameStats.autoLove > 0) {
+                gameStats.lovePoints += gameStats.autoLove;
+                updateClickerDisplay();
+            }
+        }, 1000);
+        
+        // Loading screen
+        function hideLoadingScreen() {
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').classList.add('hidden');
+                createSparkleEffect();
+            }, 3000);
+        }
+        
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        });
+        
+        // Enter key handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+        });
+        
+        // Add fadeIn and slideIn animations to CSS
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes fadeIn {
+                0% { opacity: 0; transform: translateY(10px); }
+                100% { opacity: 1; transform: translateY(0); }
+            }
+            
+            @keyframes slideIn {
+                0% { opacity: 0; transform: translateX(-20px); }
+                100% { opacity: 1; transform: translateX(0); }
+            }
+            
+            @keyframes floatUp {
+                0% { opacity: 1; transform: translateY(0); }
+                100% { opacity: 0; transform: translateY(-50px); }
+            }
+            
+            @keyframes sparkleFloat {
+                0% { opacity: 0; transform: scale(0) rotate(0deg); }
+                50% { opacity: 1; transform: scale(1) rotate(180deg); }
+                100% { opacity: 0; transform: scale(0) rotate(360deg); }
+            }
+        `;
+        document.head.appendChild(additionalStyles);
+        
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Three.js scene
+            initThreeJS();
+            
+            // Start floating hearts
+            createFloatingHearts();
+            
+            // Update clock
+            updateClock();
+            setInterval(updateClock, 60000); // Update every minute
+            
+            // Initialize games
+            startMemoryGame();
+            initPuzzle();
+            
+            // Hide loading screen
+            hideLoadingScreen();
+            
+            // Random ambient sparkles
+            setInterval(createSparkleEffect, 30000);
+        });
+    </script>
+</body>
+</html>

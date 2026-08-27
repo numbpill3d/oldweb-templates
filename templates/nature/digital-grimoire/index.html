@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>~*~ Digital Grimoire ~*~</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* ~*~ Enchanted Forest Styles ~*~ */
+        :root {
+            --forest-green: #1a2e1a;
+            --moss-green: #485d30;
+            --mushroom-beige: #c6b295;
+            --bark-brown: #2b1e10;
+            --moon-silver: #c0c0c0;
+            --pixie-purple: #644a8e;
+            --cosmic-blue: #0f1a33;
+            --cosmic-purple: #341a4a;
+            --star-glow: #e0e8ff;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        body {
+            background-color: var(--cosmic-blue);
+            color: var(--mushroom-beige);
+            background-image: url('/api/placeholder/200/200');
+            padding: 20px;
+            max-width: 100%;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            background-color: rgba(15, 26, 51, 0.92);
+            border: 2px solid var(--cosmic-purple);
+            padding: 20px;
+            box-shadow: 0 0 25px rgba(100, 74, 142, 0.7);
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            border-bottom: 1px dashed var(--moss-green);
+            padding-bottom: 20px;
+        }
+        
+        h1, h2, h3 {
+            font-weight: normal;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            color: var(--moon-silver);
+            font-size: 28px;
+        }
+        
+        .ascii-art {
+            font-size: 12px;
+            line-height: 1.2;
+            white-space: pre;
+            text-align: center;
+            margin: 20px 0;
+            color: var(--pixie-purple);
+        }
+        
+        nav {
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .tab {
+            display: inline-block;
+            padding: 5px 15px;
+            margin: 0 5px;
+            background-color: var(--bark-brown);
+            color: var(--mushroom-beige);
+            border: 1px solid var(--moss-green);
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .tab:hover, .tab.active {
+            background-color: var(--moss-green);
+            color: var(--forest-green);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: rgba(19, 16, 32, 0.7);
+            background-image: url('/api/placeholder/300/300');
+            border: 1px solid var(--cosmic-purple);
+            margin-top: 20px;
+        }
+        
+        .tab-content.show {
+            display: block;
+        }
+        
+        .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+        }
+        
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+        
+        #three-container {
+            width: 100%;
+            height: 200px;
+            margin: 20px 0;
+            border: 1px solid var(--cosmic-purple);
+        }
+        
+        #cosmic-portal {
+            width: 100%;
+            height: 250px;
+            margin: 20px 0;
+            border: 1px solid var(--cosmic-purple);
+            box-shadow: 0 0 20px rgba(100, 74, 142, 0.5);
+        }
+        
+        .under-construction {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px dashed yellow;
+            background-color: black;
+            color: yellow;
+        }
+        
+        .japanese-marquee {
+            text-align: center;
+            margin: 20px 0;
+            font-family: 'MS PGothic', 'Hiragino Kaku Gothic ProN', sans-serif;
+            letter-spacing: 2px;
+            background-color: black;
+            color: var(--star-glow);
+            padding: 8px;
+            border: 1px solid var(--cosmic-purple);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .japanese-marquee span {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+            text-shadow: 0 0 5px var(--star-glow), 0 0 10px var(--pixie-purple);
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        .download-item {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid var(--moss-green);
+            background-color: rgba(42, 62, 42, 0.7);
+        }
+        
+        .download-link {
+            color: #88ff88;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .download-link::before {
+            content: "[~] ";
+            color: var(--pixie-purple);
+        }
+        
+        .two-columns {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .column {
+            flex: 1 1 300px;
+            min-width: 300px;
+        }
+        
+        .screenshot {
+            width: 100%;
+            border: 2px solid var(--bark-brown);
+            margin-bottom: 10px;
+        }
+        
+        .scroll-box {
+            height: 300px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--moss-green);
+            padding: 10px;
+        }
+        
+        .embed-code {
+            font-family: monospace;
+            white-space: pre-wrap;
+            color: #88ff88;
+        }
+        
+        /* Moon phase navigation */
+        .moon-phases {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .moon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: black;
+            border: 1px solid var(--moon-silver);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .moon::after {
+            content: "";
+            position: absolute;
+            background-color: var(--moon-silver);
+            border-radius: 50%;
+        }
+        
+        .new-moon::after {
+            display: none;
+        }
+        
+        .waxing-crescent::after {
+            width: 100%;
+            height: 100%;
+            right: -50%;
+            box-shadow: -15px 0 0 0 black;
+        }
+        
+        .first-quarter::after {
+            width: 100%;
+            height: 100%;
+            right: -15px;
+            box-shadow: -30px 0 0 0 black;
+        }
+        
+        .waxing-gibbous::after {
+            width: 100%;
+            height: 100%;
+            right: 5px;
+            box-shadow: -30px 0 0 0 black;
+        }
+        
+        .full-moon::after {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .waning-gibbous::after {
+            width: 100%;
+            height: 100%;
+            left: 5px;
+            box-shadow: 30px 0 0 0 black;
+        }
+        
+        .last-quarter::after {
+            width: 100%;
+            height: 100%;
+            left: -15px;
+            box-shadow: 30px 0 0 0 black;
+        }
+        
+        .waning-crescent::after {
+            width: 100%;
+            height: 100%;
+            left: -50%;
+            box-shadow: 15px 0 0 0 black;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px dashed var(--moss-green);
+            font-size: 14px;
+            color: var(--mushroom-beige);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .two-columns {
+                flex-direction: column;
+            }
+            
+            .column {
+                flex: 1 1 100%;
+            }
+            
+            #three-container {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>~*~ Digital Grimoire ~*~</h1>
+            <div id="cosmic-portal"></div>
+            <p>A mystical collection of code spells and digital enchantments</p>
+        </header>
+        
+        <div class="japanese-marquee">
+            <span>デジタル魔術書の世界へようこそ。古代の知識と現代の技術が交わる神秘の領域です。暗闇から生まれた光の魔法をご覧ください。</span>
+        </div>
+        
+        <div class="under-construction">
+            <span class="blink">! UNDER THE INFLUENCE OF THE FOREST SPRITES !</span>
+        </div>
+        
+        <div id="three-container"></div>
+        
+        <div class="moon-phases">
+            <div class="moon new-moon" data-phase="home" title="Home"></div>
+            <div class="moon waxing-crescent" data-phase="about" title="About"></div>
+            <div class="moon first-quarter" data-phase="portfolio" title="Portfolio"></div>
+            <div class="moon waxing-gibbous" data-phase="downloads" title="Downloads"></div>
+            <div class="moon full-moon" data-phase="embed" title="Embed"></div>
+            <div class="moon waning-gibbous" data-phase="contact" title="Contact"></div>
+        </div>
+        
+        <nav>
+            <a href="#home" class="tab active">~/home</a>
+            <a href="#about" class="tab">~/about</a>
+            <a href="#portfolio" class="tab">~/portfolio</a>
+            <a href="#downloads" class="tab">~/downloads</a>
+            <a href="#embed" class="tab">~/embed</a>
+            <a href="#contact" class="tab">~/contact</a>
+        </nav>
+        
+        <div id="home" class="tab-content show">
+            <h2>Welcome to my digital woodland</h2>
+            <p>This grimoire contains spells (code) I've crafted over the moons. Feel free to wander through the digital forest and discover enchantments for your own projects.</p>
+            <p>Cauldron-brewed with HTML, CSS, JavaScript, and some Three.js magic. No synthetic emojis here—only ancient ASCII runes as the spirits intended.</p>
+            <div class="ascii-art">
+               .              +   .                .   . .     .  .
+                        .                    .       .     *
+              .       .         .    .   . .    . .        .  .
+                      .       .      .        .   .       .   .
+                    .    .  .     .     .      .  .   .
+                        .     .    .      .  .     .    *  .
+                   .     .    .      . .    .  .   .
+              .      .    . .     .    .      .     .      .
+                  .     .    .        .  .   .         .
+              .    .    .   .    .     .   .  .   .  .
+            .   .    .  .   .       .   . *   .   .    *
+                 .  .    .   .        .   .    .    .
+            </div>
+        </div>
+        
+        <div id="about" class="tab-content">
+            <h2>About the Forest Keeper</h2>
+            <p>I am a certified pentester for a conglomerate of various major companies, wielding the digital wand to protect and strengthen the walls of technological fortresses.</p>
+            <p>My craft involves brewing secure code potions and finding weaknesses in existing spells. I specialize in protective magic through HTML, CSS, JavaScript, Three.js, X3DOM, and A-Frame.</p>
+            <p>When the moon is full, I venture into the realm of 3D visualization and interactive experiences. When it wanes, I focus on security audits and vulnerability assessments.</p>
+        </div>
+        
+        <div id="portfolio" class="tab-content">
+            <h2>Spell Anthology</h2>
+            <p>A collection of my most powerful code incantations:</p>
+            
+            <div class="download-item">
+                <h3>~* Security Scrying Orb *~</h3>
+                <p>A Three.js visualization of network traffic and potential intrusions. The orb glows brighter as suspicious activity increases.</p>
+            </div>
+            
+            <div class="download-item">
+                <h3>~* Forest Path Authentication *~</h3>
+                <p>A secure multi-factor authentication system disguised as a journey through an enchanted forest. Each correct credential moves you deeper into the woods.</p>
+            </div>
+            
+            <div class="download-item">
+                <h3>~* Mushroom Data Clusters *~</h3>
+                <p>A data visualization system that grows like mushroom networks, connecting related information in organic patterns.</p>
+            </div>
+            
+            <div class="download-item">
+                <h3>~* Moonlight Shadow Tester *~</h3>
+                <p>Penetration testing tool that works under the cover of darkness, leaving minimal traces while thoroughly examining system defenses.</p>
+            </div>
+        </div>
+        
+        <div id="downloads" class="tab-content">
+            <h2>Free Enchantments</h2>
+            <p>Take these potions and use them in your own grimoire:</p>
+            
+            <div class="download-item">
+                <h3>~* Basic Protective Ward *~</h3>
+                <p>A simple JavaScript library for form validation and basic XSS protection.</p>
+                <a href="#" class="download-link">brew install ward.js</a>
+            </div>
+            
+            <div class="download-item">
+                <h3>~* Three.js Cauldron Starter *~</h3>
+                <p>A boilerplate for creating interactive 3D scenes with Three.js. Includes orbiting controls and responsive canvas.</p>
+                <a href="#" class="download-link">brew install cauldron-3d.zip</a>
+            </div>
+            
+            <div class="download-item">
+                <h3>~* Responsive Forest Layout *~</h3>
+                <p>A CSS framework built with flexbox that adapts to any screen size like a shapeshifting spirit.</p>
+                <a href="#" class="download-link">brew install forest-flex.css</a>
+            </div>
+            
+            <div class="download-item">
+                <h3>~* Web 1.0 Nostalgia Kit *~</h3>
+                <p>Collection of Web 1.0 style elements recreated with modern standards. Includes visitor counters, under construction banners, and pixelated backgrounds.</p>
+                <a href="#" class="download-link">brew install nostalgia-web1.zip</a>
+            </div>
+        </div>
+        
+        <div id="embed" class="tab-content">
+            <h2>Embed Code Scrolls</h2>
+            <p>Ancient scripts to summon on your own pages:</p>
+            
+            <div class="two-columns">
+                <div class="column">
+                    <img src="https://files.catbox.moe/roov50.png" alt="Screenshot of 3D Forest Scene" class="screenshot">
+                    <p>A mystical Three.js forest scene with interactive elements.</p>
+                </div>
+                <div class="column">
+                    <div class="scroll-box">
+                        <code class="embed-code"><!-- Forest Scene Embed Code -->
+<!-- First, include Three.js in your HTML -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<!-- Add this HTML where you want the scene -->
+<div id="forest-scene" style="width: 100%; height: 400px;"></div>
+
+<!-- Then add this JavaScript -->
+<script>
+  // ~~~ Forest Scene Enchantment ~~~
+  // Brewed under the waxing moon of Samhain
+  
+  // Initialize the woodland realm
+  const container = document.getElementById('forest-scene');
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x2a3e2a);
+  
+  // Summon the viewing portal
+  const camera = new THREE.PerspectiveCamera(
+    75, container.clientWidth / container.clientHeight, 0.1, 1000
+  );
+  camera.position.z = 5;
+  
+  // Create the scrying glass
+  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  container.appendChild(renderer.domElement);
+  
+  // Adapt to window size changes like a shapeshifter
+  window.addEventListener('resize', () => {
+    camera.aspect = container.clientWidth / container.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(container.clientWidth, container.clientHeight);
+  });
+  
+  // Add ambient moonlight
+  const ambientLight = new THREE.AmbientLight(0x606060);
+  scene.add(ambientLight);
+  
+  // Add directional sunlight filtering through leaves
+  const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+  dirLight.position.set(2, 3, 2);
+  scene.add(dirLight);
+  
+  // Create the sacred grove
+  const trees = [];
+  for (let i = 0; i < 15; i++) {
+    // Tree trunk (cylinder)
+    const trunkGeo = new THREE.CylinderGeometry(0.1, 0.15, 1, 8);
+    const trunkMat = new THREE.MeshLambertMaterial({ color: 0x3b2e20 });
+    const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+    
+    // Tree foliage (cone)
+    const foliageGeo = new THREE.ConeGeometry(0.5, 1, 8);
+    const foliageMat = new THREE.MeshLambertMaterial({ color: 0x687d50 });
+    const foliage = new THREE.Mesh(foliageGeo, foliageMat);
+    foliage.position.y = 1;
+    
+    // Combine into a tree
+    const tree = new THREE.Group();
+    tree.add(trunk);
+    tree.add(foliage);
+    
+    // Place in the forest at random
+    tree.position.x = Math.random() * 10 - 5;
+    tree.position.z = Math.random() * 10 - 5;
+    tree.rotation.y = Math.random() * Math.PI * 2;
+    
+    scene.add(tree);
+    trees.push(tree);
+  }
+  
+  // Create the forest floor
+  const floorGeo = new THREE.PlaneGeometry(20, 20, 32, 32);
+  const floorMat = new THREE.MeshLambertMaterial({ 
+    color: 0x687d50,
+    side: THREE.DoubleSide
+  });
+  const floor = new THREE.Mesh(floorGeo, floorMat);
+  floor.rotation.x = Math.PI / 2;
+  floor.position.y = -0.5;
+  scene.add(floor);
+  
+  // Summon magical floating lights
+  const lights = [];
+  for (let i = 0; i < 20; i++) {
+    const lightGeo = new THREE.SphereGeometry(0.05, 8, 8);
+    const lightMat = new THREE.MeshBasicMaterial({ 
+      color: 0xffffaa,
+      transparent: true,
+      opacity: 0.8
+    });
+    const light = new THREE.Mesh(lightGeo, lightMat);
+    
+    // Position randomly in the forest
+    light.position.x = Math.random() * 8 - 4;
+    light.position.y = Math.random() * 2 + 0.5;
+    light.position.z = Math.random() * 8 - 4;
+    
+    scene.add(light);
+    lights.push({
+      mesh: light,
+      speed: Math.random() * 0.01 + 0.005,
+      yOffset: Math.random() * Math.PI * 2
+    });
+  }
+  
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+    
+    // Make the magical lights dance
+    const time = Date.now() * 0.001;
+    lights.forEach((light, i) => {
+      light.mesh.position.y = 
+        light.mesh.position.y + 
+        Math.sin(time * light.speed + light.yOffset) * 0.01;
+        
+      // Make them float around in small circles
+      light.mesh.position.x += Math.sin(time * 0.3 + i) * 0.005;
+      light.mesh.position.z += Math.cos(time * 0.2 + i) * 0.005;
+    });
+    
+    // Gently sway the trees
+    trees.forEach((tree, i) => {
+      tree.rotation.z = Math.sin(time * 0.1 + i) * 0.05;
+    });
+    
+    renderer.render(scene, camera);
+  }
+  
+  // Begin the enchantment
+  animate();
+</script></code>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="two-columns" style="margin-top: 40px;">
+                <div class="column">
+                    <img src="https://files.catbox.moe/r4y5nt.png" alt="Screenshot of Visitor Counter" class="screenshot">
+                    <p>A nostalgic Web 1.0 visitor counter with glowing effect.</p>
+                </div>
+                <div class="column">
+                    <div class="scroll-box">
+                        <code class="embed-code"><!-- Mystical Visitor Counter -->
+<!-- Add this HTML where you want the counter -->
+<div class="visitor-counter">
+  Woodland Visitors: <span id="visitor-count">0</span>
+</div>
+
+<!-- Add this CSS -->
+<style>
+  .visitor-counter {
+    font-family: 'Courier New', monospace;
+    text-align: center;
+    margin: 20px 0;
+    padding: 8px;
+    background-color: #000;
+    color: #5cfc5c;
+    border: 1px solid #5cfc5c;
+    display: inline-block;
+    box-shadow: 0 0 10px rgba(92, 252, 92, 0.5);
+    letter-spacing: 2px;
+  }
+  
+  #visitor-count {
+    font-weight: bold;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% { text-shadow: 0 0 5px rgba(92, 252, 92, 0.5); }
+    50% { text-shadow: 0 0 20px rgba(92, 252, 92, 0.8); }
+    100% { text-shadow: 0 0 5px rgba(92, 252, 92, 0.5); }
+  }
+</style>
+
+<!-- Add this JavaScript -->
+<script>
+  // Summon the counter from the local storage dimension
+  window.addEventListener('DOMContentLoaded', () => {
+    // Check if we have a stored count in the crystal ball
+    let count = localStorage.getItem('visitorCount');
+    
+    // If no count exists in the crystal, start the counting spell
+    if (!count) {
+      count = Math.floor(Math.random() * 100) + 1;
+      localStorage.setItem('visitorCount', count);
+    } else {
+      // Increment the count for returning visitors
+      count = parseInt(count) + 1;
+      localStorage.setItem('visitorCount', count);
+    }
+    
+    // Update the counter display with our magical number
+    document.getElementById('visitor-count').textContent = count;
+    
+    // A little magical flourish when the count is shown
+    const counterEl = document.getElementById('visitor-count');
+    counterEl.style.opacity = 0;
+    
+    // Fade in with a magical glow
+    let opacity = 0;
+    const interval = setInterval(() => {
+      opacity += 0.1;
+      counterEl.style.opacity = opacity;
+      
+      if (opacity >= 1) {
+        clearInterval(interval);
+      }
+    }, 100);
+  });
+</script></code>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="contact" class="tab-content">
+            <h2>Send a Messenger Raven</h2>
+            <div class="ascii-art">
+                  __
+                 /  >
+                |   |
+               /\/\|_
+              /       \
+            </div>
+            <p>To commune with the forest keeper, scribe your message on a leaf and cast it to the digital winds:</p>
+            <p>~* forest.keeper [at] digital-grimoire [dot] net *~</p>
+            <p>~* @ForestKeeperDev on the bird-messaging platform *~</p>
+            <p>Responses arrive by the next phase of the moon.</p>
+        </div>
+        
+        <footer>
+            <p>~ Crafted with moonlit code and forest magic ~</p>
+            <p>Best viewed during the witching hour with modern scrying glasses</p>
+            <p class="blink">... No cookies were harvested in these woods ...</p>
+        </footer>
+    </div>
+    
+    <script>
+        // ~*~ Enchantment scripts ~*~
+        
+        // Empty - visitor counter removed
+        
+        // Tab navigation spell
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Remove active class from all tabs
+                tabs.forEach(t => t.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => content.classList.remove('show'));
+                
+                // Show the corresponding tab content
+                const targetId = tab.getAttribute('href').substring(1);
+                document.getElementById(targetId).classList.add('show');
+            });
+        });
+        
+        // Moon phase navigation
+        const moons = document.querySelectorAll('.moon');
+        
+        moons.forEach(moon => {
+            moon.addEventListener('click', () => {
+                const phase = moon.getAttribute('data-phase');
+                
+                // Find corresponding tab and click it
+                document.querySelector(`a[href="#${phase}"]`).click();
+            });
+        });
+        
+        // Three.js Forest Scene
+        function initThreeScene() {
+            // Set up the scene, camera, and renderer
+            const container = document.getElementById('three-container');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x2a3e2a);
+            
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 5;
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Handle window resizing
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+            
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0x606060);
+            scene.add(ambientLight);
+            
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            directionalLight.position.set(2, 3, 2);
+            scene.add(directionalLight);
+            
+            // Add a mystical crystal
+            const crystalGeometry = new THREE.IcosahedronGeometry(1, 0);
+            const crystalMaterial = new THREE.MeshPhongMaterial({
+                color: 0x845a9e,
+                transparent: true,
+                opacity: 0.8,
+                shininess: 100
+            });
+            const crystal = new THREE.Mesh(crystalGeometry, crystalMaterial);
+            scene.add(crystal);
+            
+            // Add orbiting particles
+            const particles = [];
+            for (let i = 0; i < 30; i++) {
+                const particleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+                const particleMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xeeeeff,
+                    transparent: true,
+                    opacity: 0.7
+                });
+                const particle = new THREE.Mesh(particleGeometry, particleMaterial);
+                
+                // Position in orbit
+                const angle = (i / 30) * Math.PI * 2;
+                const radius = 1.5 + Math.random() * 0.5;
+                particle.position.x = Math.cos(angle) * radius;
+                particle.position.y = Math.sin(angle) * radius;
+                particle.position.z = (Math.random() - 0.5) * 2;
+                
+                scene.add(particle);
+                particles.push({
+                    mesh: particle,
+                    angle: angle,
+                    radius: radius,
+                    speed: 0.01 + Math.random() * 0.01,
+                    amplitude: Math.random() * 0.2
+                });
+            }
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Rotate crystal
+                crystal.rotation.x += 0.005;
+                crystal.rotation.y += 0.007;
+                
+                // Move particles
+                const time = Date.now() * 0.001;
+                particles.forEach(particle => {
+                    particle.angle += particle.speed;
+                    particle.mesh.position.x = Math.cos(particle.angle) * particle.radius;
+                    particle.mesh.position.y = Math.sin(particle.angle) * particle.radius;
+                    particle.mesh.position.z = Math.sin(time * 0.5) * particle.amplitude;
+                });
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+        }
+        
+        // Initialize Three.js scenes
+        initThreeScene();
+        
+        // Initialize Cosmic Portal
+        function initCosmicPortal() {
+            const container = document.getElementById('cosmic-portal');
+            const scene = new THREE.Scene();
+            
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 20;
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            // Handle window resizing
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+            
+            // Add a subtle ambient light
+            const ambientLight = new THREE.AmbientLight(0x222244);
+            scene.add(ambientLight);
+            
+            // Add a stronger directional light
+            const directionalLight = new THREE.DirectionalLight(0x9090ff, 0.8);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+            
+            // Create cosmic layers
+            
+            // Layer 1: Background star field
+            const starGeometry = new THREE.BufferGeometry();
+            const starVertices = [];
+            const starColors = [];
+            
+            for (let i = 0; i < 2000; i++) {
+                const x = (Math.random() - 0.5) * 100;
+                const y = (Math.random() - 0.5) * 100;
+                const z = (Math.random() - 0.5) * 50 - 25;
+                
+                starVertices.push(x, y, z);
+                
+                // Random star colors - mostly blue/white with occasional red/yellow
+                const r = Math.random() * 0.3 + 0.7; // 0.7-1.0
+                const g = Math.random() * 0.3 + 0.7; // 0.7-1.0
+                const b = Math.random() * 0.2 + 0.8; // 0.8-1.0
+                
+                starColors.push(r, g, b);
+            }
+            
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+            
+            const starMaterial = new THREE.PointsMaterial({
+                size: 0.2,
+                vertexColors: true,
+                transparent: true
+            });
+            
+            const starField = new THREE.Points(starGeometry, starMaterial);
+            scene.add(starField);
+            
+            // Layer 2: Central Cosmic Portal
+            const portalGeometry = new THREE.TorusGeometry(5, 1, 16, 100);
+            const portalMaterial = new THREE.MeshPhongMaterial({
+                color: 0x341a4a,
+                emissive: 0x241444,
+                shininess: 90,
+                specular: 0x9090ff,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const portal = new THREE.Mesh(portalGeometry, portalMaterial);
+            scene.add(portal);
+            
+            // Layer 3: Inner portal glow
+            const glowGeometry = new THREE.CircleGeometry(4, 32);
+            const glowMaterial = new THREE.MeshBasicMaterial({
+                color: 0x9370DB,
+                transparent: true,
+                opacity: 0.3,
+                side: THREE.DoubleSide
+            });
+            
+            const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+            scene.add(glow);
+            
+            // Layer 4: Floating glyphs
+            const glyphs = [];
+            const glyphGeometry = new THREE.TorusKnotGeometry(0.5, 0.15, 64, 8);
+            const glyphMaterial = new THREE.MeshPhongMaterial({
+                color: 0xc0c0ff,
+                emissive: 0x4040aa,
+                shininess: 80,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            for (let i = 0; i < 12; i++) {
+                const glyph = new THREE.Mesh(glyphGeometry, glyphMaterial);
+                const angle = (i / 12) * Math.PI * 2;
+                const radius = 7;
+                
+                glyph.position.x = Math.cos(angle) * radius;
+                glyph.position.y = Math.sin(angle) * radius;
+                glyph.position.z = (Math.random() - 0.5) * 3;
+                
+                glyph.rotation.x = Math.random() * Math.PI;
+                glyph.rotation.y = Math.random() * Math.PI;
+                
+                glyph.scale.set(0.6, 0.6, 0.6);
+                
+                scene.add(glyph);
+                glyphs.push({
+                    mesh: glyph,
+                    initialAngle: angle,
+                    radius: radius,
+                    speed: 0.005 + Math.random() * 0.005,
+                    pulseSpeed: 0.01 + Math.random() * 0.01
+                });
+            }
+            
+            // Layer 5: Cosmic particles
+            const particleGeometry = new THREE.BufferGeometry();
+            const particleVertices = [];
+            const particleColors = [];
+            
+            for (let i = 0; i < 300; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 3 + Math.random() * 3;
+                
+                const x = Math.cos(angle) * radius;
+                const y = Math.sin(angle) * radius;
+                const z = (Math.random() - 0.5) * 5;
+                
+                particleVertices.push(x, y, z);
+                
+                // Purplish particle colors
+                const r = Math.random() * 0.4 + 0.4; // 0.4-0.8
+                const g = Math.random() * 0.2 + 0.2; // 0.2-0.4
+                const b = Math.random() * 0.4 + 0.6; // 0.6-1.0
+                
+                particleColors.push(r, g, b);
+            }
+            
+            particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particleVertices, 3));
+            particleGeometry.setAttribute('color', new THREE.Float32BufferAttribute(particleColors, 3));
+            
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.3,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            const particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+            
+            // Interactive raycaster
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            
+            container.addEventListener('mousemove', (event) => {
+                // Calculate mouse position in normalized device coordinates
+                const rect = renderer.domElement.getBoundingClientRect();
+                mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            });
+            
+            container.addEventListener('click', () => {
+                // Cast a ray and check for intersections
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects(scene.children);
+                
+                if (intersects.length > 0) {
+                    // Create a ripple effect from click point
+                    const clickPosition = intersects[0].point;
+                    createRipple(clickPosition);
+                }
+            });
+            
+            // Ripple effect
+            function createRipple(position) {
+                const rippleGeometry = new THREE.RingGeometry(0.1, 0.2, 32);
+                const rippleMaterial = new THREE.MeshBasicMaterial({
+                    color: 0xffffff,
+                    transparent: true,
+                    opacity: 0.8,
+                    side: THREE.DoubleSide
+                });
+                
+                const ripple = new THREE.Mesh(rippleGeometry, rippleMaterial);
+                ripple.position.copy(position);
+                
+                // Orient the ripple to face the camera
+                ripple.lookAt(camera.position);
+                
+                scene.add(ripple);
+                
+                // Animate the ripple
+                const startTime = Date.now();
+                
+                function animateRipple() {
+                    const elapsedTime = Date.now() - startTime;
+                    const duration = 1500; // 1.5 seconds
+                    
+                    if (elapsedTime < duration) {
+                        const scale = 0.1 + (elapsedTime / duration) * 3;
+                        ripple.scale.set(scale, scale, scale);
+                        
+                        rippleMaterial.opacity = 0.8 * (1 - elapsedTime / duration);
+                        
+                        requestAnimationFrame(animateRipple);
+                    } else {
+                        scene.remove(ripple);
+                        ripple.geometry.dispose();
+                        rippleMaterial.dispose();
+                    }
+                }
+                
+                animateRipple();
+            }
+            
+            // Animation loop
+            function animate() {
+                requestAnimationFrame(animate);
+                
+                // Rotate the portal
+                portal.rotation.x += 0.002;
+                portal.rotation.y += 0.003;
+                
+                // Rotate the inner glow
+                glow.rotation.z += 0.005;
+                
+                // Pulsate the glow
+                const time = Date.now() * 0.001;
+                glow.material.opacity = 0.2 + Math.sin(time) * 0.1;
+                
+                // Move glyphs
+                glyphs.forEach(glyph => {
+                    glyph.mesh.rotation.x += 0.01;
+                    glyph.mesh.rotation.y += 0.01;
+                    
+                    // Orbit around portal
+                    glyph.initialAngle += glyph.speed;
+                    glyph.mesh.position.x = Math.cos(glyph.initialAngle) * glyph.radius;
+                    glyph.mesh.position.y = Math.sin(glyph.initialAngle) * glyph.radius;
+                    
+                    // Pulsate glyph size
+                    const pulse = Math.sin(time * glyph.pulseSpeed) * 0.1 + 0.7;
+                    glyph.mesh.scale.set(pulse, pulse, pulse);
+                });
+                
+                // Rotate and scale the star field slightly for parallax effect
+                starField.rotation.y += 0.0004;
+                
+                // Rotate particles
+                particles.rotation.z += 0.001;
+                
+                // Update raycaster
+                raycaster.setFromCamera(mouse, camera);
+                
+                renderer.render(scene, camera);
+            }
+            
+            animate();
+        }
+        
+        // Initialize all Three.js scenes
+        initThreeScene();
+        initCosmicPortal();
+    </script>
+</body>
+</html>

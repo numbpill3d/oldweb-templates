@@ -1,0 +1,13 @@
+{
+  "title": "Temporal Breach",
+  "slug": "temporal-breach",
+  "category": "terminals",
+  "description": "Maximalist corrupted-system page presented as a temporal-breach incident report.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/dreamsequence",
+  "source_commit": "cdecd6152e11c06685a9707ba2cb237a8a962e4d",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

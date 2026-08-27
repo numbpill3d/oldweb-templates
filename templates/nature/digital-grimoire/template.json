@@ -1,0 +1,13 @@
+{
+  "title": "Digital Grimoire",
+  "slug": "digital-grimoire",
+  "category": "nature",
+  "description": "Tabbed woodland portfolio and grimoire with welcome and keeper sections.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/forestarchive",
+  "source_commit": "76bba0619741c4402c00860ed840c3ac58f910da",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

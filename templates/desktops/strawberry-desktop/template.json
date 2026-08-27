@@ -1,0 +1,13 @@
+{
+  "title": "Strawberry Desktop",
+  "slug": "strawberry-desktop",
+  "category": "desktops",
+  "description": "Pink strawberry desktop with faux windows, diary, community, and profile content.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/strawberrytheme",
+  "source_commit": "ff753d641f00dad518711e7ac1c7554698e097de",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

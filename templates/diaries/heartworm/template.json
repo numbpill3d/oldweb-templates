@@ -1,0 +1,13 @@
+{
+  "title": "Heartworm Diary",
+  "slug": "heartworm",
+  "category": "diaries",
+  "description": "Glitched HEARTWORM.HTML digital diary interface.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/heartwyrmdiwary",
+  "source_commit": "4f6f79ee3fe3826f6089498e635228aeb47ba191",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

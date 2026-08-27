@@ -1,0 +1,13 @@
+{
+  "title": "Celebi Temporal Rift",
+  "slug": "celebi-temporal-rift",
+  "category": "fandom",
+  "description": "Unofficial Pok\u00e9mon Mystery Dungeon and Celebi-inspired temporal-rift garden page.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/celebitime",
+  "source_commit": "948c2c51276f713602366f471293bb835974b1f7",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved. Unofficial fan work; Pok\u00e9mon-related names and marks belong to their respective owners."
+}

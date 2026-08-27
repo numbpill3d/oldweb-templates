@@ -1,0 +1,13 @@
+{
+  "title": "Pastel Neurocore",
+  "slug": "pastel-neurocore",
+  "category": "profiles",
+  "description": "Pastel neurocore personal shrine and profile page.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/pastelprofile",
+  "source_commit": "f737250fdf325de7c49b3e488fc42bbf73717c2c",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

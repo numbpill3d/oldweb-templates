@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>numbpilled :: WORKBENCH 1.3</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:          #0a0080;
+  --bg-panel:    #aaaaaa;
+  --bg-window:   #aaaaaa;
+  --bg-deep:     #050050;
+  --accent:      #ff8800;
+  --accent-dim:  rgba(255,136,0,0.45);
+  --text:        #000000;
+  --text-light:  #ffffff;
+  --text-muted:  #333333;
+  --border:      #ffffff;
+  --title-bar:   #0a0080;
+  --title-text:  #ffffff;
+  --shadow:      #000000;
+  --wback:       #aaaaaa;
+  --checkers-a:  #aaaaaa;
+  --checkers-b:  #888888;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  font-family: 'Share Tech Mono', monospace;
+  background: var(--bg);
+  cursor: default;
+}
+
+/* ── WORKBENCH BACKGROUND ─────────────────────────── */
+#wb-desktop {
+  position: fixed;
+  inset: 0;
+  background-image:
+    repeating-conic-gradient(var(--checkers-a) 0% 25%, var(--checkers-b) 0% 50%);
+  background-size: 8px 8px;
+  z-index: 0;
+}
+
+/* ── THREE.JS CANVAS ──────────────────────────────── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.18;
+  pointer-events: none;
+}
+
+/* ── CRT OVERLAY ──────────────────────────────────── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.06) 2px,
+    rgba(0,0,0,0.06) 4px
+  );
+  animation: flicker 4s infinite;
+}
+.crt-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.45) 100%);
+}
+@keyframes flicker {
+  0%,100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.97; }
+  94% { opacity: 1; }
+  97% { opacity: 0.98; }
+}
+
+/* ── AMIGA MENU BAR ──────────────────────────────── */
+#menubar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 20px;
+  background: var(--bg-panel);
+  border-bottom: 2px solid #000;
+  display: flex;
+  align-items: center;
+  z-index: 5000;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  user-select: none;
+}
+.menubar-title {
+  padding: 0 12px;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  color: #000;
+  border-right: 1px solid #888;
+}
+.menubar-item {
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  color: #000;
+  cursor: pointer;
+  border-right: 1px solid #888;
+  transition: background 80ms, color 80ms;
+}
+.menubar-item:hover { background: var(--title-bar); color: #fff; }
+.menubar-clock {
+  margin-left: auto;
+  padding: 0 10px;
+  color: #000;
+  font-size: 11px;
+  border-left: 1px solid #888;
+}
+
+/* ── AMIGA TASKBAR (bottom) ───────────────────────── */
+#taskbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 22px;
+  background: var(--bg-panel);
+  border-top: 2px solid #000;
+  display: flex;
+  align-items: center;
+  z-index: 5000;
+  font-size: 11px;
+  font-family: 'Share Tech Mono', monospace;
+  gap: 2px;
+  padding: 0 4px;
+}
+.task-btn {
+  padding: 1px 8px;
+  border: 2px outset #ccc;
+  background: #bbb;
+  font-size: 11px;
+  font-family: 'Share Tech Mono', monospace;
+  cursor: pointer;
+  color: #000;
+  transition: border 80ms, background 80ms;
+}
+.task-btn:hover { border-style: inset; background: #999; }
+.task-btn.active { border-style: inset; background: #888; }
+.taskbar-info {
+  margin-left: auto;
+  font-size: 10px;
+  color: #333;
+  padding-right: 6px;
+  letter-spacing: 0.05em;
+}
+
+/* ── AMIGA WINDOW BASE ───────────────────────────── */
+.wb-window {
+  position: absolute;
+  min-width: 240px;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  z-index: 100;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.wb-window.active { z-index: 200; }
+
+.win-titlebar {
+  display: flex;
+  align-items: center;
+  background: var(--title-bar);
+  color: var(--title-text);
+  height: 18px;
+  padding: 0 2px;
+  gap: 3px;
+  border-bottom: 2px solid #000;
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+}
+.win-titlebar:active { cursor: grabbing; }
+.win-gadget {
+  width: 14px; height: 14px;
+  background: var(--bg-panel);
+  border: 1px solid #000;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px;
+  color: #000;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 80ms;
+}
+.win-gadget:hover { background: var(--accent); color: #fff; }
+.win-title {
+  flex: 1;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.win-depth { margin-left: auto; }
+
+.win-body {
+  background: var(--wback);
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Amiga window scrollbar-look inner area */
+.win-scroll {
+  flex: 1;
+  overflow-y: scroll;
+  padding: 8px;
+}
+.win-scroll::-webkit-scrollbar { width: 16px; }
+.win-scroll::-webkit-scrollbar-track { background: #aaa; border-left: 2px solid #888; }
+.win-scroll::-webkit-scrollbar-thumb {
+  background: var(--bg-panel);
+  border: 2px solid #000;
+  box-shadow: inset 1px 1px 0 #fff;
+}
+
+/* ── WORKBENCH DISK ICONS ────────────────────────── */
+#desktop-icons {
+  position: fixed;
+  top: 28px; right: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  z-index: 300;
+  align-items: center;
+}
+.wb-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  user-select: none;
+  width: 72px;
+}
+.wb-icon-img {
+  width: 48px; height: 40px;
+  border: 2px solid transparent;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  background: var(--bg-panel);
+  box-shadow: 2px 2px 0 #000;
+  border-color: #000;
+  transition: background 80ms;
+  position: relative;
+}
+.wb-icon-img::after {
+  content: '';
+  position: absolute;
+  bottom: 2px; right: 2px;
+  width: 6px; height: 6px;
+  background: var(--title-bar);
+}
+.wb-icon:hover .wb-icon-img { background: var(--title-bar); }
+.wb-icon:hover .wb-icon-label { background: var(--title-bar); color: #fff; }
+.wb-icon-label {
+  font-size: 10px;
+  color: #fff;
+  font-family: 'Share Tech Mono', monospace;
+  text-align: center;
+  padding: 1px 3px;
+  letter-spacing: 0.06em;
+  background: #000;
+  line-height: 1.3;
+  word-break: break-all;
+  max-width: 72px;
+}
+
+/* ── PROFILE WINDOW ─────────────────────────────── */
+#win-profile {
+  top: 30px; left: 20px;
+  width: 320px;
+}
+.profile-card {
+  padding: 10px;
+  border-bottom: 2px solid #000;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #999;
+}
+.profile-avatar {
+  width: 64px; height: 64px;
+  border: 2px solid #000;
+  background: var(--title-bar);
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff;
+  font-family: 'VT323', monospace;
+  font-size: 26px;
+  letter-spacing: 0;
+  box-shadow: 2px 2px 0 #000;
+}
+.profile-info { flex: 1; }
+.profile-handle {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: #000;
+  letter-spacing: 0.1em;
+  line-height: 1.1;
+}
+.profile-sub {
+  font-size: 10px;
+  color: #333;
+  margin-top: 2px;
+  letter-spacing: 0.08em;
+}
+.profile-stats {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.stat-box {
+  border: 1px solid #000;
+  padding: 2px 6px;
+  font-size: 10px;
+  background: #bbb;
+  text-align: center;
+  line-height: 1.3;
+}
+.stat-num {
+  display: block;
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--title-bar);
+}
+
+.about-section { padding: 8px; font-size: 11px; line-height: 1.7; color: #000; }
+.about-section p { margin-bottom: 6px; }
+
+.wb-tag {
+  display: inline-block;
+  border: 1px solid #000;
+  padding: 1px 5px;
+  font-size: 10px;
+  background: var(--title-bar);
+  color: #fff;
+  margin: 2px 2px 2px 0;
+  letter-spacing: 0.06em;
+}
+
+/* ── BLOG WINDOW ────────────────────────────────── */
+#win-blog {
+  top: 30px; left: 360px;
+  width: 340px;
+  height: 380px;
+}
+.blog-list { padding: 0; }
+.blog-entry {
+  border-bottom: 1px solid #888;
+  padding: 7px 8px;
+  transition: background 80ms;
+  cursor: pointer;
+}
+.blog-entry:hover { background: #999; }
+.blog-date {
+  font-size: 10px;
+  color: var(--title-bar);
+  letter-spacing: 0.06em;
+}
+.blog-title {
+  font-size: 12px;
+  color: #000;
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  margin-top: 1px;
+}
+.blog-preview {
+  font-size: 10px;
+  color: #444;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+
+/* ── STATUS WINDOW ──────────────────────────────── */
+#win-status {
+  top: 30px; left: 720px;
+  width: 240px;
+}
+.status-rows { padding: 6px 8px; }
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 7px;
+  font-size: 11px;
+}
+.status-label { color: #333; letter-spacing: 0.06em; font-size: 10px; }
+.status-bar-wrap {
+  flex: 1;
+  height: 10px;
+  border: 1px solid #000;
+  background: #888;
+  margin: 0 6px;
+  overflow: hidden;
+}
+.status-bar-fill {
+  height: 100%;
+  background: var(--title-bar);
+  animation: pulse-bar 2.4s ease-in-out infinite;
+}
+@keyframes pulse-bar {
+  0%, 100% { width: var(--w); }
+  50% { width: calc(var(--w) + 8%); }
+}
+.status-val { font-size: 10px; color: var(--title-bar); width: 30px; text-align: right; }
+
+.now-playing {
+  border-top: 2px solid #000;
+  padding: 6px 8px;
+  background: #999;
+}
+.np-label { font-size: 10px; color: #333; letter-spacing: 0.08em; margin-bottom: 3px; }
+.np-track {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: #000;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.np-marquee {
+  display: inline-block;
+  animation: marquee-scroll 9s linear infinite;
+}
+@keyframes marquee-scroll {
+  0% { transform: translateX(200px); }
+  100% { transform: translateX(-100%); }
+}
+.np-bar {
+  height: 4px;
+  background: #888;
+  margin-top: 4px;
+  border: 1px solid #000;
+  position: relative;
+}
+.np-bar-fill {
+  height: 100%;
+  background: var(--title-bar);
+  width: 42%;
+  animation: np-progress 30s linear infinite;
+}
+@keyframes np-progress { 0% { width: 0; } 100% { width: 100%; } }
+
+/* ── GALLERY WINDOW ─────────────────────────────── */
+#win-gallery {
+  top: 440px; left: 20px;
+  width: 380px;
+  height: 240px;
+}
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 8px;
+}
+.gallery-cell {
+  aspect-ratio: 1/1;
+  border: 2px solid #000;
+  background: var(--title-bar);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'VT323', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 0.04em;
+  text-align: center;
+  padding: 2px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 80ms, color 80ms;
+  position: relative;
+}
+.gallery-cell:hover { background: var(--accent); color: #fff; }
+.gallery-cell-label {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  background: rgba(0,0,0,0.75);
+  font-size: 8px;
+  padding: 1px 2px;
+  text-align: center;
+  color: #fff;
+  transform: translateY(100%);
+  transition: transform 80ms;
+}
+.gallery-cell:hover .gallery-cell-label { transform: translateY(0); }
+
+/* ── BADGES WINDOW ──────────────────────────────── */
+#win-badges {
+  top: 440px; left: 420px;
+  width: 280px;
+}
+.badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px;
+}
+.badge-88x31 {
+  width: 88px; height: 31px;
+  border: 1px solid #000;
+  background: var(--title-bar);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'VT323', monospace;
+  font-size: 10px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 80ms;
+  text-align: center;
+  padding: 2px;
+  line-height: 1.2;
+}
+.badge-88x31:hover { background: var(--accent); color: #fff; }
+
+/* ── LINKS WINDOW ───────────────────────────────── */
+#win-links {
+  top: 440px; left: 720px;
+  width: 220px;
+}
+.link-row {
+  display: flex;
+  align-items: baseline;
+  padding: 5px 8px;
+  border-bottom: 1px solid #999;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 80ms, border-left 80ms;
+}
+.link-row:hover {
+  background: #999;
+  border-left: 3px solid var(--title-bar);
+  padding-left: 5px;
+}
+.link-prefix { color: var(--title-bar); margin-right: 6px; font-size: 12px; }
+.link-name { color: #000; }
+
+/* ── COUNTER STRIP ──────────────────────────────── */
+.counter-strip {
+  padding: 5px 8px;
+  background: #999;
+  border-top: 2px solid #000;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #000;
+}
+.counter-digits {
+  font-family: 'VT323', monospace;
+  font-size: 18px;
+  color: var(--title-bar);
+  background: #000;
+  padding: 0 4px;
+  letter-spacing: 0.08em;
+}
+.blink-dot {
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--title-bar);
+  border-radius: 50%;
+  animation: blink-on 1.1s steps(1) infinite;
+}
+@keyframes blink-on { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── RESIZE HANDLE ──────────────────────────────── */
+.win-sizebox {
+  height: 14px;
+  background: var(--bg-panel);
+  border-top: 2px solid #000;
+  cursor: se-resize;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 3px;
+  font-size: 9px;
+  color: #666;
+  flex-shrink: 0;
+}
+
+/* ── SCROLLBAR GLOBAL ───────────────────────────── */
+.win-scroll::-webkit-scrollbar { width: 16px; }
+.win-scroll::-webkit-scrollbar-track { background: #aaa; }
+.win-scroll::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border: 2px solid #000;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #666;
+}
+
+/* ── AMIGA-STYLE HORIZONTAL DIVIDER ─────────────── */
+.divider-canvas-wrap {
+  height: 20px;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.divider-canvas-wrap canvas {
+  width: 100%; height: 100%;
+  display: block;
+}
+</style>
+</head>
+<body>
+
+<div id="wb-desktop"></div>
+<canvas id="bg-canvas"></canvas>
+<div class="crt-overlay"></div>
+
+<!-- MENUBAR -->
+<div id="menubar">
+  <div class="menubar-title">WORKBENCH 1.3</div>
+  <div class="menubar-item">Workbench</div>
+  <div class="menubar-item">Window</div>
+  <div class="menubar-item">Icons</div>
+  <div class="menubar-item">Tools</div>
+  <div class="menubar-item">Help</div>
+  <div class="menubar-clock" id="clock">00:00:00</div>
+</div>
+
+<!-- DESKTOP ICONS -->
+<div id="desktop-icons">
+  <div class="wb-icon" onclick="bringFront('win-profile')">
+    <div class="wb-icon-img">&#9632;</div>
+    <div class="wb-icon-label">numbpilled</div>
+  </div>
+  <div class="wb-icon" onclick="bringFront('win-blog')">
+    <div class="wb-icon-img">&#9644;</div>
+    <div class="wb-icon-label">numbpilled</div>
+  </div>
+  <div class="wb-icon" onclick="bringFront('win-gallery')">
+    <div class="wb-icon-img">&#9633;</div>
+    <div class="wb-icon-label">numbpilled</div>
+  </div>
+  <div class="wb-icon" onclick="bringFront('win-links')">
+    <div class="wb-icon-img">&#9642;</div>
+    <div class="wb-icon-label">numbpilled</div>
+  </div>
+</div>
+
+<!-- PROFILE WINDOW -->
+<div class="wb-window" id="win-profile">
+  <div class="win-titlebar" id="tb-profile">
+    <div class="win-gadget" onclick="closeWin('win-profile')">&#x2612;</div>
+    <div class="win-title">numbpilled :: PROFILE</div>
+    <div class="win-gadget win-depth" onclick="bringFront('win-profile')">&#9633;</div>
+  </div>
+  <div class="win-body">
+    <div class="profile-card">
+      <div class="profile-avatar">NP</div>
+      <div class="profile-info">
+        <div class="profile-handle">numbpilled</div>
+        <div class="profile-sub">numbpilled // numbpilled</div>
+        <div class="profile-stats">
+          <div class="stat-box"><span class="stat-num">404</span>numbpilled</div>
+          <div class="stat-box"><span class="stat-num">0x1A</span>numbpilled</div>
+          <div class="stat-box"><span class="stat-num">99</span>numbpilled</div>
+        </div>
+      </div>
+    </div>
+    <div class="win-scroll" style="max-height:180px;">
+      <div class="about-section">
+        <p>numbpilled numbpilled numbpilled. numbpilled numbpilled — numbpilled numbpilled numbpilled numbpilled numbpilled.</p>
+        <p>numbpilled numbpilled numbpilled numbpilled numbpilled numbpilled.</p>
+        <div style="margin-top:6px;">
+          <span class="wb-tag">numbpilled</span>
+          <span class="wb-tag">numbpilled</span>
+          <span class="wb-tag">numbpilled</span>
+          <span class="wb-tag">numbpilled</span>
+        </div>
+      </div>
+    </div>
+    <div class="counter-strip">
+      <div class="blink-dot"></div>
+      <span>numbpilled:</span>
+      <div class="counter-digits" id="visitor-count">004096</div>
+    </div>
+  </div>
+  <div class="win-sizebox">&#9698;</div>
+</div>
+
+<!-- BLOG WINDOW -->
+<div class="wb-window" id="win-blog">
+  <div class="win-titlebar" id="tb-blog">
+    <div class="win-gadget" onclick="closeWin('win-blog')">&#x2612;</div>
+    <div class="win-title">numbpilled :: BLOG.DIR</div>
+    <div class="win-gadget win-depth" onclick="bringFront('win-blog')">&#9633;</div>
+  </div>
+  <div class="win-body">
+    <div class="win-scroll">
+      <div class="blog-list">
+        <div class="blog-entry">
+          <div class="blog-date">[2087.03.14 :: 03:14]</div>
+          <div class="blog-title">numbpilled</div>
+          <div class="blog-preview">numbpilled numbpilled numbpilled numbpilled numbpilled numbpilled numbpilled.</div>
+        </div>
+        <div class="blog-entry">
+          <div class="blog-date">[2087.03.08 :: 22:07]</div>
+          <div class="blog-title">numbpilled</div>
+          <div class="blog-preview">numbpilled numbpilled numbpilled numbpilled numbpilled.</div>
+        </div>
+        <div class="blog-entry">
+          <div class="blog-date">[2087.02.28 :: 11:55]</div>
+          <div class="blog-title">numbpilled</div>
+          <div class="blog-preview">numbpilled numbpilled. numbpilled numbpilled numbpilled numbpilled.</div>
+        </div>
+        <div class="blog-entry">
+          <div class="blog-date">[2087.02.19 :: 08:30]</div>
+          <div class="blog-title">numbpilled</div>
+          <div class="blog-preview">numbpilled numbpilled numbpilled.</div>
+        </div>
+        <div class="blog-entry">
+          <div class="blog-date">[2087.01.31 :: 17:42]</div>
+          <div class="blog-title">numbpilled</div>
+          <div class="blog-preview">numbpilled numbpilled numbpilled numbpilled.</div>
+        </div>
+        <div class="blog-entry">
+          <div class="blog-date">[2087.01.14 :: 00:03]</div>
+          <div class="blog-title">numbpilled</div>
+          <div class="blog-preview">numbpilled.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="win-sizebox">&#9698;</div>
+</div>
+
+<!-- STATUS WINDOW -->
+<div class="wb-window" id="win-status">
+  <div class="win-titlebar" id="tb-status">
+    <div class="win-gadget" onclick="closeWin('win-status')">&#x2612;</div>
+    <div class="win-title">numbpilled :: SYS</div>
+    <div class="win-gadget win-depth" onclick="bringFront('win-status')">&#9633;</div>
+  </div>
+  <div class="win-body">
+    <div class="status-rows">
+      <div class="status-row">
+        <span class="status-label">NUMBPILLED</span>
+        <div class="status-bar-wrap"><div class="status-bar-fill" style="--w:72%;width:72%;"></div></div>
+        <span class="status-val">72%</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">NUMBPILLED</span>
+        <div class="status-bar-wrap"><div class="status-bar-fill" style="--w:45%;width:45%;"></div></div>
+        <span class="status-val">45%</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">NUMBPILLED</span>
+        <div class="status-bar-wrap"><div class="status-bar-fill" style="--w:88%;width:88%;"></div></div>
+        <span class="status-val">88%</span>
+      </div>
+      <div class="status-row">
+        <span class="status-label">NUMBPILLED</span>
+        <div class="status-bar-wrap"><div class="status-bar-fill" style="--w:31%;width:31%;"></div></div>
+        <span class="status-val">31%</span>
+      </div>
+    </div>
+    <div class="divider-canvas-wrap"><canvas id="div-canvas-1"></canvas></div>
+    <div class="now-playing">
+      <div class="np-label">NUMBPILLED.MOD</div>
+      <div class="np-track"><span class="np-marquee">numbpilled &nbsp;&nbsp; numbpilled &nbsp;&nbsp; numbpilled &nbsp;&nbsp; numbpilled</span></div>
+      <div class="np-bar"><div class="np-bar-fill"></div></div>
+    </div>
+  </div>
+  <div class="win-sizebox">&#9698;</div>
+</div>
+
+<!-- GALLERY WINDOW -->
+<div class="wb-window" id="win-gallery">
+  <div class="win-titlebar" id="tb-gallery">
+    <div class="win-gadget" onclick="closeWin('win-gallery')">&#x2612;</div>
+    <div class="win-title">numbpilled :: GALLERY.IFF</div>
+    <div class="win-gadget win-depth" onclick="bringFront('win-gallery')">&#9633;</div>
+  </div>
+  <div class="win-body">
+    <div class="win-scroll">
+      <div class="gallery-grid">
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+        <div class="gallery-cell">NP<div class="gallery-cell-label">numbpilled</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="win-sizebox">&#9698;</div>
+</div>
+
+<!-- BADGES WINDOW -->
+<div class="wb-window" id="win-badges">
+  <div class="win-titlebar" id="tb-badges">
+    <div class="win-gadget" onclick="closeWin('win-badges')">&#x2612;</div>
+    <div class="win-title">numbpilled :: BADGES</div>
+    <div class="win-gadget win-depth" onclick="bringFront('win-badges')">&#9633;</div>
+  </div>
+  <div class="win-body">
+    <div class="win-scroll" style="max-height:140px;">
+      <div class="badges-grid">
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+        <div class="badge-88x31">numbpilled</div>
+      </div>
+    </div>
+  </div>
+  <div class="win-sizebox">&#9698;</div>
+</div>
+
+<!-- LINKS WINDOW -->
+<div class="wb-window" id="win-links">
+  <div class="win-titlebar" id="tb-links">
+    <div class="win-gadget" onclick="closeWin('win-links')">&#x2612;</div>
+    <div class="win-title">numbpilled :: LINKS</div>
+    <div class="win-gadget win-depth" onclick="bringFront('win-links')">&#9633;</div>
+  </div>
+  <div class="win-body">
+    <div class="win-scroll" style="max-height:180px;">
+      <div class="link-row"><span class="link-prefix">&gt;&gt;</span><span class="link-name">numbpilled</span></div>
+      <div class="link-row"><span class="link-prefix">&gt;&gt;</span><span class="link-name">numbpilled</span></div>
+      <div class="link-row"><span class="link-prefix">&gt;&gt;</span><span class="link-name">numbpilled</span></div>
+      <div class="link-row"><span class="link-prefix">&gt;&gt;</span><span class="link-name">numbpilled</span></div>
+      <div class="link-row"><span class="link-prefix">&gt;&gt;</span><span class="link-name">numbpilled</span></div>
+      <div class="link-row"><span class="link-prefix">&gt;&gt;</span><span class="link-name">numbpilled</span></div>
+    </div>
+  </div>
+  <div class="win-sizebox">&#9698;</div>
+</div>
+
+<!-- TASKBAR -->
+<div id="taskbar">
+  <button class="task-btn active" onclick="bringFront('win-profile')">PROFILE</button>
+  <button class="task-btn" onclick="bringFront('win-blog')">BLOG</button>
+  <button class="task-btn" onclick="bringFront('win-status')">SYS</button>
+  <button class="task-btn" onclick="bringFront('win-gallery')">GALLERY</button>
+  <button class="task-btn" onclick="bringFront('win-badges')">BADGES</button>
+  <button class="task-btn" onclick="bringFront('win-links')">LINKS</button>
+  <span class="taskbar-info">numbpilled.neocities.org &nbsp;|&nbsp; CHIP: 512K &nbsp;|&nbsp; FAST: 1M</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ── THREE.JS BACKGROUND: circuit trace crawler ──────────────────
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false });
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10);
+  camera.position.z = 1;
+
+  function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  // Circuit-trace lines
+  const lineCount = 40;
+  const lines = [];
+  for (let i = 0; i < lineCount; i++) {
+    const points = [];
+    let x = (Math.random() * 2 - 1);
+    let y = (Math.random() * 2 - 1);
+    const segments = 6 + Math.floor(Math.random() * 8);
+    for (let j = 0; j <= segments; j++) {
+      points.push(new THREE.Vector3(x, y, 0));
+      if (Math.random() > 0.5) { x += (Math.random() * 0.3 - 0.15); }
+      else { y += (Math.random() * 0.3 - 0.15); }
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(points);
+    const mat = new THREE.LineBasicMaterial({
+      color: 0x0a0080,
+      transparent: true,
+      opacity: 0.4 + Math.random() * 0.4
+    });
+    const line = new THREE.Line(geo, mat);
+    line._offset = Math.random() * Math.PI * 2;
+    line._speed = 0.3 + Math.random() * 0.5;
+    scene.add(line);
+    lines.push(line);
+  }
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.008;
+    lines.forEach(l => {
+      l.material.opacity = 0.15 + 0.25 * Math.abs(Math.sin(t * l._speed + l._offset));
+    });
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ── DIVIDER OSCILLOSCOPE ─────────────────────────────────────────
+(function() {
+  const wrap = document.getElementById('div-canvas-1');
+  if (!wrap) return;
+  const canvas = document.createElement('canvas');
+  wrap.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  function resize() { canvas.width = wrap.clientWidth; canvas.height = wrap.clientHeight || 20; }
+  resize();
+  let t = 0;
+  function draw() {
+    resize();
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = '#0a0080';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const h = canvas.height / 2;
+    for (let x = 0; x < canvas.width; x++) {
+      const y = h + Math.sin((x / canvas.width) * Math.PI * 6 + t) * (h * 0.6)
+                  + Math.sin((x / canvas.width) * Math.PI * 14 + t * 1.7) * (h * 0.2);
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    t += 0.04;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── CLOCK ──────────────────────────────────────────────────────
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const s = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('clock').textContent = h + ':' + m + ':' + s;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// ── VISITOR COUNTER ANIMATION ──────────────────────────────────
+let count = 4096;
+setInterval(() => {
+  count += Math.floor(Math.random() * 3);
+  document.getElementById('visitor-count').textContent = String(count).padStart(6, '0');
+}, 7000);
+
+// ── WINDOW MANAGEMENT ─────────────────────────────────────────
+let zTop = 200;
+function bringFront(id) {
+  zTop++;
+  const el = document.getElementById(id);
+  if (el) {
+    el.style.zIndex = zTop;
+    el.style.display = 'flex';
+    document.querySelectorAll('.task-btn').forEach(b => b.classList.remove('active'));
+    const map = {
+      'win-profile':'PROFILE','win-blog':'BLOG','win-status':'SYS',
+      'win-gallery':'GALLERY','win-badges':'BADGES','win-links':'LINKS'
+    };
+    document.querySelectorAll('.task-btn').forEach(b => {
+      if (b.textContent === (map[id] || '')) b.classList.add('active');
+    });
+  }
+}
+function closeWin(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+
+// ── DRAG WINDOWS ──────────────────────────────────────────────
+document.querySelectorAll('.win-titlebar').forEach(bar => {
+  let dragging = false, ox = 0, oy = 0;
+  const win = bar.closest('.wb-window');
+  bar.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('win-gadget')) return;
+    dragging = true;
+    bringFront(win.id);
+    const rect = win.getBoundingClientRect();
+    ox = e.clientX - rect.left;
+    oy = e.clientY - rect.top;
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    let nx = e.clientX - ox;
+    let ny = e.clientY - oy;
+    ny = Math.max(20, Math.min(ny, window.innerHeight - 40));
+    nx = Math.max(0, Math.min(nx, window.innerWidth - 100));
+    win.style.left = nx + 'px';
+    win.style.top  = ny + 'px';
+  });
+  document.addEventListener('mouseup', () => { dragging = false; });
+});
+
+// Click to focus windows
+document.querySelectorAll('.wb-window').forEach(w => {
+  w.addEventListener('mousedown', () => bringFront(w.id));
+});
+</script>
+</body>
+</html>

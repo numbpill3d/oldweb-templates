@@ -1,0 +1,13 @@
+{
+  "title": "Margin Notes",
+  "slug": "margin-notes",
+  "category": "publishing",
+  "description": "Minimal literary page organized as margin notes, a cabinet, and marginalia.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/marginnotes",
+  "source_commit": "f652274d027a287b7f38d11d7ed4389d0fe5a154",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Retro Newsroom",
+  "slug": "retro-newsroom",
+  "category": "publishing",
+  "description": "Multi-file retro newsroom dashboard with feeds, favorites, TV, gallery, and reference panels.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/retronewsroom1",
+  "source_commit": "1e8909e269d48f3ae8a80db921bfeabd9b368a49",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>◆◇ HEARTWORM.HTML ◇◆ Digital Diary v2.0</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --win98-gray: #c0c0c0;
+            --win98-dark: #808080;
+            --win98-light: #ffffff;
+            --win98-blue: #0000ff;
+            --win98-red: #ff0000;
+            --temple-cyan: #00ffff;
+            --temple-magenta: #ff00ff;
+            --temple-yellow: #ffff00;
+            --temple-green: #00ff00;
+            --matrix-green: #00ff41;
+            --error-red: #ff0040;
+            --pixel-size: 2px;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            font-size: 16px;
+            background: #008080;
+            background-image: 
+                radial-gradient(circle at 25% 25%, #ff00ff 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #00ffff 0%, transparent 50%),
+                linear-gradient(45deg, #008080 25%, #004040 25%, #004040 50%, #008080 50%, #008080 75%, #004040 75%);
+            background-size: 100px 100px, 100px 100px, 20px 20px;
+            color: var(--win98-light);
+            cursor: crosshair;
+            overflow-x: auto;
+            animation: bgShift 10s ease-in-out infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { background-position: 0% 0%, 0% 0%, 0% 0%; }
+            50% { background-position: 50% 50%, -50% -50%, 10px 10px; }
+        }
+
+        /* Custom Retro Cursor */
+        body::after {
+            content: "♥";
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            color: var(--temple-magenta);
+            font-size: 20px;
+            animation: blink 0.8s step-end infinite;
+            text-shadow: 2px 2px 0px #000000;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Window 98 Style Containers */
+        .win98-window {
+            background: var(--win98-gray);
+            border: 2px outset var(--win98-gray);
+            box-shadow: 
+                inset 1px 1px 0px var(--win98-light),
+                inset -1px -1px 0px var(--win98-dark),
+                2px 2px 4px rgba(0,0,0,0.3);
+            margin: 4px;
+        }
+
+        .win98-titlebar {
+            background: linear-gradient(90deg, var(--win98-blue) 0%, #1084d0 100%);
+            color: white;
+            padding: 2px 4px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            border-bottom: 1px solid var(--win98-dark);
+        }
+
+        .win98-controls {
+            display: flex;
+            gap: 2px;
+        }
+
+        .win98-button {
+            width: 16px;
+            height: 14px;
+            background: var(--win98-gray);
+            border: 1px outset var(--win98-gray);
+            font-size: 10px;
+            text-align: center;
+            line-height: 12px;
+            cursor: pointer;
+            color: black;
+        }
+
+        .win98-button:active {
+            border: 1px inset var(--win98-gray);
+        }
+
+        .win98-content {
+            padding: 8px;
+            background: var(--win98-gray);
+            color: black;
+            min-height: 100px;
+        }
+
+        /* TempleOS Style Headers */
+        .temple-header {
+            background: black;
+            color: var(--temple-cyan);
+            padding: 4px;
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            text-align: center;
+            border: 2px solid var(--temple-magenta);
+            animation: rainbow-border 2s linear infinite;
+            text-shadow: 
+                0 0 5px var(--temple-cyan),
+                0 0 10px var(--temple-cyan),
+                0 0 15px var(--temple-cyan);
+        }
+
+        @keyframes rainbow-border {
+            0% { border-color: var(--temple-magenta); }
+            25% { border-color: var(--temple-yellow); }
+            50% { border-color: var(--temple-cyan); }
+            75% { border-color: var(--temple-green); }
+            100% { border-color: var(--temple-magenta); }
+        }
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 8px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Three.js Background */
+        #threejs-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 8px;
+        }
+
+        .title-ascii {
+            background: black;
+            color: var(--matrix-green);
+            padding: 8px;
+            font-family: 'VT323', monospace;
+            font-size: 12px;
+            white-space: pre;
+            border: 2px solid var(--matrix-green);
+            overflow-x: auto;
+            animation: matrix-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes matrix-glow {
+            0%, 100% { box-shadow: 0 0 5px var(--matrix-green); }
+            50% { box-shadow: 0 0 20px var(--matrix-green), inset 0 0 10px rgba(0,255,65,0.1); }
+        }
+
+        /* Navigation Tabs */
+        .nav-container {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            background: var(--win98-gray);
+            border: 2px outset var(--win98-gray);
+            padding: 4px 12px;
+            font-family: 'VT323', monospace;
+            font-size: 14px;
+            color: black;
+            cursor: pointer;
+            position: relative;
+            transition: none;
+        }
+
+        .nav-tab:hover {
+            background: #b0b0b0;
+        }
+
+        .nav-tab.active {
+            border: 2px inset var(--win98-gray);
+            background: #a0a0a0;
+        }
+
+        .nav-tab::before {
+            content: "▶ ";
+            color: var(--temple-magenta);
+            font-weight: bold;
+        }
+
+        .nav-tab.active::before {
+            content: "♦ ";
+            color: var(--temple-cyan);
+        }
+
+        /* Content Layout */
+        .content-wrapper {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .sidebar {
+            flex: 0 0 280px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* Retro Scrollbox */
+        .retro-scrollbox {
+            background: white;
+            border: 2px inset var(--win98-gray);
+            padding: 4px;
+            max-height: 200px;
+            overflow-y: scroll;
+            font-size: 12px;
+            color: black;
+        }
+
+        .retro-scrollbox::-webkit-scrollbar {
+            width: 16px;
+        }
+
+        .retro-scrollbox::-webkit-scrollbar-track {
+            background: var(--win98-gray);
+            border: 1px inset var(--win98-gray);
+        }
+
+        .retro-scrollbox::-webkit-scrollbar-thumb {
+            background: var(--win98-gray);
+            border: 1px outset var(--win98-gray);
+        }
+
+        .retro-scrollbox::-webkit-scrollbar-thumb:hover {
+            background: #b0b0b0;
+        }
+
+        .retro-scrollbox::-webkit-scrollbar-corner {
+            background: var(--win98-gray);
+        }
+
+        /* List Items */
+        .list-item {
+            padding: 2px 4px;
+            border-bottom: 1px dotted #999;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .list-item:hover {
+            background: var(--win98-blue);
+            color: white;
+        }
+
+        .list-item::before {
+            content: "●";
+            color: var(--error-red);
+            font-size: 8px;
+        }
+
+        /* Status Indicators */
+        .status-led {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: led-blink 1.5s ease-in-out infinite;
+        }
+
+        .status-led.green {
+            background: var(--temple-green);
+            box-shadow: 0 0 4px var(--temple-green);
+        }
+
+        .status-led.red {
+            background: var(--error-red);
+            box-shadow: 0 0 4px var(--error-red);
+        }
+
+        .status-led.yellow {
+            background: var(--temple-yellow);
+            box-shadow: 0 0 4px var(--temple-yellow);
+        }
+
+        @keyframes led-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Content Tabs */
+        .content-tabs {
+            background: white;
+            border: 2px inset var(--win98-gray);
+            min-height: 400px;
+        }
+
+        .tab-headers {
+            background: var(--win98-gray);
+            display: flex;
+            border-bottom: 1px solid var(--win98-dark);
+        }
+
+        .tab-header {
+            padding: 4px 12px;
+            border-right: 1px solid var(--win98-dark);
+            cursor: pointer;
+            font-size: 12px;
+            color: black;
+            position: relative;
+        }
+
+        .tab-header:hover {
+            background: #b0b0b0;
+        }
+
+        .tab-header.active {
+            background: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+        }
+
+        .tab-content {
+            padding: 8px;
+            color: black;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* Diary Entries */
+        .diary-entry {
+            background: #ffffc0;
+            border: 1px solid #ffff80;
+            padding: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            position: relative;
+            box-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .diary-entry::before {
+            content: "📝";
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 16px;
+        }
+
+        .entry-timestamp {
+            color: var(--win98-blue);
+            font-weight: bold;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .entry-text {
+            line-height: 1.4;
+            text-align: justify;
+        }
+
+        /* Pixel Art Elements */
+        .pixel-heart {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            background: 
+                radial-gradient(circle at 25% 40%, var(--error-red) 25%, transparent 26%),
+                radial-gradient(circle at 75% 40%, var(--error-red) 25%, transparent 26%),
+                linear-gradient(to bottom, transparent 40%, var(--error-red) 40%, var(--error-red) 80%, transparent 80%);
+            animation: pixel-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes pixel-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Modal/Popup */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-dialog {
+            background: var(--win98-gray);
+            border: 2px outset var(--win98-gray);
+            min-width: 300px;
+            max-width: 500px;
+            box-shadow: 4px 4px 8px rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            padding: 8px;
+            color: black;
+            font-size: 12px;
+        }
+
+        /* Image Placeholder Grid */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: 4px;
+            margin: 8px 0;
+        }
+
+        .image-placeholder {
+            aspect-ratio: 1;
+            background: linear-gradient(45deg, #ff00ff, #00ffff);
+            border: 2px outset var(--win98-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            animation: rainbow-shift 3s linear infinite;
+        }
+
+        @keyframes rainbow-shift {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .image-placeholder:hover {
+            border: 2px inset var(--win98-gray);
+            transform: scale(0.95);
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            border: 1px solid #999;
+            margin-bottom: 4px;
+        }
+
+        .collapsible-header {
+            background: var(--win98-gray);
+            padding: 4px 8px;
+            cursor: pointer;
+            font-weight: bold;
+            border-bottom: 1px solid #999;
+            position: relative;
+        }
+
+        .collapsible-header::after {
+            content: "[+]";
+            position: absolute;
+            right: 8px;
+            color: var(--temple-magenta);
+            font-family: monospace;
+        }
+
+        .collapsible.active .collapsible-header::after {
+            content: "[-]";
+            color: var(--temple-cyan);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: white;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 300px;
+        }
+
+        .collapsible-inner {
+            padding: 8px;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .footer-content {
+            background: black;
+            color: var(--temple-green);
+            padding: 8px;
+            border: 2px solid var(--temple-green);
+            font-family: 'VT323', monospace;
+            animation: terminal-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes terminal-glow {
+            0%, 100% { text-shadow: 0 0 5px var(--temple-green); }
+            50% { text-shadow: 0 0 10px var(--temple-green), 0 0 15px var(--temple-green); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                flex: none;
+                order: 2;
+            }
+            
+            .nav-container {
+                flex-direction: column;
+            }
+            
+            .tab-headers {
+                flex-wrap: wrap;
+            }
+            
+            .title-ascii {
+                font-size: 8px;
+                overflow-x: scroll;
+            }
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            animation: glitch 0.3s linear infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(-1px, -1px); }
+            60% { transform: translate(1px, 1px); }
+            80% { transform: translate(1px, -1px); }
+            100% { transform: translate(0); }
+        }
+
+        /* Loading Animation */
+        .loading-dots::after {
+            content: '';
+            animation: loading 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes loading {
+            0% { content: ''; }
+            25% { content: '.'; }
+            50% { content: '..'; }
+            75% { content: '...'; }
+            100% { content: ''; }
+        }
+
+        /* Floating Windows */
+        .floating-widget {
+            position: fixed;
+            z-index: 100;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .floating-widget-1 {
+            top: 10%;
+            right: 5%;
+            animation-delay: 0s;
+        }
+
+        .floating-widget-2 {
+            bottom: 20%;
+            left: 3%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js Canvas -->
+    <canvas id="threejs-canvas"></canvas>
+
+    <!-- Floating Widgets -->
+    <div class="floating-widget floating-widget-1 win98-window">
+        <div class="win98-titlebar">
+            <span>♥ VITALS.EXE</span>
+            <div class="win98-controls">
+                <div class="win98-button">_</div>
+                <div class="win98-button">□</div>
+                <div class="win98-button">×</div>
+            </div>
+        </div>
+        <div class="win98-content" style="padding: 4px; font-size: 10px;">
+            <div><span class="status-led green"></span>BPM: 72</div>
+            <div><span class="status-led yellow"></span>TEMP: 98.6°F</div>
+            <div><span class="status-led red"></span>STRESS: MED</div>
+        </div>
+    </div>
+
+    <div class="floating-widget floating-widget-2 win98-window">
+        <div class="win98-titlebar">
+            <span>📡 SYSTEM.LOG</span>
+            <div class="win98-controls">
+                <div class="win98-button">_</div>
+                <div class="win98-button">□</div>
+                <div class="win98-button">×</div>
+            </div>
+        </div>
+        <div class="win98-content" style="padding: 4px; font-size: 10px;">
+            <div>CONNECTION: STABLE</div>
+            <div>MEMORIES: LOADING<span class="loading-dots"></span></div>
+            <div>DREAMS: ACTIVE</div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="temple-header">
+                ◆◇◆ HEARTWORM.HTML v2.0 - DIGITAL DIARY SYSTEM ◆◇◆
+            </div>
+            
+            <div class="title-ascii">
+╔══════════════════════════════════════════════════════════════════╗
+║  ♥♥♥  WELCOME TO THE NEURAL NETWORK OF THE HEART  ♥♥♥          ║  
+║                                                                  ║
+║  > INITIALIZING EMOTIONAL_PROTOCOL.EXE...                       ║
+║  > LOADING MEMORY_BANKS...                              [OK]    ║
+║  > CONNECTING TO DREAM_SERVER...                        [OK]    ║
+║  > SYNCING HEARTBEAT_MONITOR...                         [OK]    ║
+║                                                                  ║
+║  STATUS: ONLINE | MOOD: CONTEMPLATIVE | UPTIME: 24/7            ║
+╚══════════════════════════════════════════════════════════════════╝
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav-container">
+            <div class="nav-tab active" data-section="diary">DIARY.LOG</div>
+            <div class="nav-tab" data-section="memories">MEMORY.DAT</div>
+            <div class="nav-tab" data-section="dreams">DREAM.SYS</div>
+            <div class="nav-tab" data-section="notes">NOTES.TXT</div>
+            <div class="nav-tab" data-section="system">SYSTEM.CFG</div>
+        </div>
+
+        <!-- Content Wrapper -->
+        <div class="content-wrapper">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Medical Monitor Widget -->
+                <div class="win98-window">
+                    <div class="win98-titlebar">
+                        <span>🏥 MEDICAL.EXE</span>
+                        <div class="win98-controls">
+                            <div class="win98-button">_</div>
+                            <div class="win98-button">□</div>
+                            <div class="win98-button">×</div>
+                        </div>
+                    </div>
+                    <div class="win98-content">
+                        <div style="margin-bottom: 4px; font-weight: bold;">PATIENT STATUS:</div>
+                        <div class="retro-scrollbox">
+                            <div class="list-item"><span class="status-led green"></span>Heart Rate: 72 BPM</div>
+                            <div class="list-item"><span class="status-led green"></span>Blood Pressure: 120/80</div>
+                            <div class="list-item"><span class="status-led yellow"></span>Temperature: 98.6°F</div>
+                            <div class="list-item"><span class="status-led green"></span>Oxygen Sat: 98%</div>
+                            <div class="list-item"><span class="status-led yellow"></span>Stress Level: MODERATE</div>
+                            <div class="list-item"><span class="status-led red"></span>Sleep Debt: 2.3 hrs</div>
+                            <div class="list-item"><span class="status-led green"></span>Hydration: OPTIMAL</div>
+                            <div class="list-item"><span class="status-led yellow"></span>Caffeine: ELEVATED</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medication Tracker -->
+                <div class="win98-window">
+                    <div class="win98-titlebar">
+                        <span>💊 MEDS.DAT</span>
+                        <div class="win98-controls">
+                            <div class="win98-button">_</div>
+                            <div class="win98-button">□</div>
+                            <div class="win98-button">×</div>
+                        </div>
+                    </div>
+                    <div class="win98-content">
+                        <div style="margin-bottom: 4px; font-weight: bold;">DOSAGE SCHEDULE:</div>
+                        <div class="retro-scrollbox">
+                            <div class="list-item">08:00 - Vitamin D [✓]</div>
+                            <div class="list-item">12:00 - Omega-3 [✓]</div>
+                            <div class="list-item">18:00 - Magnesium [ ]</div>
+                            <div class="list-item">22:00 - Melatonin [ ]</div>
+                            <div class="list-item">PRN - Aspirin</div>
+                            <div class="list-item">WEEKLY - B-Complex [✓]</div>
+                            <div class="list-item">MONTHLY - Iron [ ]</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Gallery -->
+                <div class="win98-window">
+                    <div class="win98-titlebar">
+                        <span>🖼️ GALLERY.BMP</span>
+                        <div class="win98-controls">
+                            <div class="win98-button">_</div>
+                            <div class="win98-button">□</div>
+                            <div class="win98-button">×</div>
+                        </div>
+                    </div>
+                    <div class="win98-content">
+                        <div class="image-grid">
+                            <div class="image-placeholder" onclick="openModal()">🎵</div>
+                            <div class="image-placeholder">🌙</div>
+                            <div class="image-placeholder">⚕️</div>
+                            <div class="image-placeholder">💝</div>
+                            <div class="image-placeholder">🏥</div>
+                            <div class="image-placeholder">📱</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="win98-window">
+                    <div class="win98-titlebar">
+                        <span>📊 STATS.LOG</span>
+                        <div class="win98-controls">
+                            <div class="win98-button">_</div>
+                            <div class="win98-button">□</div>
+                            <div class="win98-button">×</div>
+                        </div>
+                    </div>
+                    <div class="win98-content" style="font-size: 10px;">
+                        <div>ENTRIES WRITTEN: 1,247</div>
+                        <div>DAYS TRACKED: 892</div>
+                        <div>DREAMS LOGGED: 203</div>
+                        <div>MOOD AVERAGE: 7.2/10</div>
+                        <div>UPTIME: 99.7%</div>
+                        <div>LAST BACKUP: 05/31/25</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="main-content">
+                <div class="win98-window">
+                    <div class="win98-titlebar">
+                        <span>📝 HEARTWORM_DIARY.TXT - EDIT MODE</span>
+                        <div class="win98-controls">
+                            <div class="win98-button">_</div>
+                            <div class="win98-button">□</div>
+                            <div class="win98-button">×</div>
+                        </div>
+                    </div>
+                    
+                    <div class="content-tabs">
+                        <div class="tab-headers">
+                            <div class="tab-header active" data-tab="diary">DIARY.LOG</div>
+                            <div class="tab-header" data-tab="memories">MEMORY.DAT</div>
+                            <div class="tab-header" data-tab="dreams">DREAM.SYS</div>
+                            <div class="tab-header" data-tab="notes">NOTES.TXT</div>
+                        </div>
+
+                        <!-- Diary Tab -->
+                        <div class="tab-content" id="diary-content">
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.31_23:47:33] ENTRY_ID: 1247</div>
+                                <div class="entry-text">
+                                    The green phosphor glow of the cardiac monitor reminds me of the old terminals dad used to work on. There's something hypnotic about watching the heartbeat trace - each spike a digital pulse of life itself. Tonight I'm thinking about how we've turned the most intimate rhythms of the human body into data streams. Lub-dub becomes 01001000 01000101 01000001 01010010 01010100. But somehow, even in binary, love still translates.
+                                </div>
+                            </div>
+
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.30_19:22:11] ENTRY_ID: 1246</div>
+                                <div class="entry-text">
+                                    Caught myself staring at the EKG readout again. Those green waves dancing across the CRT like some kind of electronic poetry. I wonder if Terry Davis ever thought about how heartbeats look like assembly code when you really squint at them. Each QRS complex a tiny subroutine in the grand program of staying alive. Maybe that's what TempleOS was really about - finding God in the machine, finding the sacred in the systematic.
+                                </div>
+                            </div>
+
+                            <div class="collapsible">
+                                <div class="collapsible-header">[2025.05.29_14:33:07] ENTRY_ID: 1245 - PHILOSOPHICAL.TXT</div>
+                                <div class="collapsible-content">
+                                    <div class="collapsible-inner">
+                                        Sometimes I think we're all just biological computers running on caffeine and hope. Every patient that comes through those sliding doors is a walking database of symptoms, stories, and dreams deferred. We scan their bodies like reading RAM, check their vital signs like monitoring system resources.
+                                        <br><br>
+                                        But here's the thing - the most important data can't be captured in a chart. The way someone's eyes light up when they talk about their grandchildren. The tremor in their voice when they're scared. The grateful squeeze of a hand after a successful procedure. These are the variables that matter most, and they'll never fit in any database.
+                                        <br><br>
+                                        Today an elderly programmer told me he'd been writing code for forty years, and he still got excited every time a program compiled successfully. "It's like a tiny miracle every time," he said. I felt that. Every heartbeat is a tiny miracle too.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.28_03:15:44] ENTRY_ID: 1244</div>
+                                <div class="entry-text">
+                                    Night shift has its own particular energy. The hospital runs on skeleton crews and emergency lighting, like a system in safe mode. I find myself thinking about all the dreams happening in the rooms around me - patients, families, staff catching naps in break rooms. We're all processing the day's data while our conscious minds defragment.
+                                </div>
+                            </div>
+
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.27_11:08:29] ENTRY_ID: 1243</div>
+                                <div class="entry-text">
+                                    Upgraded the IV pump software today. Funny how medical equipment is just specialized computers now. Everything's got a GUI, everything needs updates, everything can crash at the worst possible moment. But there's something beautiful about technology serving life directly - silicon and plastic and electricity all working together to keep someone's heart beating steady.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Memories Tab -->
+                        <div class="tab-content hidden" id="memories-content">
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2020.06.01_08:00:00] MEMORY_CORE_DUMP: FIRST_DAY.MEM</div>
+                                <div class="entry-text">
+                                    Booting up for the first time in the hospital system. White coat felt like wearing someone else's skin. Stethoscope around my neck like a badge of honor I hadn't earned yet. Dr. Martinez showed me how to read EKG strips, her finger tracing the peaks and valleys like she was debugging code. "See this? This is where the heart speaks," she said. I'm still learning its language.
+                                </div>
+                            </div>
+
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2022.09.15_22:30:15] MEMORY_SEGMENT: PATIENT_093.MEM</div>
+                                <div class="entry-text">
+                                    Margaret, Room 317. Ninety-three years old and still laughing at my terrible programmer jokes. "You remind me of my son," she'd say, "always talking about computers I don't understand." Her heart was failing but her spirit ran on endless loops of joy. She taught me that healing isn't always about fixing the hardware - sometimes it's about optimizing the human experience while the system is still running.
+                                </div>
+                            </div>
+
+                            <div class="collapsible">
+                                <div class="collapsible-header">[2018.08.22_16:45:33] MEDICAL_SCHOOL.BAK</div>
+                                <div class="collapsible-content">
+                                    <div class="collapsible-inner">
+                                        Anatomy lab, 2 AM. Surrounded by textbooks and the gentle hum of fluorescent lights. Learning the architecture of the human body like studying the motherboard of the most complex machine ever built. Gray's Anatomy felt like reading technical documentation for a system none of us fully understood.
+                                        <br><br>
+                                        First time taking blood pressure on a classmate - hearing their pulse through the stethoscope felt invasive and intimate. Like accessing someone else's system logs. The soft thump-thump-thump of life in digital stereo.
+                                        <br><br>
+                                        I remember thinking: we're all just biological programs running on wetware, executing the same basic functions - heartbeat.exe, breathe.dll, dream.sys. But each installation is unique, each system has its own quirks and features and beautiful bugs.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dreams Tab -->
+                        <div class="tab-content hidden" id="dreams-content">
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.31_07:23:16] DREAM_LOG: REM_CYCLE_047.DRM</div>
+                                <div class="entry-text">
+                                    Last night I dreamed I was inside a computer, floating through circuits that looked like blood vessels. The data packets flowing around me were shaped like red blood cells, carrying oxygen-encoded information to different organs. I could hear the CPU fan spinning like a heartbeat - lub-dub, lub-dub, lub-dub. When I woke up, my own heart was synchronizing with the memory of that digital rhythm.
+                                </div>
+                            </div>
+
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.29_06:44:22] DREAM_LOG: RECURRING_PATTERN_12.DRM</div>
+                                <div class="entry-text">
+                                    The hospital corridors stretch infinitely in my sleep, lined with monitors displaying scrolling green text like the Matrix. But instead of code, it's vital signs - heartbeats and breathing patterns streaming past in endless loops. I walk through this digital ward checking on patients who exist only in REM sleep, their dream-bodies connected to phantom machines that beep in 4/4 time.
+                                </div>
+                            </div>
+
+                            <div class="collapsible">
+                                <div class="collapsible-header">[2025.05.26_05:17:39] DREAM_ANALYSIS.LOG</div>
+                                <div class="collapsible-content">
+                                    <div class="collapsible-inner">
+                                        Recurring theme: technology merging with biology. Last week I dreamed about performing surgery with a keyboard and mouse. The patient's body was displayed like a 3D modeling program - I could rotate and zoom, adjust organ opacity, highlight different systems in different colors.
+                                        <br><br>
+                                        The most beautiful part was the heart, rendered as a constantly updating procedural animation. Each beat was a small explosion of light that radiated through the circulatory system like neon flowing through glass tubes.
+                                        <br><br>
+                                        I think my subconscious is trying to reconcile two languages - the digital and the biological. Maybe they're not so different after all.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Notes Tab -->
+                        <div class="tab-content hidden" id="notes-content">
+                            <div class="diary-entry">
+                                <div class="entry-timestamp">[2025.05.31_MISC] RANDOM_THOUGHTS.TXT</div>
+                                <div class="entry-text">
+                                    • Hospital coffee tastes like liquid sadness but keeps the human.exe running<br>
+                                    • Every heartbeat is approximately 1 Hz of pure life frequency<br>
+                                    • Scrubs are just work uniforms for flesh mechanics<br>
+                                    • Patient monitors are really just biological debugging tools<br>
+                                    • Wonder if Terry Davis ever had his heart broken. Bet he would have written beautiful code about it<br>
+                                    • The sound of ventilators is oddly soothing - like being inside a sleeping computer<br>
+                                    • Healing happens in the spaces between data points
+                                </div>
+                            </div>
+
+                            <div class="collapsible">
+                                <div class="collapsible-header">[2025.05.30_ARCHIVE] THINGS_TO_REMEMBER.BAK</div>
+                                <div class="collapsible-content">
+                                    <div class="collapsible-inner">
+                                        The way morning light filters through ICU windows, casting rainbow patterns through IV bags. How Mrs. Chen's face pixelated into pure joy when her granddaughter video-called. The texture of surgical gloves - like wearing someone else's skin. Dr. Foster humming classic rock while reviewing charts. The weight of successful code compilation... I mean, successful surgery. Same feeling.
+                                        <br><br>
+                                        The patient who told me my stethoscope looked like headphones for listening to life's soundtrack. The sound of rain on the hospital roof during that endless April storm. How silence sounds different at 3 AM in the ICU - fuller, more pregnant with possibility.
+                                        <br><br>
+                                        Every beep, every alarm, every gentle sigh of the ventilator - it's all just the hospital's way of talking to itself. A massive biological-digital hybrid consciousness, processing life and death in real-time.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-content">
+                [SYSTEM STATUS: ONLINE] ♥ HEARTWORM.HTML v2.0 © 2025 ♥ [UPTIME: 99.7%]<br>
+                "Every heartbeat is a line of code in the program of existence"<br>
+                BUILD: 20250531.2347 | PLATFORM: RETRO_WEB_1.0 | FRAMEWORK: PURE_NOSTALGIA
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-dialog win98-window">
+            <div class="win98-titlebar">
+                <span>🎵 AUDIO_MEMORY.WAV</span>
+                <div class="win98-controls">
+                    <div class="win98-button" onclick="closeModal()">×</div>
+                </div>
+            </div>
+            <div class="modal-content">
+                <p><strong>MEMORY FRAGMENT ACCESSED:</strong></p>
+                <p>This audio file contains the echoes of moments too precious for words. Sometimes music carries what diagnostic code cannot - the frequency of healing, the amplitude of hope, the waveform of a heart learning to synchronize with the rhythm of recovery.</p>
+                <br>
+                <p style="text-align: center; font-style: italic;">
+                    "In the space between heartbeats,<br>
+                    we find our truest debugging sessions with the soul."
+                </p>
+                <br>
+                <p style="text-align: center; font-size: 10px;">
+                    [FILE_SIZE: 4.7MB] [BITRATE: 320kbps] [EMOTIONAL_DEPTH: INFINITE]
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js Retro Heart System
+        let scene, camera, renderer, hearts;
+        let heartCount = 200;
+
+        function initRetroThreeJS() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x008080, 5, 15);
+            
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('threejs-canvas'),
+                alpha: true,
+                antialias: false // Retro pixelated look
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(1); // Deliberately low-res
+            
+            // Create retro heart particles
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(heartCount * 3);
+            const colors = new Float32Array(heartCount * 3);
+            const sizes = new Float32Array(heartCount);
+            
+            for(let i = 0; i < heartCount; i++) {
+                // Simple 8-bit heart pattern
+                const angle = (i / heartCount) * Math.PI * 2;
+                const radius = 2 + Math.sin(angle * 3) * 0.5;
+                
+                positions[i * 3] = Math.cos(angle) * radius;
+                positions[i * 3 + 1] = Math.sin(angle) * radius;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
+                
+                // Retro color palette
+                const colorChoice = Math.floor(Math.random() * 4);
+                switch(colorChoice) {
+                    case 0: // Magenta
+                        colors[i * 3] = 1.0;
+                        colors[i * 3 + 1] = 0.0;
+                        colors[i * 3 + 2] = 1.0;
+                        break;
+                    case 1: // Cyan
+                        colors[i * 3] = 0.0;
+                        colors[i * 3 + 1] = 1.0;
+                        colors[i * 3 + 2] = 1.0;
+                        break;
+                    case 2: // Yellow
+                        colors[i * 3] = 1.0;
+                        colors[i * 3 + 1] = 1.0;
+                        colors[i * 3 + 2] = 0.0;
+                        break;
+                    case 3: // Green
+                        colors[i * 3] = 0.0;
+                        colors[i * 3 + 1] = 1.0;
+                        colors[i * 3 + 2] = 0.0;
+                        break;
+                }
+                
+                sizes[i] = Math.random() * 5 + 2;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            // Simple point material for retro look
+            const material = new THREE.PointsMaterial({
+                size: 4,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                sizeAttenuation: false
+            });
+            
+            hearts = new THREE.Points(geometry, material);
+            scene.add(hearts);
+            
+            camera.position.z = 8;
+            
+            animateRetro();
+        }
+        
+        function animateRetro() {
+            requestAnimationFrame(animateRetro);
+            
+            const time = Date.now() * 0.001;
+            
+            // Retro rotation with stuttering effect
+            if (Math.floor(time * 10) % 2 === 0) {
+                hearts.rotation.z += 0.005;
+                hearts.rotation.y += 0.002;
+            }
+            
+            // Pulsing scale like old CRT monitors
+            const pulse = Math.sin(time * 2) * 0.1 + 1;
+            hearts.scale.setScalar(pulse);
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        initRetroThreeJS();
+
+        // Tab System
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                // Add click feedback
+                tab.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    tab.style.transform = '';
+                }, 100);
+            });
+        });
+
+        document.querySelectorAll('.tab-header').forEach(header => {
+            header.addEventListener('click', () => {
+                document.querySelectorAll('.tab-header').forEach(h => h.classList.remove('active'));
+                header.classList.add('active');
+                
+                const targetTab = header.dataset.tab;
+                switchTab(targetTab);
+            });
+        });
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            const targetContent = document.getElementById(tabName + '-content');
+            if (targetContent) {
+                targetContent.classList.remove('hidden');
+            }
+        }
+
+        // Collapsible sections
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const collapsible = header.parentElement;
+                collapsible.classList.toggle('active');
+                
+                // Sound effect simulation
+                console.log('*click*');
+            });
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('modalOverlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.remove('active');
+        }
+
+        // Close modal on background click
+        document.getElementById('modalOverlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                closeModal();
+            }
+        });
+
+        // Retro click effects
+        document.querySelectorAll('.list-item, .image-placeholder').forEach(item => {
+            item.addEventListener('click', () => {
+                item.style.filter = 'invert(1)';
+                setTimeout(() => {
+                    item.style.filter = '';
+                }, 100);
+            });
+        });
+
+        // Random glitch effects
+        setInterval(() => {
+            const elements = document.querySelectorAll('.win98-titlebar');
+            const randomElement = elements[Math.floor(Math.random() * elements.length)];
+            
+            randomElement.classList.add('glitch');
+            setTimeout(() => {
+                randomElement.classList.remove('glitch');
+            }, 300);
+        }, 15000);
+
+        // Status LED randomizer
+        setInterval(() => {
+            const leds = document.querySelectorAll('.status-led');
+            leds.forEach(led => {
+                if (Math.random() < 0.1) {
+                    led.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+                }
+            });
+        }, 2000);
+
+        // Console startup message
+        console.log(`
+╔══════════════════════════════════════════════════════════════════╗
+║                    HEARTWORM.HTML v2.0 LOADED                    ║
+║                                                                  ║
+║  > System initialized successfully                               ║
+║  > Retro aesthetics engine: ACTIVE                               ║
+║  > Nostalgia levels: MAXIMUM                                     ║
+║  > CREATED BY NUMBPIILLED                                        ║
+║                                                                  ║
+║  Welcome to the intersection of flesh and silicon ♥              ║
+╚══════════════════════════════════════════════════════════════════╝
+        `);
+
+        // Subtle heartbeat in title
+        let titleBeat = 0;
+        setInterval(() => {
+            const title = document.title;
+            titleBeat = (titleBeat + 1) % 3;
+            if (titleBeat === 0) {
+                document.title = title.replace('◆◇', '♥♥');
+            } else if (titleBeat === 1) {
+                document.title = title.replace('♥♥', '◆◇');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

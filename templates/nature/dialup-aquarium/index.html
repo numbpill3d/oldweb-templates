@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>~*~ my aquarium page ~*~ dialup edition</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
+
+:root {
+  --chrome-light: #e8e8e8;
+  --chrome-mid: #c0c0c0;
+  --chrome-dark: #808080;
+  --chrome-darker: #404040;
+  --title-bar: #000080;
+  --title-text: #ffffff;
+  --win-bg: #c0c0c0;
+  --btn-face: #d4d0c8;
+  --btn-shadow: #808080;
+  --btn-highlight: #ffffff;
+  --btn-dark-shadow: #404040;
+  --aim-blue: #003399;
+  --aim-yellow: #ffcc00;
+  --link-blue: #0000cc;
+  --link-visited: #800080;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%; height: 100%;
+  background: #000005;
+  overflow: hidden;
+  cursor: none;
+  font-family: 'Noto Sans JP', 'MS PGothic', 'ＭＳ Ｐゴシック', sans-serif;
+  font-size: 11px;
+}
+
+/* ── ANIMATED WATER BACKGROUND ── */
+#desktop {
+  position: fixed; inset: 0;
+  background-color: #00001a;
+  background-image:
+    radial-gradient(ellipse 60px 40px at 20% 30%, rgba(0,60,120,0.3) 0%, transparent 70%),
+    radial-gradient(ellipse 80px 50px at 70% 60%, rgba(0,40,100,0.25) 0%, transparent 70%),
+    radial-gradient(ellipse 40px 60px at 50% 20%, rgba(0,80,160,0.2) 0%, transparent 70%);
+  overflow: hidden;
+}
+
+/* SVG water tiles */
+#water-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  opacity: 0.7;
+}
+
+/* Scanlines overlay */
+#scanlines {
+  position: fixed; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0,0,0,0.18) 2px,
+    rgba(0,0,0,0.18) 4px
+  );
+  pointer-events: none;
+  z-index: 9998;
+  animation: scanroll 8s linear infinite;
+}
+
+@keyframes scanroll {
+  from { background-position: 0 0; }
+  to { background-position: 0 80px; }
+}
+
+/* Vignette */
+#vignette {
+  position: fixed; inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.7) 100%);
+  pointer-events: none;
+  z-index: 9997;
+}
+
+/* ── WINDOWS CHROME SHARED ── */
+.win {
+  position: absolute;
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-dark-shadow) var(--btn-dark-shadow) var(--btn-highlight);
+  box-shadow: inset 1px 1px 0 var(--btn-face), inset -1px -1px 0 var(--btn-shadow);
+  background: var(--win-bg);
+  user-select: none;
+  min-width: 120px;
+}
+
+.title-bar {
+  background: linear-gradient(to right, #000080, #1084d0);
+  color: white;
+  padding: 3px 4px 3px 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+  height: 20px;
+}
+
+.title-bar.inactive {
+  background: linear-gradient(to right, #7b7b7b, #ababab);
+}
+
+.title-bar-text {
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.title-bar-icon {
+  width: 14px; height: 14px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.title-bar-controls {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.win-btn {
+  width: 16px; height: 14px;
+  border: 1px solid;
+  border-color: var(--btn-highlight) var(--btn-dark-shadow) var(--btn-dark-shadow) var(--btn-highlight);
+  background: var(--chrome-mid);
+  color: #000;
+  font-size: 9px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-family: 'Marlett', 'Wingdings', monospace;
+}
+
+.win-btn:active, .win-btn.depressed {
+  border-color: var(--btn-dark-shadow) var(--btn-highlight) var(--btn-highlight) var(--btn-dark-shadow);
+  transform: translate(1px, 1px);
+}
+
+/* Chrome toolbar button */
+.chrome-btn {
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-shadow) var(--btn-shadow) var(--btn-highlight);
+  background: var(--chrome-light);
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.chrome-btn:active {
+  border-color: var(--btn-shadow) var(--btn-highlight) var(--btn-highlight) var(--btn-shadow);
+  padding: 3px 7px 1px 9px;
+}
+
+/* ── IE WINDOW ── */
+#ie-window {
+  width: 680px;
+  height: 520px;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+.ie-toolbar {
+  background: var(--chrome-light);
+  padding: 2px 4px;
+  border-bottom: 1px solid var(--btn-shadow);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.address-bar {
+  display: flex;
+  align-items: center;
+  background: var(--chrome-light);
+  padding: 2px 4px;
+  border-bottom: 2px solid var(--btn-shadow);
+  gap: 4px;
+}
+
+.address-bar-label {
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.address-input {
+  flex: 1;
+  height: 18px;
+  border: 2px inset var(--btn-shadow);
+  background: white;
+  font-family: 'Noto Sans JP', monospace;
+  font-size: 11px;
+  padding: 0 2px;
+  color: #000066;
+}
+
+.ie-content-area {
+  flex: 1;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background: #ffffff;
+  border: 2px inset var(--btn-shadow);
+  margin: 2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--chrome-mid) var(--chrome-light);
+}
+
+.ie-content-area::-webkit-scrollbar { width: 16px; }
+.ie-content-area::-webkit-scrollbar-track { background: var(--chrome-light); border: 1px solid var(--btn-shadow); }
+.ie-content-area::-webkit-scrollbar-thumb {
+  background: var(--chrome-mid);
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-shadow) var(--btn-shadow) var(--btn-highlight);
+}
+.ie-content-area::-webkit-scrollbar-button {
+  background: var(--chrome-mid);
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-shadow) var(--btn-shadow) var(--btn-highlight);
+  height: 16px;
+  width: 16px;
+}
+
+.ie-statusbar {
+  background: var(--chrome-light);
+  border-top: 1px solid var(--btn-shadow);
+  padding: 1px 4px;
+  font-size: 10px;
+  display: flex;
+  justify-content: space-between;
+  height: 18px;
+  align-items: center;
+}
+
+/* ── PAGE CONTENT ── */
+.page-content {
+  padding: 8px 12px;
+  background: #ffffff;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.page-title {
+  font-family: 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: bold;
+  color: #000080;
+  text-align: center;
+  padding: 8px 0;
+  text-shadow: 2px 2px 0 #8888ff;
+  letter-spacing: 1px;
+}
+
+.page-subtitle {
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.blinky {
+  animation: blink 0.8s step-end infinite;
+  color: red;
+  font-weight: bold;
+}
+
+@keyframes blink { 50% { opacity: 0; } }
+
+.divider-bar {
+  height: 4px;
+  background: linear-gradient(to right, #000080, #0000ff, #4444ff, #0000ff, #000080);
+  margin: 6px 0;
+  border: 1px inset #8888ff;
+}
+
+.fish-gif-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 6px 0;
+  font-size: 20px;
+  animation: fishswim 4s ease-in-out infinite alternate;
+}
+
+@keyframes fishswim { from { letter-spacing: 4px; } to { letter-spacing: 24px; } }
+
+.section-header {
+  background: #000080;
+  color: white;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 2px 6px;
+  margin: 8px 0 4px;
+}
+
+.content-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.content-table td {
+  padding: 3px 6px;
+  border: 1px solid #c0c0c0;
+  vertical-align: top;
+}
+.content-table tr:nth-child(even) td { background: #f0f0ff; }
+.content-table tr:nth-child(odd) td { background: #ffffff; }
+
+a { color: var(--link-blue); }
+a:visited { color: var(--link-visited); }
+
+.hit-counter {
+  text-align: center;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: #008000;
+  border: 1px solid #c0c0c0;
+  padding: 2px 6px;
+  background: #000;
+  color: #00ff00;
+  display: inline-block;
+}
+
+.guestbook-form {
+  border: 2px inset var(--btn-shadow);
+  padding: 8px;
+  background: #f8f8f8;
+  margin: 8px 0;
+}
+
+.guestbook-form input, .guestbook-form textarea {
+  border: 2px inset var(--btn-shadow);
+  background: white;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px;
+  width: 100%;
+  margin-bottom: 4px;
+}
+
+.fun-facts {
+  background: #ffffd0;
+  border: 2px solid #c8c800;
+  padding: 6px 10px;
+  margin: 8px 0;
+  font-size: 11px;
+}
+
+.marquee-text {
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 11px;
+  color: #000080;
+  padding: 2px 0;
+}
+
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 18s linear infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(100%); }
+  to { transform: translateX(-100%); }
+}
+
+/* ── MUSIC PLAYER WINDOW ── */
+#music-window {
+  width: 240px;
+  bottom: 80px;
+  right: 20px;
+  z-index: 110;
+}
+
+.mp-display {
+  background: #000;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  padding: 4px 6px;
+  height: 40px;
+  overflow: hidden;
+  border: 2px inset var(--btn-shadow);
+  margin: 4px;
+}
+
+.mp-track-name {
+  animation: marquee 10s linear infinite;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.mp-time {
+  color: #00cc00;
+  font-size: 9px;
+}
+
+.mp-controls {
+  display: flex;
+  gap: 2px;
+  padding: 2px 4px 4px;
+  justify-content: center;
+}
+
+.mp-btn {
+  width: 28px; height: 22px;
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-shadow) var(--btn-shadow) var(--btn-highlight);
+  background: var(--chrome-mid);
+  font-size: 9px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.mp-btn:active {
+  border-color: var(--btn-shadow) var(--btn-highlight) var(--btn-highlight) var(--btn-shadow);
+  transform: translate(1px,1px);
+}
+
+.mp-progress-bar {
+  margin: 2px 4px;
+  height: 8px;
+  background: #000;
+  border: 1px inset var(--btn-shadow);
+  position: relative;
+}
+
+.mp-progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #004400, #00ff00);
+  transition: width 0.5s;
+}
+
+.mp-eq {
+  display: flex;
+  gap: 2px;
+  padding: 2px 4px;
+  align-items: flex-end;
+  height: 20px;
+  justify-content: center;
+}
+
+.eq-bar {
+  width: 6px;
+  background: #00cc00;
+  animation: eqbounce var(--spd) ease-in-out infinite alternate;
+  box-shadow: 0 0 2px #00ff00;
+}
+
+@keyframes eqbounce {
+  from { height: 2px; }
+  to { height: var(--h); }
+}
+
+/* ── AIM WINDOW ── */
+#aim-window {
+  width: 260px;
+  height: 380px;
+  bottom: 80px;
+  left: 20px;
+  z-index: 110;
+  display: flex;
+  flex-direction: column;
+}
+
+.aim-header-bar {
+  background: linear-gradient(to bottom, var(--aim-yellow), #cc9900);
+  padding: 2px 4px;
+  font-size: 10px;
+  font-weight: bold;
+  color: #000033;
+  border-bottom: 1px solid #aa8800;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.aim-buddy-info {
+  background: linear-gradient(to right, #000066, #003399);
+  color: #99ccff;
+  font-size: 9px;
+  padding: 2px 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.aim-online-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #ffff00;
+  box-shadow: 0 0 4px #ffff00;
+  animation: pulse 2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes pulse { 50% { opacity: 0.4; box-shadow: none; } }
+
+.aim-chat-area {
+  flex: 1;
+  background: white;
+  overflow-y: scroll;
+  padding: 4px;
+  font-size: 11px;
+  border: 1px inset var(--btn-shadow);
+  margin: 2px;
+  scrollbar-width: thin;
+}
+
+.aim-chat-area::-webkit-scrollbar { width: 12px; }
+.aim-chat-area::-webkit-scrollbar-track { background: var(--chrome-light); }
+.aim-chat-area::-webkit-scrollbar-thumb { background: var(--chrome-mid); border: 1px solid var(--btn-shadow); }
+
+.aim-msg {
+  margin-bottom: 4px;
+  line-height: 1.5;
+  font-size: 11px;
+}
+
+.aim-msg .sender { font-weight: bold; }
+.aim-msg .sender.me { color: #000099; }
+.aim-msg .sender.them { color: #990000; }
+.aim-msg .sender.system { color: #666; }
+.aim-msg .msg-text { color: #000; }
+.aim-msg.system-msg { color: #888; font-style: italic; font-size: 10px; }
+.aim-msg a { font-size: 11px; }
+
+.aim-input-area {
+  background: var(--chrome-light);
+  border-top: 1px solid var(--btn-shadow);
+  padding: 2px 4px;
+}
+
+.aim-input-toolbar {
+  display: flex; gap: 2px; margin-bottom: 2px;
+}
+
+.aim-format-btn {
+  width: 18px; height: 16px;
+  border: 1px solid var(--btn-shadow);
+  background: white;
+  font-size: 9px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: serif;
+}
+
+.aim-input {
+  width: 100%;
+  height: 36px;
+  border: 2px inset var(--btn-shadow);
+  background: white;
+  font-family: inherit;
+  font-size: 11px;
+  padding: 2px 4px;
+  resize: none;
+}
+
+.aim-send-row {
+  display: flex; justify-content: flex-end; margin-top: 2px; gap: 4px;
+}
+
+/* ── TASKBAR ── */
+#taskbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 28px;
+  background: var(--win-bg);
+  border-top: 2px solid var(--btn-highlight);
+  box-shadow: inset 0 1px 0 var(--btn-highlight);
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  z-index: 9999;
+}
+
+.start-btn {
+  height: 22px;
+  padding: 0 8px;
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-dark-shadow) var(--btn-dark-shadow) var(--btn-highlight);
+  background: var(--chrome-mid);
+  font-weight: bold;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.start-btn:active {
+  border-color: var(--btn-dark-shadow) var(--btn-highlight) var(--btn-highlight) var(--btn-dark-shadow);
+}
+
+.task-btn {
+  height: 22px;
+  padding: 0 6px;
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-shadow) var(--btn-shadow) var(--btn-highlight);
+  background: var(--chrome-light);
+  font-size: 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 140px;
+  text-overflow: ellipsis;
+  font-family: inherit;
+}
+
+.task-btn.active {
+  border-color: var(--btn-shadow) var(--btn-highlight) var(--btn-highlight) var(--btn-shadow);
+  background: var(--chrome-mid);
+}
+
+.taskbar-clock {
+  margin-left: auto;
+  border: 1px inset var(--btn-shadow);
+  background: var(--chrome-light);
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+}
+
+.taskbar-sep {
+  width: 2px;
+  height: 20px;
+  background: linear-gradient(to right, var(--btn-shadow), var(--btn-highlight));
+  margin: 0 2px;
+}
+
+/* ── BUBBLE CURSOR ── */
+#cursor-dot {
+  position: fixed;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.9), rgba(100,180,255,0.6));
+  border: 1px solid rgba(150,200,255,0.7);
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.05s;
+}
+
+.bubble-trail {
+  position: fixed;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.8), rgba(100,180,255,0.3));
+  border: 1px solid rgba(150,200,255,0.5);
+  pointer-events: none;
+  z-index: 99998;
+  animation: bubble-float 1.2s ease-out forwards;
+}
+
+@keyframes bubble-float {
+  0% { opacity: 0.8; transform: translate(-50%,-50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%,-120%) scale(0.3); }
+}
+
+/* ── DESKTOP ICONS ── */
+.desktop-icon {
+  position: absolute;
+  width: 64px;
+  text-align: center;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.desktop-icon:hover .icon-label, .desktop-icon.selected .icon-label {
+  background: var(--title-bar);
+  color: white;
+}
+
+.desktop-icon .icon-img {
+  font-size: 32px;
+  display: block;
+  margin: 0 auto 2px;
+  filter: drop-shadow(1px 1px 0 rgba(0,0,100,0.8));
+}
+
+.desktop-icon .icon-label {
+  font-size: 11px;
+  color: white;
+  text-shadow: 1px 1px 2px #000, -1px -1px 2px #000;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+/* ── WATER ANIMATION ── */
+.water-tile {
+  animation: waterwave 3s ease-in-out infinite;
+}
+
+@keyframes waterwave {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.9; }
+}
+
+/* ── LOADING BAR ── */
+#loading-overlay {
+  position: fixed; inset: 0;
+  background: #000010;
+  z-index: 99999;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 16px;
+}
+
+.loading-title {
+  color: #4488ff;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  text-shadow: 0 0 10px #4488ff;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.loading-sub {
+  color: #8888aa;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
+.loading-bar-container {
+  width: 320px;
+  height: 18px;
+  border: 2px solid;
+  border-color: var(--btn-highlight) var(--btn-shadow) var(--btn-shadow) var(--btn-highlight);
+  background: #000;
+  padding: 2px;
+}
+
+.loading-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, #000080, #4444ff, #8888ff);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.loading-status {
+  color: #6688aa;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  text-align: center;
+  height: 12px;
+}
+
+/* Window resize handle */
+.resize-handle {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 14px; height: 14px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, var(--btn-shadow) 50%, transparent 60%, var(--btn-shadow) 60%, transparent 70%, var(--btn-shadow) 70%, transparent 80%, var(--btn-shadow) 80%);
+}
+</style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loading-overlay">
+  <div class="loading-title">🐟 dialup aquarium 🐟</div>
+  <div class="loading-sub">connecting to the internet...</div>
+  <div class="loading-bar-container">
+    <div class="loading-bar-fill" id="loading-bar"></div>
+  </div>
+  <div class="loading-status" id="loading-status">Dialing 555-FISH-NET...</div>
+</div>
+
+<!-- Desktop -->
+<div id="desktop">
+  <!-- Water canvas -->
+  <canvas id="water-canvas"></canvas>
+
+  <!-- Desktop icons -->
+  <div class="desktop-icon" style="top:20px;left:20px;" ondblclick="bringToFront('ie-window')">
+    <span class="icon-img">🌐</span>
+    <span class="icon-label">My Aquarium</span>
+  </div>
+  <div class="desktop-icon" style="top:110px;left:20px;">
+    <span class="icon-img">🗑️</span>
+    <span class="icon-label">Recycle Bin</span>
+  </div>
+  <div class="desktop-icon" style="top:200px;left:20px;" ondblclick="bringToFront('music-window')">
+    <span class="icon-img">🎵</span>
+    <span class="icon-label">Winamp 2.91</span>
+  </div>
+  <div class="desktop-icon" style="top:290px;left:20px;" ondblclick="bringToFront('aim-window')">
+    <span class="icon-img">💬</span>
+    <span class="icon-label">AIM 5.1</span>
+  </div>
+
+  <!-- IE Window -->
+  <div class="win" id="ie-window">
+    <div class="title-bar" id="ie-titlebar">
+      <div class="title-bar-text">
+        <svg class="title-bar-icon" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#1a80d8" stroke="#003090" stroke-width="1"/><path d="M2 8a6 6 0 0 1 12 0" stroke="white" stroke-width="1.5" fill="none"/><path d="M4 5 Q8 1 12 5" stroke="white" stroke-width="1" fill="none"/><line x1="8" y1="1" x2="8" y2="15" stroke="white" stroke-width="1"/></svg>
+        ~*~ my aquarium page ~*~ - Microsoft Internet Explorer
+      </div>
+      <div class="title-bar-controls">
+        <button class="win-btn" onclick="minimizeWin('ie-window')">_</button>
+        <button class="win-btn">□</button>
+        <button class="win-btn" onclick="closeWin('ie-window')">✕</button>
+      </div>
+    </div>
+    <div class="ie-toolbar">
+      <button class="chrome-btn" id="btn-back">◄ Back</button>
+      <button class="chrome-btn" id="btn-forward">Forward ►</button>
+      <button class="chrome-btn" id="btn-stop">⬛ Stop</button>
+      <button class="chrome-btn" id="btn-refresh">🔄 Refresh</button>
+      <button class="chrome-btn" id="btn-home">🏠 Home</button>
+      <div style="width:1px;background:var(--btn-shadow);margin:0 2px;height:18px;"></div>
+      <button class="chrome-btn" id="btn-favorites">☆ Favorites</button>
+    </div>
+    <div class="address-bar">
+      <span class="address-bar-label">Address</span>
+      <input class="address-input" type="text" value="http://www.geocities.com/~fishgirl2001/aquarium.html" readonly>
+      <button class="chrome-btn">Go</button>
+    </div>
+
+    <div class="ie-content-area" id="ie-content">
+      <div class="page-content">
+        <div class="marquee-text"><span class="marquee-inner">🐟 WELCOME TO MY AQUARIUM PAGE 🐠 YOU ARE VISITOR #002,847 🦑 BEST VIEWED IN 800x600 🐡 IE 5.5 OR HIGHER 🌊 MIDI MUSIC ON! 🐙 PLEASE SIGN MY GUESTBOOK!! 🐚</span></div>
+        <div class="divider-bar"></div>
+
+        <div class="page-title">~*~ my aquarium page ~*~</div>
+        <div class="page-subtitle">
+          <span class="blinky">★</span> last updated: september 14, 2001 at 11:42 PM <span class="blinky">★</span>
+        </div>
+
+        <div class="fish-gif-row">🐟 🐠 🦑 🐡 🦈 🐙 🦐 🐚</div>
+
+        <div class="divider-bar"></div>
+
+        <div class="fun-facts">
+          <strong>~~ fun fish fact of the day!! ~~</strong><br>
+          did u know that clownfish can change gender?? so basically nemo's dad would become nemo's mom lol. science is weird!!! 🐟💕
+        </div>
+
+        <div class="section-header">🌊 about my fish 🌊</div>
+        <table class="content-table">
+          <tr><td><strong>Name</strong></td><td><strong>Species</strong></td><td><strong>Personality</strong></td><td><strong>Fav Food</strong></td></tr>
+          <tr><td>Bubbles 💙</td><td>Blue Tang</td><td>energetic!! always swimming fast</td><td>brine shrimp</td></tr>
+          <tr><td>Mr. Tentacles 🟣</td><td>Octopus</td><td>shy but smart. watches u</td><td>crab meat</td></tr>
+          <tr><td>Glitter ✨</td><td>Angelfish</td><td>dramatic queen tbh</td><td>flake food</td></tr>
+          <tr><td>Chompy 🦷</td><td>Piranha</td><td>misunderstood. very sweet actually</td><td>feeder fish :( sorry</td></tr>
+          <tr><td>Pearl 🌸</td><td>Clownfish</td><td>brave, like nemo</td><td>zooplankton</td></tr>
+        </table>
+
+        <div class="section-header">💻 my links page 💻</div>
+        <p style="font-size:11px;padding:4px 0;">sites i think r cool!! check them out plz 🌟</p>
+        <ul style="padding-left:20px;font-size:11px;line-height:2;">
+          <li><a href="#">🔗 the angelfish appreciation society</a></li>
+          <li><a href="#">🔗 geocities aquarium webrings hub</a></li>
+          <li><a href="#">🔗 free fish wallpapers!! (no viruses i promise)</a></li>
+          <li><a href="#">🔗 my friend kellys page (shes so funny)</a></li>
+          <li><a href="#">🔗 deep sea creatures!! (kinda scary tbh)</a></li>
+          <li><a href="#">🔗 MIDI files - ocean sounds pack vol 3</a></li>
+          <li><a href="#">🔗 how to make ur fish tank not smell</a></li>
+        </ul>
+
+        <div class="section-header">📖 sign my guestbook!! 📖</div>
+        <div class="guestbook-form">
+          <div style="font-size:11px;margin-bottom:6px;">hi! pls leave a message!! i read every single one 🥺💕</div>
+          <input type="text" placeholder="ur name (or screenname!)" style="border:2px inset #808080;background:white;font-family:inherit;font-size:11px;padding:2px;width:100%;margin-bottom:4px;">
+          <input type="text" placeholder="ur homepage URL (optional)" style="border:2px inset #808080;background:white;font-family:inherit;font-size:11px;padding:2px;width:100%;margin-bottom:4px;">
+          <textarea placeholder="say something nice!! ✨" rows="3" style="border:2px inset #808080;background:white;font-family:inherit;font-size:11px;padding:2px;width:100%;resize:vertical;"></textarea>
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <button class="chrome-btn">Submit ✉</button>
+            <button class="chrome-btn">Clear ✕</button>
+          </div>
+        </div>
+
+        <div class="divider-bar"></div>
+
+        <div style="text-align:center;padding:8px 0;font-size:10px;color:#666;">
+          <div>this page has been visited</div>
+          <div class="hit-counter" style="margin:4px auto;display:inline-block;">002847</div>
+          <div>times since july 4 2001 :)</div>
+          <div style="margin-top:8px;">
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style="width:88px;height:31px;border:1px solid #ccc;background:#003399;vertical-align:middle;">
+            <span style="font-size:9px;"> made with notepad!! </span>
+            <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style="width:88px;height:31px;border:1px solid #ccc;background:#ff6600;vertical-align:middle;">
+          </div>
+          <div style="margin-top:6px;font-size:9px;">© fishgirl2001 — please do not steal my graphics!!</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ie-statusbar">
+      <span id="ie-status">✓ Done</span>
+      <span>🔒 Internet</span>
+    </div>
+    <div class="resize-handle" id="ie-resize"></div>
+  </div>
+
+  <!-- Music Player Window -->
+  <div class="win" id="music-window">
+    <div class="title-bar" id="music-titlebar">
+      <div class="title-bar-text">
+        <span>🎵</span> Winamp 2.91
+      </div>
+      <div class="title-bar-controls">
+        <button class="win-btn" onclick="minimizeWin('music-window')">_</button>
+        <button class="win-btn" onclick="closeWin('music-window')">✕</button>
+      </div>
+    </div>
+    <div class="mp-display">
+      <div style="color:#00ff00;font-size:9px;">⏵ PLAYING</div>
+      <div id="mp-track" class="mp-track-name">03. enya - sail away (ocean remix).mp3</div>
+      <div class="mp-time" id="mp-time">2:34 / 4:12</div>
+    </div>
+    <div class="mp-progress-bar">
+      <div class="mp-progress-fill" id="mp-progress" style="width:42%;"></div>
+    </div>
+    <div class="mp-eq" id="mp-eq"></div>
+    <div class="mp-controls">
+      <button class="mp-btn">⏮</button>
+      <button class="mp-btn">⏪</button>
+      <button class="mp-btn" id="mp-play-btn">⏸</button>
+      <button class="mp-btn">⏩</button>
+      <button class="mp-btn">⏭</button>
+    </div>
+    <div style="padding:2px 4px 4px;display:flex;gap:4px;align-items:center;">
+      <span style="font-size:9px;color:#555;">VOL</span>
+      <input type="range" min="0" max="100" value="72" style="width:80px;height:10px;" title="Volume">
+      <span style="font-size:9px;color:#555;">BAL</span>
+      <input type="range" min="0" max="100" value="50" style="width:60px;height:10px;" title="Balance">
+    </div>
+  </div>
+
+  <!-- AIM Window -->
+  <div class="win" id="aim-window">
+    <div class="title-bar" id="aim-titlebar">
+      <div class="title-bar-text">
+        <span>💬</span> Instant Message: xXfishgirl2001Xx
+      </div>
+      <div class="title-bar-controls">
+        <button class="win-btn" onclick="minimizeWin('aim-window')">_</button>
+        <button class="win-btn" onclick="closeWin('aim-window')">✕</button>
+      </div>
+    </div>
+    <div class="aim-header-bar">
+      <span>🐟 xXfishgirl2001Xx</span>
+      <span style="font-size:9px;">AIM 5.1</span>
+    </div>
+    <div class="aim-buddy-info">
+      <div class="aim-online-dot"></div>
+      <span>deepseadreamer77 is online — away: "feeding my fish brb"</span>
+    </div>
+    <div class="aim-chat-area" id="aim-chat">
+      <div class="aim-msg system-msg">deepseadreamer77 has entered the room.</div>
+      <div class="aim-msg"><span class="sender them">deepseadreamer77: </span><span class="msg-text">OMG ur aquarium page is SO COOL</span></div>
+      <div class="aim-msg"><span class="sender me">xXfishgirl2001Xx: </span><span class="msg-text">hehe thx!! took me all weekend to make 😊</span></div>
+      <div class="aim-msg"><span class="sender them">deepseadreamer77: </span><span class="msg-text">did u see my new layout?? <a href="#">www.geocities.com/~seadream</a></span></div>
+      <div class="aim-msg"><span class="sender me">xXfishgirl2001Xx: </span><span class="msg-text">omg yes!! the dolphins gif is everything!!</span></div>
+      <div class="aim-msg"><span class="sender them">deepseadreamer77: </span><span class="msg-text">hey check out this link: <a href="#">free fish screensavers!!</a></span></div>
+      <div class="aim-msg"><span class="sender me">xXfishgirl2001Xx: </span><span class="msg-text">downloading rn lol my mom will be so mad if it has a virus again 💀</span></div>
+      <div class="aim-msg system-msg">xXfishgirl2001Xx is away: "in the bathroom"</div>
+    </div>
+    <div class="aim-input-area">
+      <div class="aim-input-toolbar">
+        <button class="aim-format-btn" title="Bold"><b>B</b></button>
+        <button class="aim-format-btn" title="Italic"><i>I</i></button>
+        <button class="aim-format-btn" title="Underline"><u>U</u></button>
+        <button class="aim-format-btn" title="Color">🎨</button>
+        <button class="aim-format-btn" title="Font">A</button>
+        <div style="flex:1;"></div>
+        <span style="font-size:9px;color:#888;">A/S/L?</span>
+      </div>
+      <textarea class="aim-input" id="aim-input" placeholder="type a message..."></textarea>
+      <div class="aim-send-row">
+        <button class="chrome-btn" onclick="sendAimMsg()">Send ►</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Taskbar -->
+  <div id="taskbar">
+    <button class="start-btn">
+      <span style="font-size:14px;">🪟</span> Start
+    </button>
+    <div class="taskbar-sep"></div>
+    <button class="task-btn active" onclick="bringToFront('ie-window')">🌐 My Aquarium Page</button>
+    <button class="task-btn" onclick="bringToFront('music-window')">🎵 Winamp</button>
+    <button class="task-btn" onclick="bringToFront('aim-window')">💬 AIM - fishgirl</button>
+    <div class="taskbar-sep"></div>
+    <div class="taskbar-clock" id="taskbar-clock">11:42 PM</div>
+  </div>
+</div>
+
+<!-- Scanlines + Vignette -->
+<div id="scanlines"></div>
+<div id="vignette"></div>
+
+<!-- Cursor -->
+<div id="cursor-dot"></div>
+
+<script>
+// ── LOADING SEQUENCE ──
+const loadingMsgs = [
+  "Dialing 555-FISH-NET...",
+  "Negotiating connection...",
+  "Authenticating with server...",
+  "Loading fish GIFs...",
+  "Parsing HTML tables...",
+  "Downloading MIDI files...",
+  "Almost there...",
+  "Connected at 56.6 kbps!"
+];
+
+let loadPct = 0;
+const loadBar = document.getElementById('loading-bar');
+const loadStatus = document.getElementById('loading-status');
+let loadIdx = 0;
+
+const loadInterval = setInterval(() => {
+  loadPct += Math.random() * 18 + 5;
+  if (loadPct > 100) loadPct = 100;
+  loadBar.style.width = loadPct + '%';
+  if (loadIdx < loadingMsgs.length) {
+    loadStatus.textContent = loadingMsgs[Math.floor((loadPct / 100) * (loadingMsgs.length - 1))];
+  }
+  if (loadPct >= 100) {
+    clearInterval(loadInterval);
+    setTimeout(() => {
+      document.getElementById('loading-overlay').style.display = 'none';
+    }, 600);
+  }
+}, 180);
+
+// ── WATER ANIMATION ──
+const canvas = document.getElementById('water-canvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+let waterTime = 0;
+function drawWater() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  waterTime += 0.012;
+
+  const tileW = 80, tileH = 50;
+  const cols = Math.ceil(canvas.width / tileW) + 2;
+  const rows = Math.ceil(canvas.height / tileH) + 2;
+
+  for (let r = -1; r < rows; r++) {
+    for (let c = -1; c < cols; c++) {
+      const ox = (waterTime * 20) % tileW;
+      const oy = (waterTime * 8) % tileH;
+      const x = c * tileW - ox;
+      const y = r * tileH - oy;
+      const wave = Math.sin(waterTime + c * 0.5 + r * 0.3) * 0.4 + 0.6;
+      const alpha = wave * 0.25;
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      // Tile gradient
+      const grad = ctx.createLinearGradient(x, y, x + tileW, y + tileH);
+      grad.addColorStop(0, `hsl(${210 + Math.sin(waterTime + c) * 10}, 80%, ${8 + wave * 6}%)`);
+      grad.addColorStop(0.5, `hsl(${220 + Math.cos(waterTime + r) * 8}, 85%, ${12 + wave * 8}%)`);
+      grad.addColorStop(1, `hsl(${205 + Math.sin(waterTime * 1.3 + c + r) * 12}, 75%, ${6 + wave * 4}%)`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(x, y, tileW, tileH);
+
+      // Wave lines
+      ctx.strokeStyle = `rgba(0, 100, 200, ${wave * 0.3})`;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath();
+      for (let wx = 0; wx <= tileW; wx += 8) {
+        const wy = Math.sin(waterTime * 2 + wx * 0.2 + c + r) * 3 + tileH * 0.5;
+        if (wx === 0) ctx.moveTo(x + wx, y + wy);
+        else ctx.lineTo(x + wx, y + wy);
+      }
+      ctx.stroke();
+
+      ctx.restore();
+    }
+  }
+
+  // Floating bubbles
+  if (Math.random() < 0.03) {
+    bubblesList.push({
+      x: Math.random() * canvas.width,
+      y: canvas.height + 10,
+      r: Math.random() * 8 + 2,
+      speed: Math.random() * 0.8 + 0.3,
+      wobble: Math.random() * Math.PI * 2
+    });
+  }
+
+  bubblesList = bubblesList.filter(b => b.y > -20);
+  bubblesList.forEach(b => {
+    b.y -= b.speed;
+    b.x += Math.sin(waterTime * 2 + b.wobble) * 0.5;
+    ctx.save();
+    ctx.globalAlpha = 0.25;
+    const bg = ctx.createRadialGradient(b.x - b.r * 0.3, b.y - b.r * 0.3, 0, b.x, b.y, b.r);
+    bg.addColorStop(0, 'rgba(255,255,255,0.8)');
+    bg.addColorStop(1, 'rgba(100,180,255,0.1)');
+    ctx.fillStyle = bg;
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(150,200,255,0.4)';
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+    ctx.restore();
+  });
+
+  requestAnimationFrame(drawWater);
+}
+
+let bubblesList = [];
+drawWater();
+
+// ── DRAGGABLE WINDOWS ──
+let zTop = 200;
+function bringToFront(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  zTop++;
+  el.style.zIndex = zTop;
+  el.style.display = 'block';
+  document.querySelectorAll('.title-bar').forEach(tb => tb.classList.add('inactive'));
+  el.querySelector('.title-bar').classList.remove('inactive');
+}
+
+function makeDraggable(win, titlebar) {
+  let dragging = false, startX, startY, winX, winY;
+
+  titlebar.addEventListener('mousedown', e => {
+    if (e.target.classList.contains('win-btn')) return;
+    dragging = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    const rect = win.getBoundingClientRect();
+    winX = rect.left;
+    winY = rect.top;
+    bringToFront(win.id);
+    e.preventDefault();
+  });
+
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    win.style.left = (winX + dx) + 'px';
+    win.style.top = (winY + dy) + 'px';
+    win.style.transform = 'none';
+  });
+
+  document.addEventListener('mouseup', () => { dragging = false; });
+}
+
+makeDraggable(document.getElementById('ie-window'), document.getElementById('ie-titlebar'));
+makeDraggable(document.getElementById('music-window'), document.getElementById('music-titlebar'));
+makeDraggable(document.getElementById('aim-window'), document.getElementById('aim-titlebar'));
+
+function closeWin(id) {
+  document.getElementById(id).style.display = 'none';
+}
+
+function minimizeWin(id) {
+  const el = document.getElementById(id);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+// Click on windows to bring to front
+['ie-window','music-window','aim-window'].forEach(id => {
+  document.getElementById(id).addEventListener('mousedown', () => bringToFront(id));
+});
+
+// ── CHROME BUTTON DEPRESS ──
+document.querySelectorAll('.chrome-btn, .mp-btn').forEach(btn => {
+  btn.addEventListener('mousedown', () => btn.classList.add('depressed'));
+  btn.addEventListener('mouseup', () => btn.classList.remove('depressed'));
+  btn.addEventListener('mouseleave', () => btn.classList.remove('depressed'));
+});
+
+// ── CURSOR TRAIL ──
+const cursorDot = document.getElementById('cursor-dot');
+let mouseX = 0, mouseY = 0;
+let lastBubble = 0;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  cursorDot.style.left = mouseX + 'px';
+  cursorDot.style.top = mouseY + 'px';
+
+  const now = Date.now();
+  if (now - lastBubble > 60) {
+    lastBubble = now;
+    const b = document.createElement('div');
+    b.className = 'bubble-trail';
+    const size = Math.random() * 8 + 4;
+    b.style.cssText = `width:${size}px;height:${size}px;left:${mouseX}px;top:${mouseY}px;`;
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 1200);
+  }
+});
+
+// ── CLOCK ──
+function updateClock() {
+  const d = new Date();
+  let h = d.getHours(), m = d.getMinutes();
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  document.getElementById('taskbar-clock').textContent =
+    h + ':' + String(m).padStart(2,'0') + ' ' + ampm;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ── EQ BARS ──
+const eq = document.getElementById('mp-eq');
+const eqHeights = [14, 10, 16, 12, 18, 9, 14, 16, 11, 13, 15, 8];
+const eqSpeeds = [0.6, 0.4, 0.7, 0.5, 0.45, 0.8, 0.6, 0.5, 0.7, 0.4, 0.65, 0.55];
+eqHeights.forEach((h, i) => {
+  const bar = document.createElement('div');
+  bar.className = 'eq-bar';
+  bar.style.setProperty('--h', h + 'px');
+  bar.style.setProperty('--spd', eqSpeeds[i] + 's');
+  bar.style.animationDelay = (i * 0.07) + 's';
+  eq.appendChild(bar);
+});
+
+// ── MUSIC PLAYER PROGRESS ──
+let progress = 42, playing = true, trackTime = 154;
+const tracks = [
+  "03. enya - sail away (ocean remix).mp3",
+  "07. dido - thank you.mp3",
+  "02. enigma - return to innocence.mp3",
+  "11. moby - porcelain.mp3",
+  "05. bjork - hyperballad.mp3"
+];
+let currentTrack = 0;
+
+setInterval(() => {
+  if (!playing) return;
+  trackTime++;
+  progress += 0.4;
+  if (progress > 100) { progress = 0; trackTime = 0; currentTrack = (currentTrack + 1) % tracks.length; }
+  document.getElementById('mp-progress').style.width = progress + '%';
+  const cur = Math.floor(trackTime);
+  const total = 252;
+  const cm = Math.floor(cur / 60), cs = cur % 60;
+  const tm = Math.floor(total / 60), ts = total % 60;
+  document.getElementById('mp-time').textContent =
+    cm + ':' + String(cs).padStart(2,'0') + ' / ' + tm + ':' + String(ts).padStart(2,'0');
+  document.getElementById('mp-track').textContent = tracks[currentTrack];
+}, 1000);
+
+document.getElementById('mp-play-btn').addEventListener('click', () => {
+  playing = !playing;
+  document.getElementById('mp-play-btn').textContent = playing ? '⏸' : '▶';
+  eq.querySelectorAll('.eq-bar').forEach(b => b.style.animationPlayState = playing ? 'running' : 'paused');
+});
+
+// ── AIM CHAT ──
+const aimMessages = [
+  {sender: 'deepseadreamer77', text: 'hey omg did u see the new finding nemo trailer???'},
+  {sender: 'me', text: 'WAIT WHAT NO LINK PLEASE'},
+  {sender: 'deepseadreamer77', text: 'hold on finding it brb'},
+  {sender: 'deepseadreamer77', text: 'ok nvm that was a fake site. anyway'},
+  {sender: 'me', text: 'lmaooo ur gonna get another virus 💀'},
+  {sender: 'deepseadreamer77', text: 'shut up ur the one who clicked the "ur the 1000000th visitor" popup'},
+  {sender: 'me', text: 'THAT WAS ONE TIME'},
+  {sender: 'deepseadreamer77', text: '🐟🐟🐟'},
+  {sender: 'me', text: 'hey have u heard of this band dashboard confessional'},
+  {sender: 'deepseadreamer77', text: 'yes!! they r so deep and emotional'},
+  {sender: 'me', text: 'right!! ok im updating my away message to a lyric'},
+  {sender: 'deepseadreamer77', text: '✨ iconic ✨'},
+  {sender: 'system', text: 'xXfishgirl2001Xx has set away message: "swimming with the fishies... back l8r 🌊"'}
+];
+
+let aimIdx = 0;
+function addAimMsg() {
+  if (aimIdx >= aimMessages.length) { aimIdx = 0; }
+  const m = aimMessages[aimIdx++];
+  const chat = document.getElementById('aim-chat');
+  const div = document.createElement('div');
+  div.className = 'aim-msg' + (m.sender === 'system' ? ' system-msg' : '');
+  if (m.sender === 'system') {
+    div.textContent = m.text;
+  } else {
+    div.innerHTML = `<span class="sender ${m.sender === 'me' ? 'me' : 'them'}">${m.sender === 'me' ? 'xXfishgirl2001Xx' : m.sender}: </span><span class="msg-text">${m.text}</span>`;
+  }
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+setInterval(addAimMsg, 4500);
+
+function sendAimMsg() {
+  const input = document.getElementById('aim-input');
+  const val = input.value.trim();
+  if (!val) return;
+  const chat = document.getElementById('aim-chat');
+  const div = document.createElement('div');
+  div.className = 'aim-msg';
+  div.innerHTML = `<span class="sender me">xXfishgirl2001Xx: </span><span class="msg-text">${val}</span>`;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  input.value = '';
+}
+
+document.getElementById('aim-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAimMsg(); }
+});
+
+// ── IE STATUS BAR MESSAGES ──
+const ieStatuses = ['✓ Done', '⏳ Connecting to geocities.com...', '📥 Loading images (3 of 8)...', '✓ Done', '✓ Local intranet'];
+let statusIdx = 0;
+setInterval(() => {
+  document.getElementById('ie-status').textContent = ieStatuses[statusIdx % ieStatuses.length];
+  statusIdx++;
+}, 7000);
+
+// ── BRING IE TO FRONT INITIALLY ──
+setTimeout(() => bringToFront('ie-window'), 700);
+</script>
+</body>
+</html>

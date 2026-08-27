@@ -1,0 +1,13 @@
+{
+  "title": "Neurodigital Prayer Device",
+  "slug": "neurodigital-prayer-device",
+  "category": "terminals",
+  "description": "Mystical consciousness interface presented as a neurodigital prayer device.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/psychical",
+  "source_commit": "33162fe25d29d8a2e71478b7d5013431468d2719",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

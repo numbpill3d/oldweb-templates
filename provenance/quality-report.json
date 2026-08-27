@@ -1,0 +1,110 @@
+{
+  "html_files": 28,
+  "unresolved_local_references": [
+    {
+      "file": "templates/desktops/win98-homepage/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "/api/placeholder/80/80"
+    },
+    {
+      "file": "templates/desktops/win98-homepage/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "/api/placeholder/80/80"
+    },
+    {
+      "file": "templates/desktops/win98-homepage/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "/api/placeholder/80/80"
+    },
+    {
+      "file": "templates/desktops/win98-homepage/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "/api/placeholder/16/16"
+    },
+    {
+      "file": "templates/desktops/win98-homepage/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "/api/placeholder/24/24"
+    },
+    {
+      "file": "templates/profiles/fruitiger-aero/index.html",
+      "tag": "link",
+      "attribute": "href",
+      "reference": "styles.css"
+    },
+    {
+      "file": "templates/profiles/fruitiger-aero/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "pfp.png"
+    },
+    {
+      "file": "templates/profiles/fruitiger-aero/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "floating1.gif"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/retro-tv.png"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/screenshots/screenshot1.png"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/screenshots/screenshot2.png"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/book-covers/book1.jpg"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/book-covers/book2.jpg"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/screenshots/screenshot1.png"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/screenshots/screenshot2.png"
+    },
+    {
+      "file": "templates/publishing/retro-newsroom/index.html",
+      "tag": "img",
+      "attribute": "src",
+      "reference": "assets/avatar.png"
+    }
+  ],
+  "unresolved_count": 16,
+  "preview_templates": 28,
+  "preview_captures": 56,
+  "preview_captures_ok": 56,
+  "notes": [
+    "Source files are preserved byte-for-byte from migration clones.",
+    "Preview-only fallbacks may hide loading overlays or remove scripts when automated capture is otherwise blocked."
+  ],
+  "unique_unresolved_count": 12
+}

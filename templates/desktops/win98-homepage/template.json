@@ -1,0 +1,13 @@
+{
+  "title": "Windows 98 Homepage",
+  "slug": "win98-homepage",
+  "category": "desktops",
+  "description": "Windows 98-style personal homepage with biography and embedded-site areas.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/oldwebtime",
+  "source_commit": "a0a62c02528bc2bc85d20f1ea1959c6aa31a719f",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Darknet Bazaar",
+  "slug": "darknet-bazaar",
+  "category": "terminals",
+  "description": "Cyberpunk marketplace mockup with an unauthorized-access terminal treatment.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/darknetbaztheme",
+  "source_commit": "8d43532d2f08897df37da4fd1b5124722eb53eb6",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

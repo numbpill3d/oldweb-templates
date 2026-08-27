@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>nexys :: X11/Neocities Profile Desktop</title>
+<meta name="description" content="Early Linux/X11 OS UI aesthetic with chromatic gradient three.js background. Draggable windows, tabs, gallery, terminal, widgets." />
+
+<style>
+/* =========================================================
+   EARLY LINUX / X11 AESTHETIC DESKTOP — MAXIMALIST BUILD
+   ========================================================= */
+
+/* ---------- Root Theme Tokens ---------- */
+:root{
+  --bg-0: #0b0c10;          /* desktop black */
+  --bg-1: #0f1116;          /* panel / dock */
+  --bg-2: #14171f;          /* window body */
+  --bg-3: #252a36;          /* bevel dark */
+  --bg-4: #2e3444;          /* bevel light */
+  --chrome-1: #c9d0db;      /* classic gray (titlebar light) */
+  --chrome-2: #98a2b3;      /* classic gray (titlebar dark) */
+  --chrome-3: #556177;      /* titlebar strip accent */
+  --accent: #7df9ff;        /* neon ice blue */
+  --accent-2: #ff4df2;      /* magenta */
+  --accent-3: #aaff5f;      /* neon green */
+  --warning: #ffcc00;       /* amber */
+  --ok: #4dffbf;            /* mint */
+  --danger: #ff3b3b;        /* red */
+  --text-hi: #e8edf3;
+  --text-mid:#c7cfdd;
+  --text-dim:#97a0af;
+  --link: #8fd3ff;
+  --link-visited:#c4b5fd;
+  --grid: rgba(255,255,255,0.07);
+
+  --shadow-strong: 0 16px 32px rgba(0,0,0,0.6), 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-soft:   0 8px 18px rgba(0,0,0,0.35);
+
+  --chrome-radius: 8px;
+  --chrome-gap: 10px;
+  --chrome-border: 1px;
+
+  --scanline: linear-gradient(rgba(255,255,255,0.04), rgba(0,0,0,0.05));
+}
+
+/* ---------- CSS Reset-ish ---------- */
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; height:100%; }
+html{ background: var(--bg-0); }
+body{
+  color: var(--text-mid);
+  font: 14px/1.45 "Lucida Console", "Courier New", monospace;
+  overflow:hidden; /* Desktop vibe */
+  cursor: default;
+  user-select: none;
+}
+
+/* ---------- Background Canvas + FX ---------- */
+#bg{
+  position:fixed; inset:0; display:block; width:100%; height:100%;
+  background: radial-gradient(1600px 800px at 10% 10%, #0d1220, #0a0c12 35%, #05070a 70%, #030407 100%);
+  z-index:-2;
+}
+
+/* CRT scanlines + vignette */
+#crt-overlay{
+  pointer-events:none; position:fixed; inset:0; z-index:-1;
+  background-image:
+     repeating-linear-gradient(0deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 3px),
+     radial-gradient(1200px 800px at 50% 50%, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 65%, rgba(0,0,0,0.35) 100%);
+  mix-blend-mode: screen;
+  filter: contrast(1.03) saturate(1.04);
+}
+
+/* ---------- Desktop Grid (subtle) ---------- */
+.desktop-grid{
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px, 24px 24px;
+  mask-image: radial-gradient(1200px 700px at 70% 40%, rgba(0,0,0,1), rgba(0,0,0,0.4), rgba(0,0,0,0));
+}
+
+/* ---------- Cursor sparkle trail ---------- */
+.sparkle{
+  position:fixed; width:6px; height:6px; border-radius:50%;
+  background: radial-gradient(circle, #fff, rgba(255,255,255,0) 70%);
+  pointer-events:none; z-index:9999; opacity:0.9; filter: blur(0.5px);
+  animation: sparkfade 600ms ease-out forwards;
+}
+@keyframes sparkfade{
+  to{ transform: translateY(10px) scale(0.4); opacity:0; }
+}
+
+/* ---------- Panel / Dock (top) ---------- */
+.panel{
+  position:fixed; left:0; right:0; top:0; height:36px; z-index:1000;
+  background: linear-gradient(#1a1f2c, #0f1320);
+  border-bottom: 1px solid #2d3244;
+  display:flex; align-items:center; gap:12px; padding:0 12px;
+  box-shadow: var(--shadow-soft);
+}
+.panel .brand{
+  color: var(--text-hi); letter-spacing:1px; font-weight:bold;
+  text-shadow: 0 1px 0 #000;
+}
+.panel .tasklist{ display:flex; gap:8px; flex: 1; overflow:hidden; }
+.panel .task {
+  padding:6px 10px; border:1px solid #2e3547; border-radius:6px;
+  background: linear-gradient(#212638, #151a2b);
+  color:#cfe7ff; font-size:12px; white-space:nowrap; max-width: 180px; overflow:hidden; text-overflow:ellipsis;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.panel .task:hover {
+  background: linear-gradient(#28304a, #1a213a);
+}
+.panel .task.active{
+  border-color:#3a4460; background: linear-gradient(#2a3150, #1a203a);
+}
+.panel .systray{ display:flex; align-items:center; gap:10px; }
+.led{
+  width:10px; height:10px; border-radius:50%;
+  box-shadow: 0 0 10px currentColor, inset 0 0 4px rgba(0,0,0,0.8);
+  transition: all 0.3s ease;
+}
+.led.green{ color: var(--ok); background: var(--ok); }
+.led.amber{ color: var(--warning); background: var(--warning); }
+.led.red{ color: var(--danger); background: var(--danger); }
+.clock{ color:#e2ebff; font-size:12px; opacity:0.9; }
+
+/* ---------- Desktop Icons ---------- */
+.desktop{
+  position:fixed; inset:36px 0 28px 0; /* below panel, above dock */
+  padding: 16px; overflow:hidden;
+}
+.icon-grid{
+  display:grid; grid-template-columns: repeat(auto-fill, 86px); gap: 8px 16px; width: 380px;
+}
+.icon{
+  width:86px; text-align:center; color:#d9e6ff; text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+  filter: drop-shadow(0 2px 0 rgba(0,0,0,0.3));
+  user-select:none; cursor: pointer;
+  transition: all 0.2s ease;
+}
+.icon:hover {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,0.4));
+}
+.icon img{
+  width:64px; height:64px; image-rendering: pixelated; border-radius:6px;
+  border: 1px solid #2f3a50; background: #0f1422; padding:6px;
+}
+.icon span{ display:block; margin-top:4px; font-size:12px; }
+
+/* ---------- Window Manager ---------- */
+.window{
+  position:absolute; min-width: 340px; min-height: 220px; width: 520px; height: 360px;
+  border: var(--chrome-border) solid #3e495c;
+  background: var(--bg-2);
+  box-shadow: var(--shadow-strong);
+  border-radius: var(--chrome-radius);
+  overflow:hidden;
+  transition: backdrop-filter 0.3s ease, box-shadow 0.3s ease;
+}
+.window[data-floating="true"]{ 
+  backdrop-filter: blur(3px) saturate(1.1);
+  box-shadow: var(--shadow-strong), 0 0 20px rgba(125, 249, 255, 0.2);
+}
+.window:focus-within{ outline: 2px solid rgba(125,249,255,0.3); }
+
+.titlebar{
+  height: 34px; display:flex; align-items:center; justify-content:space-between; gap:8px;
+  background: linear-gradient(#cdd6e3, #9aa6bb);
+  border-bottom: 1px solid #5a667c;
+  padding: 0 8px 0 0; user-select:none; cursor: move;
+  position:relative;
+  border-top-left-radius: var(--chrome-radius);
+  border-top-right-radius: var(--chrome-radius);
+}
+.titlebar::after{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(90deg, rgba(125,249,255,0.25), rgba(255,77,242,0.18), rgba(170,255,95,0.18));
+  mix-blend-mode: overlay; pointer-events:none;
+}
+.titlebar .grip{
+  background: repeating-linear-gradient(90deg, #556177 0, #556177 2px, #3c4658 2px, #3c4658 4px);
+  width: 150px; height: 18px; margin-left:8px; border-radius:4px; border:1px solid #6b7b95;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.35);
+  cursor: move;
+}
+.titlebar .title{
+  flex:1; padding-left:10px; color:#0c1120; text-shadow: 0 1px 0 rgba(255,255,255,0.65); font-weight:bold;
+  font-size:13px;
+  animation: title-glitch 5s linear infinite alternate;
+}
+@keyframes title-glitch{
+  2%{ text-shadow: 1px 0 #f0f, -1px 0 #0ff; }
+  3%{ text-shadow: -1px 0 #f0f, 1px 0 #0ff; }
+  4%{ text-shadow: none; }
+}
+
+.win-btns{ display:flex; gap:6px; }
+.win-btn{
+  width:18px; height:18px; border-radius:3px; border:1px solid #4b5568; background:#e6ecf5;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 0 rgba(0,0,0,0.25);
+  display:grid; place-items:center; font-weight:bold; color:#1c2334; cursor:pointer;
+  transition: all 0.2s ease;
+}
+.win-btn:hover{ filter: brightness(0.95); transform: scale(1.1); }
+.win-btn.close{ background: linear-gradient(#ffd8d8, #ff9e9e); border-color:#744; color:#400; }
+.win-btn.close:hover { background: linear-gradient(#ffb8b8, #ff7e7e); }
+
+.window .content{
+  position:absolute; inset:34px 0 0 0; display:flex; flex-direction: column;
+}
+.window .inner{
+  flex:1; background: linear-gradient(#121622, #0e1320); padding: 12px; overflow:auto;
+}
+.window .statusbar{
+  height:22px; display:flex; align-items:center; gap:10px; padding:0 8px;
+  border-top: 1px solid #2e3a4f; background: linear-gradient(#0f1423, #0b1020);
+  font-size:12px; color:#9db3d9;
+}
+
+/* make inner areas resizable if needed */
+.resizable { resize: both; overflow:auto; min-height: 120px; min-width: 220px; }
+
+/* ---------- Generic UI Elements ---------- */
+.hr{ height:1px; background: linear-gradient(90deg, transparent, #2c3a58, transparent); margin:12px 0; }
+a{ color: var(--link); text-decoration: none; }
+a:hover{ text-decoration: underline; }
+
+.tag{
+  display:inline-block; padding:2px 6px; border:1px solid #3a4664; border-radius:5px;
+  background:#101423; color:#bcd0f5; margin:2px 4px 0 0; font-size:12px;
+  transition: all 0.2s ease;
+}
+.tag:hover {
+  background:#17203a;
+  box-shadow: 0 0 6px rgba(125, 249, 255, 0.3);
+}
+
+.badge{
+  display:inline-block; padding:3px 8px; border:1px solid #495573; border-radius:999px;
+  background: linear-gradient(#1a2240, #121a34); font-size:11px; color:#b3c6ef;
+}
+
+/* ---------- Tabs ---------- */
+.tabs{ display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap; }
+.tab{
+  padding:6px 10px; border:1px solid #3b4761; border-bottom: none; border-top-left-radius:6px; border-top-right-radius:6px;
+  background: linear-gradient(#21283c, #1a2134);
+  color:#cfe6ff; cursor:pointer; font-weight:bold; text-shadow: 0 1px 0 #000;
+  transition: all 0.2s ease;
+}
+.tab:hover {
+  background: linear-gradient(#252d45, #1d253d);
+}
+.tab.active{
+  background: linear-gradient(#2a3350, #222a42); color:#ffffff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+}
+.tabpanes{ border:1px solid #3b4761; border-radius:6px; overflow:hidden; }
+.pane{ display:none; padding:12px; background:#0f1423; }
+.pane.active{ display:block; }
+
+/* ---------- Flipcards ---------- */
+.flipgrid{ display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:12px; }
+.flip{
+  perspective:1000px; height: 180px;
+}
+.flip-inner{
+  position:relative; width:100%; height:100%; transform-style:preserve-3d; transition: transform .7s cubic-bezier(.2,.8,.2,1);
+}
+.flip:hover .flip-inner{ transform: rotateY(180deg); }
+.flip-front, .flip-back{
+  position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:10px;
+  border:1px solid #3a4561; border-radius:8px; background: radial-gradient(180px 80px at 50% 0%, rgba(125,249,255,0.14), transparent 70%), linear-gradient(#12182b, #0e1427);
+  backface-visibility:hidden;
+}
+.flip-back{ transform: rotateY(180deg); }
+
+/* ---------- Gallery Grid ---------- */
+.gallery{
+  --size: 140px;
+  display:grid; grid-template-columns: repeat(auto-fill, minmax(var(--size), 1fr));
+  gap:10px;
+}
+.gallery figure{
+  margin:0; border:1px solid #2f3a55; border-radius:8px; overflow:hidden; background:#0a0f1d;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 6px 14px rgba(0,0,0,0.35);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.gallery figure:hover {
+  transform: translateY(-3px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 8px 18px rgba(0,0,0,0.5);
+}
+.gallery img{
+  display:block; width:100%; height:120px; object-fit:cover;
+  filter: saturate(1.15) contrast(1.05);
+}
+.gallery figcaption{ padding:8px; font-size:12px; color:#bacef3; }
+
+/* ---------- Scrollboxes ---------- */
+.scrollbox{
+  max-height: 220px; overflow:auto; border:1px solid #2c3750; border-radius:6px; padding:10px;
+  background: linear-gradient(#0e1322, #0b0f1c);
+}
+
+/* ---------- Fake Chatbox ---------- */
+.chat{
+  display:flex; flex-direction:column; gap:8px;
+}
+.msg{ display:flex; gap:8px; align-items:flex-start; }
+.msg .avatar{
+  width:28px; height:28px; border-radius:4px; border:1px solid #3d4a63; background:#0c1120;
+}
+.msg .bubble{
+  padding:8px 10px; border:1px solid #3c4966; border-radius:8px;
+  background: linear-gradient(#151c30, #0e162b); max-width: 70%;
+  color:#cfe1ff;
+}
+.chat-input{
+  display:flex; gap:8px; margin-top:8px;
+}
+.chat-input input{
+  flex:1; padding:8px; border:1px solid #2e3952; border-radius:6px; background:#0b1020; color:#cfe1ff;
+  transition: all 0.2s ease;
+}
+.chat-input input:focus {
+  outline: none;
+  border-color: #3a68b4;
+  box-shadow: 0 0 0 2px rgba(58, 104, 180, 0.3);
+}
+.chat-input button{
+  padding:8px 12px; border:1px solid #3a4661; border-radius:6px; background:#111931; color:#cfe1ff; cursor:pointer;
+  transition: all 0.2s ease;
+}
+.chat-input button:hover{ filter:brightness(1.2); transform: translateY(-1px); }
+
+/* ---------- Terminal ---------- */
+.terminal{
+  background:#000; color:#8cff9a; border:1px solid #1f1f1f; border-radius:6px; padding:10px; font-size:13px;
+  text-shadow: 0 0 2px rgba(140,255,154,0.15);
+}
+.terminal .prompt{ color:#7df9ff; }
+.terminal .out{ color:#b2ffb8; }
+.terminal .error{ color:#ff9494; }
+.terminal input{
+  width:100%; background:transparent; border:none; color:#8cff9a; outline:none; caret-color:#7df9ff;
+}
+
+/* ---------- Dock (bottom) ---------- */
+.dock{
+  position:fixed; left:0; right:0; bottom:0; height:28px; z-index:1000;
+  background: linear-gradient(#0f1423, #0b1020);
+  border-top: 1px solid #2a3146; display:flex; align-items:center; gap:8px; padding: 0 10px;
+}
+.dock .marquee{
+  flex:1; overflow:hidden; white-space:nowrap; color:#90a9da; font-size:12px;
+}
+.marquee span{ display:inline-block; padding-left:100%; animation: scrollmar 18s linear infinite; }
+@keyframes scrollmar{ to{ transform: translateX(-100%); } }
+
+/* ---------- 88x31 Buttons Row ---------- */
+.buttons-88{
+  display:flex; gap:6px; flex-wrap:wrap; padding-top:8px;
+}
+.btn-88{
+  width:88px; height:31px; border:1px solid #3c4660; image-rendering: pixelated;
+  background:
+    linear-gradient(#161b2a, #0f1423),
+    repeating-linear-gradient(90deg, rgba(125,249,255,0.08) 0 2px, transparent 2px 4px);
+  display:grid; place-items:center; color:#cfe6ff; font-size:10px; text-transform:uppercase; border-radius:4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+.btn-88:hover {
+  background:
+    linear-gradient(#1a2135, #12182a),
+    repeating-linear-gradient(90deg, rgba(125,249,255,0.15) 0 2px, transparent 2px 4px);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+/* ---------- Glows & selection ---------- */
+.glow{ box-shadow: 0 0 0 2px rgba(125,249,255,0.17), 0 0 22px rgba(125,249,255,0.18); }
+::selection{ background:#223a63; color:#d8ecff; }
+
+/* ---------- Utility ---------- */
+.hide{ display:none !important; }
+.center{ text-align:center; }
+.small{ font-size:12px; opacity:0.85; }
+
+/* ---------- Responsive tweaks ---------- */
+@media (max-width: 980px){
+  .icon-grid{ width: auto; grid-template-columns: repeat(3, 86px); }
+  .window{ width: 92vw; left: 4vw !important; }
+  .flipgrid{ grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); }
+  .gallery{ grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); }
+}
+
+@media (max-width: 768px){
+  .panel .task { max-width: 120px; }
+  .window { min-width: 300px; width: 85vw; }
+  .titlebar .grip { width: 100px; }
+}
+
+@media (max-width: 480px){
+  .panel { height: 42px; flex-wrap: wrap; }
+  .desktop { inset: 42px 0 28px 0; }
+  .panel .brand { font-size: 12px; }
+  .panel .task { max-width: 90px; font-size: 10px; padding: 4px 6px; }
+  .window { min-width: 280px; width: 95vw; }
+  .titlebar .grip { width: 80px; }
+  .titlebar .title { font-size: 11px; }
+}
+
+/* ---------- Scrollbar styling ---------- */
+*::-webkit-scrollbar{ height:10px; width:10px; }
+*::-webkit-scrollbar-track{ background:#0a0f1c; }
+*::-webkit-scrollbar-thumb{ background:#2a3450; border:2px solid #0a0f1c; border-radius:10px; transition: all 0.3s ease; }
+*::-webkit-scrollbar-thumb:hover{ background:#364268; }
+
+/* ---------- Easter egg: window tremor ---------- */
+@keyframes tremor{
+  0%,100%{ transform: translate(0,0); }
+  30%{ transform: translate(-1px, 1px); }
+  60%{ transform: translate(1px, -1px); }
+}
+
+/* ---------- Window drag feedback ---------- */
+.window-dragging {
+  opacity: 0.9;
+  box-shadow: var(--shadow-strong), 0 0 20px rgba(125, 249, 255, 0.4) !important;
+}
+
+/* ---------- Focus states for accessibility ---------- */
+.win-btn:focus-visible,
+.tab:focus-visible,
+.btn-88:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+</style>
+</head>
+<body>
+
+<!-- THREE.JS BACKGROUND -->
+<canvas id="bg"></canvas>
+<div id="crt-overlay"></div>
+<div class="desktop-grid"></div>
+
+<!-- TOP PANEL -->
+<div class="panel" id="panel">
+  <div class="brand">⟨ X11 • HIDDEN LAYER DESKTOP ⟩</div>
+  <div class="tasklist" id="tasklist"></div>
+  <div class="systray">
+    <div class="led green" title="Renderer OK"></div>
+    <div class="led amber" id="net-led" title="Net Activity"></div>
+    <div class="led red" id="event-led" title="Event Log"></div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+</div>
+
+<!-- DESKTOP AREA -->
+<div class="desktop" id="desktop">
+  <div class="icon-grid">
+    <div class="icon" data-open="#win-about">
+      <img alt="About icon" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='8' ry='8' fill='%230f1423' stroke='%233a4661'/><circle cx='32' cy='22' r='10' fill='%237df9ff'/><rect x='12' y='38' width='40' height='12' rx='6' fill='%23aaff5f'/></svg>">
+      <span>About</span>
+    </div>
+    <div class="icon" data-open="#win-gallery">
+      <img alt="Gallery icon" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%237df9ff'/><stop offset='1' stop-color='%23ff4df2'/></linearGradient></defs><rect width='64' height='64' rx='8' ry='8' fill='%230f1423' stroke='%233a4661'/><rect x='10' y='10' width='44' height='30' fill='url(%23g)'/><circle cx='38' cy='20' r='6' fill='%23fff'/></svg>">
+      <span>Gallery</span>
+    </div>
+    <div class="icon" data-open="#win-terminal">
+      <img alt="Terminal icon" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='8' ry='8' fill='%23000000' stroke='%233a4661'/><text x='10' y='36' font-family='monospace' font-size='20' fill='%238cff9a'>&gt;_</text></svg>">
+      <span>Terminal</span>
+    </div>
+    <div class="icon" data-open="#win-chat">
+      <img alt="Chat icon" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='8' ry='8' fill='%230f1423' stroke='%233a4661'/><path d='M10 14h44v24H28l-8 10v-10H10z' fill='%237df9ff' opacity='.5'/></svg>">
+      <span>Chat</span>
+    </div>
+    <div class="icon" data-open="#win-links">
+      <img alt="Links icon" src="data:image/svg+xml;utf8,<?xml version='1.0'?><svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' rx='8' ry='8' fill='%230f1423' stroke='%233a4661'/><path d='M20 26h24v4H20zm0 10h24v4H20zm0 10h16v4H20z' fill='%23cfe1ff'/></svg>">
+      <span>Links</span>
+    </div>
+  </div>
+</div>
+
+<!-- WINDOWS -->
+<!-- About / Profile -->
+<div class="window" id="win-about" style="left: 430px; top: 120px;">
+  <div class="titlebar">
+    <div class="grip"></div>
+    <div class="title">Profile · /home/nexys</div>
+    <div class="win-btns">
+      <div class="win-btn" data-float title="Toggle translucency">◻</div>
+      <div class="win-btn" data-min title="Minimize">—</div>
+      <div class="win-btn close" data-close title="Close">×</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="inner">
+      <div class="tabs" data-tabs="#about-tabs">
+        <div class="tab active" data-tab="pane-overview">Overview</div>
+        <div class="tab" data-tab="pane-stats">Stats</div>
+        <div class="tab" data-tab="pane-widgets">Widgets</div>
+      </div>
+      <div class="tabpanes" id="about-tabs">
+        <div class="pane active" id="pane-overview">
+          <div style="display:grid; grid-template-columns: 160px 1fr; gap:14px; align-items:start;">
+            <div>
+              <img src="https://picsum.photos/seed/xen/320/320" alt="profile" style="width:100%; border:1px solid #3a4661; border-radius:8px; display:block;">
+              <div class="buttons-88">
+                <div class="btn-88">Neocities</div>
+                <div class="btn-88">Nekoweb</div>
+                <div class="btn-88">RSS</div>
+              </div>
+            </div>
+            <div>
+              <h3 style="margin:0 0 6px; color:#eaf3ff;">nexys / splicer</h3>
+              <div class="badge">programmer</div>
+              <div class="badge">entrepreneur</div>
+              <div class="badge">artist</div>
+              <div class="hr"></div>
+              <div class="scrollbox">
+                <p><strong>about:</strong> indie-web tinkerer, early-linux enjoyer, and UI necromancer. i build retro-futurist interfaces and weird pets.</p>
+                <p><strong>likes:</strong> ghost networks, crt glow, three.js shaders, telvanni-style architectures, teamSESH vibes.</p>
+                <p><strong>dislikes:</strong> over-simplified ui, bland gradients, soulless dashboards.</p>
+                <p class="small">tip: drag windows, use the terminal <em>(help)</em>, and click desktop icons. easter eggs exist.</p>
+              </div>
+              <div style="margin-top:10px;">
+                <span class="tag">#web1.0</span>
+                <span class="tag">#x11</span>
+                <span class="tag">#shader</span>
+                <span class="tag">#neocities</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pane" id="pane-stats">
+          <div class="flipgrid">
+            <div class="flip">
+              <div class="flip-inner">
+                <div class="flip-front">
+                  <div style="font-size:28px; color:#7df9ff;">2133</div>
+                  <div class="small">sigil</div>
+                </div>
+                <div class="flip-back">
+                  <div class="small">echoes from the desolace.</div>
+                  <div>custom glyph system for UI markers.</div>
+                </div>
+              </div>
+            </div>
+            <div class="flip">
+              <div class="flip-inner">
+                <div class="flip-front">
+                  <div style="font-size:28px; color:#aaff5f;">FPS</div>
+                  <div id="fps" class="small">--</div>
+                </div>
+                <div class="flip-back">
+                  <div>live renderer stats</div>
+                  <div class="small">background shader + particles</div>
+                </div>
+              </div>
+            </div>
+            <div class="flip">
+              <div class="flip-inner">
+                <div class="flip-front">
+                  <div style="font-size:28px; color:#ff4df2;">WINDOWS</div>
+                  <div id="win-count" class="small">--</div>
+                </div>
+                <div class="flip-back">
+                  <div>active managed windows</div>
+                  <div class="small">click icons, move, minimize</div>
+                </div>
+              </div>
+            </div>
+            <div class="flip">
+              <div class="flip-inner">
+                <div class="flip-front">
+                  <div style="font-size:22px; color:#e8edf3;">UPTIME</div>
+                  <div id="uptime" class="small">00:00</div>
+                </div>
+                <div class="flip-back">
+                  <div class="small">session uptime since load</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="pane" id="pane-widgets">
+          <div class="scrollbox resizable">
+            <h4 style="margin-top:0; color:#eaf3ff;">mini widgets</h4>
+            <ul>
+              <li>entropy ticker: <span id="entropy" class="badge">0.000</span></li>
+              <li>net activity: <span id="net-activity" class="badge">idle</span></li>
+              <li>random glitch pulse: <span id="glitch" class="badge">ready</span></li>
+            </ul>
+            <p class="small">drag the corner to resize this region. hover for glow.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="statusbar">
+      <div>🖥️ window · profile</div>
+      <div style="margin-left:auto;">pos:<span class="small" id="about-pos">--</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Gallery -->
+<div class="window" id="win-gallery" style="left: 120px; top: 160px; width: 720px; height:460px;">
+  <div class="titlebar">
+    <div class="grip"></div>
+    <div class="title">Gallery · /home/nexys/pictures</div>
+    <div class="win-btns">
+      <div class="win-btn" data-float>◻</div>
+      <div class="win-btn" data-min>—</div>
+      <div class="win-btn close" data-close>×</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="inner">
+      <div class="tabs" data-tabs="#gal-tabs">
+        <div class="tab active" data-tab="pane-art">Art</div>
+        <div class="tab" data-tab="pane-photos">Photos</div>
+        <div class="tab" data-tab="pane-zines">Zines</div>
+      </div>
+      <div class="tabpanes" id="gal-tabs">
+        <div class="pane active" id="pane-art">
+          <div class="gallery">
+            <figure><img src="https://picsum.photos/seed/a/640/480" alt="art a"><figcaption>artifact a</figcaption></figure>
+            <figure><img src="https://picsum.photos/seed/b/640/480" alt="art b"><figcaption>artifact b</figcaption></figure>
+            <figure><img src="https://picsum.photos/seed/c/640/480" alt="art c"><figcaption>artifact c</figcaption></figure>
+            <figure><img src="https://picsum.photos/seed/d/640/480" alt="art d"><figcaption>artifact d</figcaption></figure>
+            <figure><img src="https://picsum.photos/seed/e/640/480" alt="art e"><figcaption>artifact e</figcaption></figure>
+          </div>
+        </div>
+        <div class="pane" id="pane-photos">
+          <div class="gallery">
+            <figure><img src="https://picsum.photos/seed/p1/640/480" alt="photo 1"><figcaption>void alley</figcaption></figure>
+            <figure><img src="https://picsum.photos/seed/p2/640/480" alt="photo 2"><figcaption>crt shrine</figcaption></figure>
+            <figure><img src="https://picsum.photos/seed/p3/640/480" alt="photo 3"><figcaption>neon rain</figcaption></figure>
+          </div>
+        </div>
+        <div class="pane" id="pane-zines">
+          <div class="scrollbox">
+            <p><strong>zine index</strong></p>
+            <ul>
+              <li><a href="#">elriel fragments · pdf</a></li>
+              <li><a href="#">entropy machines · pdf</a></li>
+              <li><a href="#">numbpill cell · pdf</a></li>
+            </ul>
+            <p class="small">host your files on neocities / elsewhere and wire links here.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="statusbar">
+      <div>🗂 gallery ready</div>
+      <div style="margin-left:auto;">items:<span id="gal-count" class="small">--</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Links -->
+<div class="window" id="win-links" style="left: 220px; top: 420px; width: 520px; height: 280px;">
+  <div class="titlebar">
+    <div class="grip"></div>
+    <div class="title">Links · /etc/bookmarks.conf</div>
+    <div class="win-btns">
+      <div class="win-btn" data-float>◻</div>
+      <div class="win-btn" data-min>—</div>
+      <div class="win-btn close" data-close>×</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="inner">
+      <ul style="margin:0; padding-left:16px;">
+        <li><a href="#" rel="noopener">numbpillled.neocities.org</a></li>
+        <li><a href="#" rel="noopener">badobd.org</a></li>
+        <li><a href="#" rel="noopener">voidrane.smol.pub</a></li>
+        <li><a href="#" rel="noopener">lootrealm</a></li>
+      </ul>
+      <div class="hr"></div>
+      <div class="small">add more bookmarks; keep it web 1.0 with 88x31s.</div>
+    </div>
+    <div class="statusbar"><div>🔗 links</div></div>
+  </div>
+</div>
+
+<!-- Chat -->
+<div class="window" id="win-chat" style="left: 880px; top: 140px; width: 420px; height: 420px;">
+  <div class="titlebar">
+    <div class="grip"></div>
+    <div class="title">Message Bus · /var/run/fauxchat.sock</div>
+    <div class="win-btns">
+      <div class="win-btn" data-float>◻</div>
+      <div class="win-btn" data-min>—</div>
+      <div class="win-btn close" data-close>×</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="inner">
+      <div class="chat" id="chatlog">
+        <div class="msg">
+          <div class="avatar"></div>
+          <div class="bubble">booted. welcome to hidden layer desktop.</div>
+        </div>
+        <div class="msg">
+          <div class="avatar"></div>
+          <div class="bubble">type in the terminal: <code>help</code></div>
+        </div>
+      </div>
+      <div class="chat-input">
+        <input id="chat-input" placeholder="send a message..." />
+        <button id="chat-send">send</button>
+      </div>
+    </div>
+    <div class="statusbar"><div>💬 faux chat</div></div>
+  </div>
+</div>
+
+<!-- Terminal -->
+<div class="window" id="win-terminal" style="left: 960px; top: 420px; width: 520px; height: 280px;">
+  <div class="titlebar">
+    <div class="grip"></div>
+    <div class="title">TTY1 · /bin/hlmsh</div>
+    <div class="win-btns">
+      <div class="win-btn" data-float>◻</div>
+      <div class="win-btn" data-min>—</div>
+      <div class="win-btn close" data-close>×</div>
+    </div>
+  </div>
+  <div class="content">
+    <div class="inner">
+      <div class="terminal" id="term">
+        <div class="out">Hidden Layer MicroShell v0.9 (early linux mode)</div>
+        <div class="out">type <span class="prompt">help</span> for commands.</div>
+        <div class="hr"></div>
+        <div id="term-out"></div>
+        <div><span class="prompt">nexys@hlm</span>:<span style="color:#9bb1ff;">~</span>$ <input id="term-in" autofocus/></div>
+      </div>
+    </div>
+    <div class="statusbar"><div>⌨ TTY1</div></div>
+  </div>
+</div>
+
+<!-- BOTTOM DOCK -->
+<div class="dock">
+  <div class="marquee"><span>★ tips: drag by titlebar · click ◻ for translucent · minimize to panel · konami code = ritual ★</span></div>
+  <div class="badge">renderer:<span id="gl" style="margin-left:6px; color:#eaf3ff;">?</span></div>
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.157/build/three.min.js"></script>
+<script>
+/* =========================================================
+   THREE.JS BACKGROUND: chromatic gradient + star points
+   ========================================================= */
+(() => {
+  const canvas = document.getElementById('bg');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  function size(){ renderer.setSize(innerWidth, innerHeight, false); }
+  size(); addEventListener('resize', size, {passive:true});
+  const gl = renderer.getContext();
+  document.getElementById('gl').textContent = gl.getParameter(gl.RENDERER);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1,1,1,-1, 0, 1);
+
+  const uniforms = {
+    u_time: { value: 0 },
+    u_res:  { value: new THREE.Vector2(innerWidth, innerHeight) },
+    u_mouse:{ value: new THREE.Vector2(0.5, 0.5) }
+  };
+  const frag = `
+    precision highp float;
+    uniform vec2 u_res;
+    uniform float u_time;
+    uniform vec2 u_mouse;
+
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1,311.7)))*43758.5453123); }
+    float noise(in vec2 p){
+      vec2 i = floor(p), f = fract(p);
+      float a = hash(i), b = hash(i+vec2(1.,0.));
+      float c = hash(i+vec2(0.,1.)), d = hash(i+vec2(1.,1.));
+      vec2 u = f*f*(3.0-2.0*f);
+      return mix(a,b,u.x)+ (c-a)*u.y*(1.0-u.x) + (d-b)*u.x*u.y;
+    }
+
+    void main(){
+      vec2 uv = (gl_FragCoord.xy / u_res.xy);
+      vec2 p = (uv - 0.5) * vec2(u_res.x/u_res.y, 1.0);
+
+      float t = u_time * 0.08;
+      float n = noise(uv*2.5 + t) * 0.6 + noise(uv*6.0 - t*1.5) * 0.4;
+      float r = length(p - (u_mouse - 0.5)*vec2(1.5,1.5));
+      float ring = 0.4 + 0.6 * smoothstep(0.65, 0.05, r + n*0.2);
+
+      vec3 colA = vec3(0.02, 0.05, 0.18);
+      vec3 colB = vec3(0.00, 0.85, 1.00);
+      vec3 colC = vec3(1.00, 0.30, 0.92);
+      vec3 colD = vec3(0.66, 1.00, 0.37);
+
+      float ca = smoothstep(0.0, 1.0, ring);
+      float cb = smoothstep(0.0, 1.0, 1.0-ring);
+
+      vec3 col = mix(colA, colB, ca);
+      col = mix(col, colC, n*0.5);
+      col = mix(col, colD, cb*0.25 + 0.1*sin(t*1.7 + r*6.0));
+
+      // subtle chromatic fringing
+      float fx = 0.0015 + 0.001*sin(t*2.0);
+      vec2 off = vec2(fx, 0.0);
+      float rC = clamp(noise(uv*3.0 + t*0.8 + off)*0.6 + ring, 0.0, 1.0);
+      float gC = clamp(noise(uv*3.0 + t*0.8)*0.6 + ring, 0.0, 1.0);
+      float bC = clamp(noise(uv*3.0 + t*0.8 - off)*0.6 + ring, 0.0, 1.0);
+      col *= vec3(rC, gC, bC);
+
+      // film grain
+      float grain = (hash(uv + fract(u_time)) - 0.5) * 0.06;
+      col += grain;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+  const mat = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader: `void main(){ gl_Position = vec4(position, 1.0); }`,
+    fragmentShader: frag
+  });
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2,2), mat);
+  scene.add(quad);
+
+  // Stars layer
+  const starGeo = new THREE.BufferGeometry();
+  const COUNT = 900;
+  const pos = new Float32Array(COUNT*3);
+  for(let i=0;i<COUNT;i++){
+    pos[i*3+0] = (Math.random()*2-1);
+    pos[i*3+1] = (Math.random()*2-1);
+    pos[i*3+2] = 0;
+  }
+  starGeo.setAttribute('position', new THREE.BufferAttribute(pos,3));
+  const starMat = new THREE.PointsMaterial({ size: 0.006, color: 0x88caff, transparent:true, opacity:0.85 });
+  const stars = new THREE.Points(starGeo, starMat);
+  scene.add(stars);
+
+  let last = performance.now(), frames=0, fps=0;
+  function loop(){
+    const now = performance.now();
+    const dt = (now-last)/1000; last = now; frames++;
+    uniforms.u_time.value += dt;
+    stars.rotation.z += dt*0.02;
+
+    renderer.setViewport(0,0,innerWidth,innerHeight);
+    uniforms.u_res.value.set(innerWidth, innerHeight);
+    renderer.render(scene, camera);
+
+    // fps meter (cheap)
+    if(frames % 10 === 0){
+      const f = Math.round(1000 / (now - (now - dt*1000)));
+      fps = f;
+      const e = document.getElementById('fps'); if(e) e.textContent = fps+' fps';
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+
+  // mouse to shader
+  addEventListener('pointermove', (e)=>{
+    uniforms.u_mouse.value.set(e.clientX/innerWidth, 1.0 - e.clientY/innerHeight);
+    netPulse();
+    sparkle(e.clientX, e.clientY);
+  }, {passive:true});
+
+  // sparkle trail
+  function sparkle(x,y){
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.left = (x-3)+'px';
+    s.style.top = (y-3)+'px';
+    document.body.appendChild(s);
+    setTimeout(()=>s.remove(), 650);
+  }
+
+  // minor network / event leds
+  const netLed = document.getElementById('net-led');
+  const eventLed = document.getElementById('event-led');
+  let netTimer=null, evtTimer=null;
+  function netPulse(){
+    netLed.style.filter = 'brightness(1.8) drop-shadow(0 0 6px #fd0)';
+    clearTimeout(netTimer);
+    netTimer = setTimeout(()=> netLed.style.filter = '', 180);
+  }
+  function evtPulse(){
+    eventLed.style.filter = 'brightness(1.8) drop-shadow(0 0 6px #f00)';
+    clearTimeout(evtTimer);
+    evtTimer = setTimeout(()=> eventLed.style.filter = '', 260);
+  }
+  window.__evtPulse = evtPulse; // expose for other modules
+})();
+
+/* =========================================================
+   WINDOW MANAGER: drag, focus, minimize, float
+   ========================================================= */
+(() => {
+  const windows = Array.from(document.querySelectorAll('.window'));
+  const tasklist = document.getElementById('tasklist');
+
+  function bringToFront(win){
+    // raise z-indices monotonically
+    const maxZ = Math.max(1001, ...windows.map(w => +getComputedStyle(w).zIndex || 1001));
+    win.style.zIndex = (maxZ + 1);
+    updateWinCount();
+  }
+
+  function makeTaskButton(win){
+    const btn = document.createElement('div');
+    btn.className = 'task';
+    btn.textContent = win.querySelector('.title')?.textContent?.trim() || 'window';
+    btn.addEventListener('click', ()=>{
+      if(win.classList.contains('hide')){
+        win.classList.remove('hide');
+      }
+      bringToFront(win);
+      // little tremor on recall
+      win.style.animation = 'tremor 120ms 2';
+      setTimeout(()=> win.style.animation = '', 260);
+    });
+    tasklist.appendChild(btn);
+    win.__taskBtn = btn;
+  }
+
+  function updateWinCount(){
+    const n = document.querySelectorAll('.window:not(.hide)').length;
+    const el = document.getElementById('win-count');
+    if(el) el.textContent = String(n);
+  }
+
+  windows.forEach(win=>{
+    makeTaskButton(win);
+    win.style.zIndex = 1001 + Math.floor(Math.random()*50);
+
+    const titlebar = win.querySelector('.titlebar');
+    const close = win.querySelector('[data-close]');
+    const min = win.querySelector('[data-min]');
+    const float = win.querySelector('[data-float]');
+    const statusPos = win.id === 'win-about' ? document.getElementById('about-pos'): null;
+
+    // drag
+    let dx=0, dy=0, dragging=false;
+    titlebar.addEventListener('pointerdown', (e)=>{
+      dragging = true; bringToFront(win);
+      dx = e.clientX - win.offsetLeft; dy = e.clientY - win.offsetTop;
+      win.setPointerCapture(e.pointerId);
+      win.classList.add('window-dragging');
+    });
+    
+    // Handle window dragging
+    function handleDragMove(e) {
+      if(!dragging) return;
+      const x = e.clientX - dx, y = e.clientY - dy;
+      win.style.left = Math.max(6, Math.min(innerWidth - win.offsetWidth - 6, x)) + 'px';
+      win.style.top  = Math.max(42, Math.min(innerHeight - win.offsetHeight - 28, y)) + 'px';
+      if(statusPos){ statusPos.textContent = `${Math.round(x)}, ${Math.round(y)}`; }
+    }
+    
+    titlebar.addEventListener('pointermove', handleDragMove);
+    
+    // Also handle drag on the document to prevent losing the drag if moving too fast
+    document.addEventListener('pointermove', handleDragMove);
+    
+    function handleDragEnd(e) {
+      dragging = false; 
+      if (win.hasPointerCapture(e.pointerId)) {
+        win.releasePointerCapture(e.pointerId);
+      }
+      win.classList.remove('window-dragging');
+    }
+    
+    titlebar.addEventListener('pointerup', handleDragEnd);
+    titlebar.addEventListener('pointercancel', handleDragEnd);
+    titlebar.addEventListener('pointerleave', handleDragEnd);
+    
+    titlebar.addEventListener('dblclick', ()=>{
+      // minimize on dblclick
+      win.classList.add('hide'); if(win.__taskBtn) win.__taskBtn.classList.remove('active');
+      window.__evtPulse && window.__evtPulse();
+    });
+
+    // focus visual
+    win.addEventListener('pointerdown', ()=> bringToFront(win));
+
+    // controls
+    close?.addEventListener('click', ()=>{
+      win.classList.add('hide');
+      win.__taskBtn?.remove();
+      updateWinCount();
+      window.__evtPulse && window.__evtPulse();
+    });
+    min?.addEventListener('click', ()=>{
+      win.classList.add('hide');
+      if(win.__taskBtn){ win.__taskBtn.classList.remove('active'); }
+      window.__evtPulse && window.__evtPulse();
+    });
+    float?.addEventListener('click', ()=>{
+      const f = win.getAttribute('data-floating') === 'true';
+      win.setAttribute('data-floating', String(!f));
+      window.__evtPulse && window.__evtPulse();
+    });
+  });
+
+  // desktop icons open windows
+  document.querySelectorAll('.icon').forEach(ic=>{
+    const target = ic.getAttribute('data-open');
+    if(!target) return;
+    const win = document.querySelector(target);
+    ic.addEventListener('click', ()=>{
+      if(!win) return;
+      win.classList.remove('hide');
+      bringToFront(win);
+      win.__taskBtn && win.__taskBtn.classList.add('active');
+    });
+  });
+
+  // clock
+  const clk = document.getElementById('clock');
+  function updateClock() {
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    clk.textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // uptime
+  const t0 = Date.now();
+  setInterval(()=>{
+    const s = Math.floor((Date.now()-t0)/1000);
+    const m = Math.floor(s/60), sec = s%60;
+    const el = document.getElementById('uptime'); if(el) el.textContent = `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+  }, 1000);
+
+  updateWinCount();
+})();
+
+/* =========================================================
+   TABS
+   ========================================================= */
+document.querySelectorAll('.tabs').forEach(tabstrip=>{
+  const targetId = tabstrip.getAttribute('data-tabs');
+  const target = document.querySelector(targetId);
+  if(!target) return;
+  const tabs = Array.from(tabstrip.querySelectorAll('.tab'));
+  const panes = Array.from(target.querySelectorAll('.pane'));
+  tabs.forEach(t=>{
+    t.addEventListener('click', ()=>{
+      tabs.forEach(x=>x.classList.remove('active'));
+      panes.forEach(p=>p.classList.remove('active'));
+      t.classList.add('active');
+      const pid = t.getAttribute('data-tab');
+      target.querySelector('#'+pid)?.classList.add('active');
+    });
+  });
+});
+
+/* =========================================================
+   FAKE CHATBOX
+   ========================================================= */
+(() => {
+  const log = document.getElementById('chatlog');
+  const inp = document.getElementById('chat-input');
+  const btn = document.getElementById('chat-send');
+
+  function push(text, you=false){
+    const msg = document.createElement('div'); msg.className='msg';
+    const av = document.createElement('div'); av.className='avatar';
+    const bub = document.createElement('div'); bub.className='bubble';
+    bub.textContent = text;
+    if(you){ av.style.background = 'linear-gradient(#1b2643,#10172c)'; }
+    msg.append(av, bub); log.append(msg); log.parentElement.scrollTop = log.parentElement.scrollHeight;
+  }
+
+  function reply(s){
+    const answers = [
+      "noted.",
+      "writing to /dev/null...",
+      "render pipeline looks stable.",
+      "try `open about` in tty1.",
+      "ghosts love crt scanlines."
+    ];
+    push(answers[Math.floor(Math.random()*answers.length)]);
+  }
+
+  btn.addEventListener('click', ()=>{
+    const v = inp.value.trim(); if(!v) return;
+    push(v, true); inp.value='';
+    setTimeout(()=> reply(v), 300 + Math.random()*400);
+  });
+  inp.addEventListener('keydown', e=>{ if(e.key==='Enter') btn.click(); });
+})();
+
+/* =========================================================
+   TERMINAL
+   ========================================================= */
+(() => {
+  const out = document.getElementById('term-out');
+  const input = document.getElementById('term-in');
+
+  const cmds = {
+    help(){
+      print("commands: help, about, open [about|gallery|links|chat|terminal], theme [dark|ice], date, echo [text]");
+    },
+    about(){
+      print("Hidden Layer MicroShell. Desktop windows are DOM-managed. Three.js shader for chromatic gradient.");
+    },
+    open(which){
+      const map = {
+        about:'#win-about', gallery:'#win-gallery', links:'#win-links', chat:'#win-chat', terminal:'#win-terminal'
+      };
+      const id = map[which];
+      if(!id) return error("usage: open [about|gallery|links|chat|terminal]");
+      const w = document.querySelector(id);
+      if(!w) return error("window not found.");
+      w.classList.remove('hide');
+      w.style.zIndex = (parseInt(w.style.zIndex||'1001')+1);
+      print(`opened ${which}`);
+      window.__evtPulse && window.__evtPulse();
+    },
+    theme(which){
+      if(which==='ice'){
+        document.documentElement.style.setProperty('--accent', '#7df9ff');
+        document.documentElement.style.setProperty('--accent-2', '#ff4df2');
+        document.documentElement.style.setProperty('--accent-3', '#aaff5f');
+        print("theme: ice neon");
+      } else if(which==='dark'){
+        document.documentElement.style.setProperty('--accent', '#b0b0b0');
+        document.documentElement.style.setProperty('--accent-2', '#909090');
+        document.documentElement.style.setProperty('--accent-3', '#808080');
+        print("theme: dark steel");
+      } else {
+        error("usage: theme [dark|ice]");
+      }
+    },
+    date(){ print(new Date().toString()); },
+    echo(...rest){ print(rest.join(' ')); }
+  };
+
+  function print(s){ const d = document.createElement('div'); d.className='out'; d.textContent = s; out.append(d); out.parentElement.scrollTop = out.parentElement.scrollHeight; }
+  function error(s){ const d = document.createElement('div'); d.className='error'; d.textContent = s; out.append(d); out.parentElement.scrollTop = out.parentElement.scrollHeight; }
+
+  input.addEventListener('keydown', (e)=>{
+    if(e.key==='Enter'){
+      const raw = input.value.trim(); input.value='';
+      if(!raw){ return; }
+      const [cmd, ...args] = raw.split(/\s+/);
+      if(cmds[cmd]) cmds[cmd](...args);
+      else error("unknown command: "+cmd);
+    }
+  });
+})();
+
+/* =========================================================
+   DESKTOP WIDGET COUNTERS + MISC
+   ========================================================= */
+(() => {
+  // gallery count
+  const gal = document.getElementById('win-gallery');
+  if(gal){
+    const count = gal.querySelectorAll('.gallery figure').length;
+    const el = document.getElementById('gal-count'); if(el) el.textContent = String(count);
+  }
+
+  // entropy ticker (random noise)
+  const ent = document.getElementById('entropy');
+  setInterval(()=>{
+    const v = (Math.random()*3.14159).toFixed(3);
+    if(ent) ent.textContent = v;
+  }, 700);
+
+  // net activity faux
+  const net = document.getElementById('net-activity');
+  setInterval(()=>{
+    const p = ["idle","ping","handshake","transfer","done"];
+    if(net) net.textContent = p[Math.floor(Math.random()*p.length)];
+  }, 1900);
+
+  // konami code -> easter popup
+  const seq = [ "ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a" ];
+  let idx = 0;
+  addEventListener('keydown', (e)=>{
+    if(e.key === seq[idx]){ idx++; } else { idx = 0; }
+    if(idx>=seq.length){
+      idx=0; ritual();
+    }
+  });
+  function ritual(){
+    // spawn a tiny popup window with glitch
+    const w = document.createElement('div');
+    w.className='window glow'; w.style.cssText='left: 50vw; top: 20vh; width: 360px; height: 220px;';
+    w.innerHTML = `
+      <div class="titlebar"><div class="grip"></div>
+        <div class="title">Ritual · /usr/bin/aeon-flex</div>
+        <div class="win-btns"><div class="win-btn close" data-close>×</div></div>
+      </div>
+      <div class="content">
+        <div class="inner">
+          <div class="center" style="margin:12px 0 8px; color:#eaf3ff;">glitch unlocked</div>
+          <div class="scrollbox" style="text-align:center;">
+            <div style="font-size:28px; letter-spacing:2px; color:#7df9ff;">2 1 3 3</div>
+            <div class="small">the desolace hums behind the gradient.</div>
+          </div>
+        </div>
+        <div class="statusbar"><div>✨ secret</div></div>
+      </div>`;
+    document.body.appendChild(w);
+    // wire close & draggable
+    const close = w.querySelector('[data-close]');
+    close.addEventListener('click', ()=> w.remove());
+    const tb = w.querySelector('.titlebar'); let dx=0,dy=0, drag=false;
+    tb.addEventListener('pointerdown', (e)=>{ drag=true; dx=e.clientX-w.offsetLeft; dy=e.clientY-w.offsetTop; w.setPointerCapture(e.pointerId); });
+    tb.addEventListener('pointermove', (e)=>{ if(!drag) return; w.style.left=(e.clientX-dx)+'px'; w.style.top=(e.clientY-dy)+'px'; });
+    tb.addEventListener('pointerup', (e)=>{ drag=false; w.releasePointerCapture(e.pointerId); });
+
+    window.__evtPulse && window.__evtPulse();
+  }
+})();
+
+/* =========================================================
+   CLOCK TICK ON LOAD + minor desktop niceties
+   ========================================================= */
+(() => {
+  // activate first windows on load
+  ['#win-about','#win-gallery'].forEach(sel=>{
+    const w = document.querySelector(sel); if(!w) return;
+    w.classList.remove('hide');
+  });
+
+  // update task buttons state (active if visible)
+  function refreshTasks(){
+    document.querySelectorAll('.window').forEach(w=>{
+      if(w.__taskBtn){
+        w.__taskBtn.classList.toggle('active', !w.classList.contains('hide'));
+      }
+    });
+  }
+  setInterval(refreshTasks, 800);
+})();
+</script>
+
+</body>
+</html>

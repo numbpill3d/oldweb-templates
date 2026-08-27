@@ -1,0 +1,13 @@
+{
+  "title": "Amiga Workbench Homepage",
+  "slug": "amiga-workbench",
+  "category": "desktops",
+  "description": "Personal homepage rendered as an Amiga Workbench 1.3 desktop.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/amiga",
+  "source_commit": "35c52abfe87923cf0fefce2875961f57d30fd734",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

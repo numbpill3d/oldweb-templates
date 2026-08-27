@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frutiger Aero / Y2K Theme by Numbpilled<3</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Bar with Profile Info -->
+  <div class="top-bar">
+    <div class="profile">
+      <img src="pfp.png" alt="Profile Picture" class="profile-pic">
+      <h1>~Your Name Here~</h1>
+      <p>@numbpilled</p>
+      <p>she/her | carperson | en+esp</p>
+    </div>
+    <marquee behavior="scroll" direction="left">Welcome to My Frutiger Aero Oasis! ✨🌐✨</marquee>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav>
+    <ul>
+      <li><a href="#about">About Me</a></li>
+      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="#music">Music</a></li>
+    </ul>
+  </nav>
+
+  <!-- Content Section -->
+  <div class="container">
+    <!-- Column 1 (Left) -->
+    <div class="column">
+      <h2>SOME LIST</h2>
+      <img src="list.jpg" alt="SOME LIST Image" class="img-box">
+      <ul>
+        <li>White albino blackpink aespaa</li>
+        <li>Many more fandom references here</li>
+      </ul>
+      <h2>More Info</h2>
+      <p class="additional-info">Non-kpop favs: Gorillaz, Death Grips</p>
+    </div>
+
+    <!-- Column 2 (Right) -->
+    <div class="column">
+      <h2>BYF</h2>
+      <p>I'm just tweeting about random things, if you don't like it, simply don't interact.</p>
+      <h2>DNI</h2>
+      <p>Basic DNI criteria, no cryptids, no serfs, etc.</p>
+      <h2>Links</h2>
+      <ul>
+        <li><a href="#">My Portfolio</a></li>
+        <li><a href="#">Myspace Revival</a></li>
+        <li><a href="#">Retro Web Club</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Audio Player -->
+  <audio controls>
+    <source src="Nightcall.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Floating Images -->
+  <img src="floating1.gif" class="floating-img floating-1" alt="Floating Image">
+  <img src="floating2.png" class="floating-img floating-2" alt="Floating Image">
+
+  <!-- Footer -->
+  <footer>
+    <p>Made with 💻 by Splicer/Numbpilled</p>
+  </footer>
+
+  <!-- Styles -->
+  <style>
+    body {
+      background: url('tile-bg1.jpg') repeat;
+      font-family: 'CustomFontHeader', sans-serif;
+      color: white;
+    }
+
+    .top-bar {
+      background-color: #0095FF;
+      padding: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .profile {
+      display: flex;
+      align-items: center;
+    }
+
+    .profile-pic {
+      border-radius: 50%;
+      width: 80px;
+      margin-right: 15px;
+    }
+
+    marquee {
+      color: #FF00FF;
+      font-size: 18px;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: space-around;
+      background-color: #0095FF;
+      padding: 10px 0;
+    }
+
+    nav a {
+      color: #FFFFFF;
+      text-decoration: none;
+    }
+
+    nav a:hover {
+      color: #FF00FF;
+    }
+
+    .container {
+      display: flex;
+      justify-content: space-between;
+      padding: 20px;
+      background-color: #1A1A1A;
+    }
+
+    .column {
+      width: 48%;
+      background-color: #2E2E2E;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .img-box {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+
+    .floating-img {
+      position: absolute;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    .floating-1 {
+      bottom: 50px;
+      left: 10%;
+    }
+
+    .floating-2 {
+      top: 100px;
+      right: 10%;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+      100% { transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      background-color: #0095FF;
+      padding: 10px;
+      color: white;
+    }
+  </style>
+</body>
+</html>
+

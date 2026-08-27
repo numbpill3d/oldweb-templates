@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Darknet Bazaar - Cyberpunk Marketplace</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: #000;
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        
+        @keyframes glitch {
+            0%, 100% { transform: translate(0); }
+            25% { transform: translate(-2px, 2px); }
+            50% { transform: translate(2px, -2px); }
+            75% { transform: translate(-2px, -2px); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -100% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .scanline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(0, 255, 255, 0.1);
+            animation: scanline 6s linear infinite;
+            pointer-events: none;
+        }
+        
+        .crt-curve {
+            border-radius: 3% / 5%;
+        }
+        
+        .holographic {
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 255, 255, 0.2) 25%, 
+                rgba(255, 0, 255, 0.2) 50%, 
+                rgba(0, 255, 255, 0.2) 75%, 
+                transparent 100%);
+            background-size: 200% 100%;
+            animation: shimmer 3s linear infinite;
+        }
+        
+        .circuit-trace {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .circuit-trace::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, transparent 48%, #0ff 49%, #0ff 51%, transparent 52%),
+                linear-gradient(0deg, transparent 48%, #f0f 49%, #f0f 51%, transparent 52%);
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .circuit-trace:hover::after {
+            opacity: 0.3;
+        }
+
+        /* Three.js container */
+        #three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        /* Main content */
+        .content {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Ticker bar */
+        .ticker-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 48px;
+            background: linear-gradient(to bottom, #000, transparent);
+            overflow: hidden;
+            border-bottom: 2px solid #0ff;
+            z-index: 20;
+        }
+
+        .ticker {
+            display: flex;
+            align-items: center;
+            height: 100%;
+            white-space: nowrap;
+            color: #0ff;
+            font-size: 14px;
+        }
+
+        .ticker-content {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+
+        .ticker-item {
+            margin: 0 32px;
+            animation: pulse 2s infinite;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-top: 80px;
+            margin-bottom: 32px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, #0ff, #f0f, #f0f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glitch 2s infinite;
+        }
+
+        .subtitle {
+            color: #0ff;
+            font-size: 14px;
+            letter-spacing: 4px;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: 2px solid;
+            transition: all 0.3s;
+            border-radius: 3% / 5%;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            background-color: transparent;
+            color: inherit;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .tab-button.active {
+            border-color: #0ff;
+            background-color: rgba(0, 255, 255, 0.2);
+            color: #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .tab-button.inactive {
+            border-color: #f0f;
+            background-color: rgba(128, 0, 128, 0.2);
+            color: #f0f;
+        }
+
+        .tab-button.inactive:hover {
+            border-color: #0ff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+
+        .tab-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .tab-katakana {
+            font-size: 10px;
+            opacity: 0.7;
+        }
+
+        /* Products container */
+        .products-container {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 4px solid #0ff;
+            border-radius: 3% / 5%;
+            padding: 24px;
+            margin: 0 auto;
+            max-width: 1000px;
+            min-height: 400px;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .products-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, transparent, #0ff, transparent);
+            opacity: 0.05;
+            animation: pulse 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Products list */
+        .products-list {
+            height: 350px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom scrollbar */
+        .products-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .products-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .products-list::-webkit-scrollbar-thumb {
+            background: #0ff;
+            border-radius: 3px;
+        }
+
+        /* Product item */
+        .product-item {
+            border-left: 4px solid #f0f;
+            background: linear-gradient(to right, #000, rgba(128, 0, 128, 0.6));
+            padding: 16px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 3% / 5%;
+        }
+
+        .product-item:hover {
+            border-left-color: #0ff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+        }
+
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .product-name {
+            color: #0ff;
+            font-weight: bold;
+            font-size: 1.25rem;
+            margin-bottom: 4px;
+        }
+
+        .product-details {
+            color: #f0f;
+            font-size: 12px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .heat-extreme {
+            color: #ff5555;
+        }
+
+        .heat-high {
+            color: #ffaa55;
+        }
+
+        .heat-medium {
+            color: #ffff55;
+        }
+
+        .heat-low {
+            color: #55ff55;
+        }
+
+        .quality {
+            color: #ffff55;
+        }
+
+        .product-price {
+            color: #55ff55;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-align: right;
+        }
+
+        .encrypted {
+            font-size: 10px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Buttons container */
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .action-button {
+            padding: 8px 24px;
+            border: 2px solid;
+            border-radius: 3% / 5%;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: transparent;
+            color: inherit;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .audio-button {
+            border-color: #f0f;
+            background-color: rgba(128, 0, 128, 0.2);
+            color: #f0f;
+        }
+
+        .audio-button:hover {
+            border-color: #ffaaff;
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.5);
+        }
+
+        .buy-button {
+            border-color: #55ff55;
+            background-color: rgba(0, 128, 0, 0.2);
+            color: #55ff55;
+        }
+
+        .buy-button:hover {
+            border-color: #aaffaa;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        .wallet-button {
+            border-color: #ffff55;
+            background-color: rgba(128, 128, 0, 0.2);
+            color: #ffff55;
+        }
+
+        .wallet-button:hover {
+            border-color: #ffffaa;
+            box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 96px;
+            background: linear-gradient(to top, #000, transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0ff;
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .footer-text {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Three.js container -->
+    <div id="three-container"></div>
+
+    <!-- Main content -->
+    <div class="content">
+        <!-- Ticker bar -->
+        <div class="ticker-container">
+            <div class="ticker">
+                <div class="ticker-content">
+                    <!-- Ticker items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">≡ DARKNET BAZAAR ≡</h1>
+            <p class="subtitle">█▓▒░ UNAUTHORIZED ACCESS DETECTED ░▒▓█</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <!-- Tabs will be populated by JavaScript -->
+        </div>
+
+        <!-- Products container -->
+        <div class="products-container scanline">
+            <div class="products-list">
+                <!-- Products will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="buttons-container">
+            <button class="action-button audio-button circuit-trace">
+                ▶ CYBERPUNK RADIO
+            </button>
+            <button class="action-button buy-button circuit-trace">
+                ⚡ QUICK BUY
+            </button>
+            <button class="action-button wallet-button circuit-trace">
+                ◎ CRYPTO WALLET
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-text">
+                CONNECTION: ANONYMOUS ◆ ENCRYPTION: AES-256 ◆ LOCATION: SCRAMBLED
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        const state = {
+            activeTab: 'intel',
+            audioPlaying: false,
+            audioContext: null,
+            analyser: null,
+            dataArray: null,
+            oscillator: null
+        };
+
+        // Data definitions
+        const tabs = [
+            { id: 'intel', label: 'INTEL', katakana: 'インテル' },
+            { id: 'software', label: 'SOFTWARE', katakana: 'ソフト' },
+            { id: 'hardware', label: 'HARDWARE', katakana: 'ハード' },
+            { id: 'ice', label: 'BLACK ICE', katakana: 'アイス' }
+        ];
+
+        const products = {
+            intel: [
+                { name: 'Corporate Database Access', price: '¥45,000', heat: 'HIGH', quality: '★★★★☆' },
+                { name: 'Government Surveillance Feeds', price: '¥89,000', heat: 'EXTREME', quality: '★★★★★' },
+                { name: 'Social Media Scrape Package', price: '¥12,000', heat: 'LOW', quality: '★★★☆☆' },
+                { name: 'Financial Records Bundle', price: '¥67,000', heat: 'HIGH', quality: '★★★★☆' },
+                { name: 'Medical Database Dump', price: '¥34,000', heat: 'MEDIUM', quality: '★★★☆☆' },
+            ],
+            software: [
+                { name: 'Neural Backdoor Suite', price: '¥156,000', heat: 'EXTREME', quality: '★★★★★' },
+                { name: 'Encryption Cracker Pro', price: '¥78,000', heat: 'HIGH', quality: '★★★★☆' },
+                { name: 'Stealth VPN Matrix', price: '¥23,000', heat: 'LOW', quality: '★★★☆☆' },
+                { name: 'AI Deepfake Generator', price: '¥45,000', heat: 'MEDIUM', quality: '★★★★☆' },
+                { name: 'Quantum Decryptor', price: '¥234,000', heat: 'EXTREME', quality: '★★★★★' },
+            ],
+            hardware: [
+                { name: 'Neural Interface Implant', price: '¥890,000', heat: 'MEDIUM', quality: '★★★★★' },
+                { name: 'Scrambler Chip Set', price: '¥67,000', heat: 'LOW', quality: '★★★★☆' },
+                { name: 'Biometric Spoofer', price: '¥123,000', heat: 'HIGH', quality: '★★★★☆' },
+                { name: 'EMP Pulse Device', price: '¥345,000', heat: 'EXTREME', quality: '★★★★★' },
+                { name: 'Drone Swarm Controller', price: '¥567,000', heat: 'HIGH', quality: '★★★★☆' },
+            ],
+            ice: [
+                { name: 'Viral Countermeasure ICE', price: '¥234,000', heat: 'MEDIUM', quality: '★★★★★' },
+                { name: 'Neural Firewall Deluxe', price: '¥145,000', heat: 'LOW', quality: '★★★★☆' },
+                { name: 'Trace Killer Protocol', price: '¥89,000', heat: 'MEDIUM', quality: '★★★☆☆' },
+                { name: 'Black Mirror Defense', price: '¥456,000', heat: 'HIGH', quality: '★★★★★' },
+                { name: 'Ghost Protocol Suite', price: '¥678,000', heat: 'EXTREME', quality: '★★★★★' },
+            ]
+        };
+
+        const tickerItems = [
+            'BTC: ¥8,234,567',
+            'ETH: ¥567,890',
+            'CORP-DATA +15%',
+            'GOV-INTEL -8%',
+            'NEURAL-WARE +23%',
+            'ICE-BREACH ALERT',
+            'MARKET VOLATILITY: HIGH',
+            'NEURAL LINK: ACTIVE'
+        ];
+
+        // Initialize Three.js scene
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            
+            if (!container) return;
+            
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.Fog(0x000000, 10, 50);
+            
+            const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.z = 15;
+            camera.position.y = 5;
+
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setClearColor(0x000000, 0.3);
+            container.appendChild(renderer.domElement);
+
+            const buildings = new THREE.Group();
+            
+            for (let i = 0; i < 30; i++) {
+                const height = Math.random() * 10 + 3;
+                const geometry = new THREE.BoxGeometry(1, height, 1);
+                const edges = new THREE.EdgesGeometry(geometry);
+                const material = new THREE.LineBasicMaterial({ 
+                    color: Math.random() > 0.5 ? 0x00ffff : 0xff00ff,
+                    transparent: true,
+                    opacity: 0.6
+                });
+                const building = new THREE.LineSegments(edges, material);
+                
+                const angle = (i / 30) * Math.PI * 2;
+                const radius = 8 + Math.random() * 5;
+                building.position.x = Math.cos(angle) * radius;
+                building.position.z = Math.sin(angle) * radius;
+                building.position.y = height / 2;
+                
+                buildings.add(building);
+            }
+            
+            scene.add(buildings);
+
+            const gridHelper = new THREE.GridHelper(50, 50, 0x00ffff, 0xff00ff);
+            gridHelper.position.y = 0;
+            gridHelper.material.opacity = 0.2;
+            gridHelper.material.transparent = true;
+            scene.add(gridHelper);
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                buildings.rotation.y += 0.002;
+                
+                if (state.analyser && state.dataArray) {
+                    state.analyser.getByteFrequencyData(state.dataArray);
+                    const bass = state.dataArray[0] / 255;
+                    gridHelper.material.opacity = 0.2 + bass * 0.3;
+                }
+                
+                renderer.render(scene, camera);
+            };
+
+            animate();
+
+            const handleResize = () => {
+                if (!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            };
+
+            window.addEventListener('resize', handleResize);
+
+            // Cleanup function
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                if (container && renderer.domElement) {
+                    container.removeChild(renderer.domElement);
+                }
+            };
+        }
+
+        // Initialize UI elements
+        function initUI() {
+            // Initialize ticker
+            const tickerContent = document.querySelector('.ticker-content');
+            if (tickerContent) {
+                // Duplicate items for seamless marquee
+                const tickerHTML = [...tickerItems, ...tickerItems].map(item => 
+                    `<span class="ticker-item">▸ ${item}</span>`
+                ).join('');
+                tickerContent.innerHTML = tickerHTML;
+            }
+
+            // Initialize tabs
+            const tabsContainer = document.querySelector('.tabs-container');
+            if (tabsContainer) {
+                tabs.forEach(tab => {
+                    const button = document.createElement('button');
+                    button.className = `tab-button circuit-trace ${state.activeTab === tab.id ? 'active' : 'inactive'}`;
+                    button.innerHTML = `
+                        <div class="holographic"></div>
+                        <div>
+                            <div class="tab-label">${tab.label}</div>
+                            <div class="tab-katakana">${tab.katakana}</div>
+                        </div>
+                    `;
+                    button.addEventListener('click', () => setActiveTab(tab.id));
+                    tabsContainer.appendChild(button);
+                });
+            }
+
+            // Initialize products list
+            renderProducts();
+
+            // Initialize action buttons
+            const audioButton = document.querySelector('.audio-button');
+            if (audioButton) {
+                audioButton.addEventListener('click', toggleAudio);
+            }
+
+            const buyButton = document.querySelector('.buy-button');
+            if (buyButton) {
+                buyButton.addEventListener('click', () => {
+                    alert('⚡ Purchase initiated. Transferring crypto...');
+                });
+            }
+
+            const walletButton = document.querySelector('.wallet-button');
+            if (walletButton) {
+                walletButton.addEventListener('click', () => {
+                    alert('◎ Accessing encrypted wallet...');
+                });
+            }
+        }
+
+        // Set active tab
+        function setActiveTab(tabId) {
+            state.activeTab = tabId;
+            
+            // Update tab buttons
+            const tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => {
+                const tabIndex = Array.from(button.parentNode.children).indexOf(button);
+                if (tabs[tabIndex] && tabs[tabIndex].id === tabId) {
+                    button.classList.remove('inactive');
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                    button.classList.add('inactive');
+                }
+            });
+            
+            // Render products for the active tab
+            renderProducts();
+        }
+
+        // Render products for the active tab
+        function renderProducts() {
+            const productsList = document.querySelector('.products-list');
+            if (!productsList) return;
+            
+            const activeProducts = products[state.activeTab] || [];
+            
+            productsList.innerHTML = activeProducts.map(product => {
+                const heatClass = `heat-${product.heat.toLowerCase().replace(' ', '-')}`;
+                
+                return `
+                    <div class="product-item circuit-trace">
+                        <div class="product-header">
+                            <div>
+                                <div class="product-name">${product.name}</div>
+                                <div class="product-details">
+                                    <span>HEAT: <span class="${heatClass}">${product.heat}</span></span>
+                                    <span class="quality">${product.quality}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="product-price">${product.price}</div>
+                                <div class="encrypted">[ENCRYPTED]</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Add click event to product items
+            document.querySelectorAll('.product-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    item.style.boxShadow = '0 0 20px rgba(0, 255, 255, 0.5)';
+                    setTimeout(() => {
+                        item.style.boxShadow = '';
+                    }, 300);
+                });
+            });
+        }
+
+        // Toggle audio
+        function toggleAudio() {
+            const audioButton = document.querySelector('.audio-button');
+            
+            if (!state.audioPlaying) {
+                // Start audio
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                state.audioContext = new AudioContext();
+                state.oscillator = state.audioContext.createOscillator();
+                const gainNode = state.audioContext.createGain();
+                state.analyser = state.audioContext.createAnalyser();
+                state.dataArray = new Uint8Array(state.analyser.frequencyBinCount);
+                
+                state.oscillator.type = 'sawtooth';
+                state.oscillator.frequency.setValueAtTime(110, state.audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.1, state.audioContext.currentTime);
+                
+                state.oscillator.connect(gainNode);
+                gainNode.connect(state.analyser);
+                state.analyser.connect(state.audioContext.destination);
+                
+                state.oscillator.start();
+                state.audioPlaying = true;
+                
+                if (audioButton) {
+                    audioButton.textContent = '◼ STOP RADIO';
+                }
+            } else {
+                // Stop audio
+                if (state.oscillator) {
+                    state.oscillator.stop();
+                    state.oscillator = null;
+                }
+                if (state.audioContext) {
+                    state.audioContext.close();
+                    state.audioContext = null;
+                }
+                state.analyser = null;
+                state.dataArray = null;
+                state.audioPlaying = false;
+                
+                if (audioButton) {
+                    audioButton.textContent = '▶ CYBERPUNK RADIO';
+                }
+            }
+        }
+
+        // Initialize everything when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            initThreeJS();
+            initUI();
+            
+            // Add circuit trace effect to all circuit-trace elements
+            document.querySelectorAll('.circuit-trace').forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    element.style.boxShadow = '0 0 10px rgba(0, 255, 255, 0.5)';
+                });
+                
+                element.addEventListener('mouseleave', () => {
+                    element.style.boxShadow = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

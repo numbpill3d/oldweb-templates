@@ -1,0 +1,13 @@
+{
+  "title": "Decora YumeTwint Desktop",
+  "slug": "decora-yumetwint",
+  "category": "desktops",
+  "description": "Bright Decora and YumeTwint faux desktop OS page.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/decora-desktop-os",
+  "source_commit": "fcaae9d6057035c78b451a74dcbbd6af66606526",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Aetheros Umbralath",
+  "slug": "aetheros-umbralath",
+  "category": "shrines",
+  "description": "Lore-heavy homepage for a fictional forgotten divinity.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/umbral",
+  "source_commit": "e8a1850e6dfe18abba1831d65234f99427dc10d0",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

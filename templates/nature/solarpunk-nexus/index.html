@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOLARPUNK::NEXUS</title>
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #990000;
+            --secondary-color: #888888;
+            --background-color: #000000;
+            --text-color: #CCCCCC;
+            --highlight-color: #FFFFFF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: "Courier New", monospace;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            height: 100%;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* Layout Structure */
+        .interface-container {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            position: relative;
+            z-index: 10;
+        }
+
+        .header {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--primary-color);
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        .nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0.5rem 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px dashed var(--primary-color);
+            z-index: 10;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 1rem;
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.4);
+            overflow-y: auto;
+        }
+
+        .status-bar {
+            padding: 0.5rem 1rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid var(--primary-color);
+            font-size: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4 {
+            color: var(--primary-color);
+            margin: 1rem 0;
+            line-height: 1.2;
+        }
+
+        h2 {
+            border-bottom: 1px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 0.75rem;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: inherit;
+            margin: 1rem 0;
+        }
+
+        /* Links & Navigation */
+        .nav a {
+            margin: 0.5rem;
+            color: var(--primary-color);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+            padding: 0.5rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .nav a:hover, .nav a.active {
+            color: var(--highlight-color);
+            text-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .nav a.active {
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        a {
+            color: var(--primary-color);
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--highlight-color);
+        }
+
+        /* Content Panels */
+        .content-panel {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .scrollbox {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 0.75rem;
+            border: 1px solid var(--primary-color);
+            background-color: rgba(0, 0, 0, 0.5);
+            margin-top: 0.75rem;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--background-color);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .progress-container {
+            width: 80%;
+            height: 2px;
+            background-color: #111;
+            margin-top: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: var(--primary-color);
+            position: relative;
+            transition: width 0.2s ease-out;
+        }
+
+        .loading-text {
+            margin-top: 1rem;
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            letter-spacing: 1px;
+        }
+
+        /* Banners */
+        .top-banner, .bottom-banner {
+            position: fixed;
+            left: 0;
+            width: 100%;
+            height: 2rem;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 95;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid var(--primary-color);
+            overflow: hidden;
+        }
+
+        .top-banner {
+            top: 0;
+            border-top: none;
+        }
+
+        .bottom-banner {
+            bottom: 0;
+            border-bottom: none;
+        }
+
+        .banner-content {
+            white-space: nowrap;
+            animation: banner-scroll 30s linear infinite;
+        }
+
+        @keyframes banner-scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Tab System */
+        .tab-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            width: 100%;
+        }
+
+        .tab-content.active {
+            display: block;
+            opacity: 1;
+        }
+
+        /* Profile Page */
+        .profile-header {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-bottom: 1px solid var(--primary-color);
+            position: relative;
+        }
+
+        .profile-avatar {
+            width: 100%;
+            max-width: 150px;
+            margin-right: 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .avatar-container {
+            width: 120px;
+            height: 120px;
+            background-color: var(--background-color);
+            border: 2px solid var(--primary-color);
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 0.75rem;
+        }
+
+        .profile-identity {
+            flex-grow: 1;
+            min-width: 250px;
+        }
+
+        .profile-stats {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+
+        .stat-item {
+            margin-right: 1.5rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--secondary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .action-btn {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background-color: rgba(153, 0, 0, 0.2);
+        }
+
+        .profile-sections {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 1.5rem;
+            gap: 1.5rem;
+        }
+
+        .profile-column {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        /* Widgets */
+        .widget {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .widget-header {
+            background-color: rgba(153, 0, 0, 0.3);
+            color: var(--highlight-color);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--primary-color);
+        }
+
+        .widget-content {
+            padding: 0.75rem;
+        }
+
+        .feed-content {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        /* Timeline */
+        .timeline-container {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 100%;
+            background-color: var(--primary-color);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+        }
+
+        .timeline-marker {
+            position: absolute;
+            left: -1.5rem;
+            top: 0;
+            width: 12px;
+            height: 12px;
+            background-color: var(--background-color);
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Terminal */
+        .terminal-output {
+            font-family: "Courier New", monospace;
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            height: 100px;
+            overflow-y: auto;
+            margin-bottom: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem;
+            border: 1px solid #333333;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Gallery */
+        .gallery-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .tag-sidebar {
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--primary-color);
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .image-cloud {
+            flex-grow: 1;
+            position: relative;
+            overflow: hidden;
+            padding: 1rem;
+            min-height: 500px;
+        }
+
+        .floating-image {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            padding: 0.5rem;
+            transition: transform 0.3s;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            z-index: 1;
+        }
+
+        .floating-image:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 15px rgba(153, 0, 0, 0.5);
+        }
+
+        /* Projects */
+        .project-entry {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .project-header {
+            background-color: rgba(153, 0, 0, 0.3);
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px dashed var(--primary-color);
+        }
+
+        .project-body {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 1rem;
+        }
+
+        .project-info {
+            flex: 2;
+            min-width: 300px;
+            padding-right: 1.5rem;
+        }
+
+        .project-meta {
+            flex: 1;
+            min-width: 200px;
+            border-left: 1px dashed var(--primary-color);
+            padding-left: 1.5rem;
+        }
+
+        /* Collections */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--primary-color);
+            background-color: rgba(0, 0, 0, 0.7);
+            min-height: 220px;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-avatar {
+                margin-right: 0;
+                margin-bottom: 1.5rem;
+            }
+
+            .profile-identity {
+                text-align: center;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+
+            .action-buttons {
+                justify-content: center;
+            }
+
+            .project-body {
+                flex-direction: column;
+            }
+
+            .project-info {
+                padding-right: 0;
+                margin-bottom: 1.5rem;
+            }
+
+            .project-meta {
+                border-left: none;
+                border-top: 1px dashed var(--primary-color);
+                padding-left: 0;
+                padding-top: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav a {
+                margin: 0.25rem;
+            }
+
+            .status-bar {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .profile-sections {
+                flex-direction: column;
+            }
+
+            .profile-column {
+                min-width: 100%;
+            }
+        }
+
+        /* Accessibility Improvements */
+        a:focus, button:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Remove problematic effects */
+        .loading-vignette,
+        .loading-scanline,
+        .blood-container,
+        .scanline-effect,
+        .crt-edge,
+        .noise-effect {
+            display: none !important;
+        }
+
+        /* Improve contrast for better readability */
+        .content-panel {
+            background-color: rgba(0, 0, 0, 0.85);
+        }
+
+        /* Ensure text is readable */
+        pre.ascii-art {
+            font-size: 8px;
+            line-height: 8px;
+            color: var(--primary-color);
+            text-align: center;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        /* Make sure all content is visible */
+        .tab-content {
+            overflow: visible;
+        }
+
+        /* Fix scrolling issues */
+        body {
+            overflow-y: auto;
+        }
+
+        .main-content {
+            overflow: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen (Simplified) -->
+    <div class="loading-screen" id="loading-screen">
+        <pre class="ascii-art">
+  _____                                                 _____ 
+( ___ )                                               ( ___ )
+ |   |~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|   | 
+ |   |                                                 |   | 
+ |   |   __  _,____, __, ____,____,  ____,_,  _,____,  |   | 
+ |   |  (-\  /(-/  \(-| (-|  (-|__) (-/_|(-|\ |(-|_,   |   | 
+ |   |    _\/  _\__/,_|_,_|__/_|  \,_/  |,_| \|,_|__,  |   | 
+ |   |   (    (     (   (    (     (     (     (       |   | 
+ |   |                                                 |   | 
+ |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___| 
+(_____)                                               (_____)
+        </pre>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="loading-text" id="loading-text">Initializing System...</div>
+    </div>
+    
+    <!-- Top Banner -->
+    <div class="top-banner">
+        <div class="banner-content">ELRIEL // HIDDEN LAYER // VOID ECHOES // SCHISM // DISSOCIATIVE GLARE // 26 MOONS</div>
+    </div>
+    
+    <!-- Bottom Banner -->
+    <div class="bottom-banner">
+        <div class="banner-content">SUBMIT YOUR FINDINGS TO HIDDENLAYER.MEDIA // ASSIMILATE // LEAVE YOUR BODY AT THE DOOR</div>
+    </div>
+
+    <!-- Main Interface -->
+    <div class="interface-container">
+        <div class="header">
+            <pre class="ascii-art">
+╔─────────────────────────────────────────────────────────────╗
+│                                                             │
+│ _    _  _____  _____ ______   ______ _______ __   _ _______ │
+│  \  /  |     |   |   |     \ |_____/ |_____| | \  | |______ │
+│   \/   |_____| __|__ |_____/ |    \_ |     | |  \_| |______ │
+│                                                             │
+╚─────────────────────────────────────────────────────────────╝
+            </pre>
+        </div>
+
+        <!-- Navigation -->
+        <div class="nav">
+            <a href="#" class="tab-link active" data-tab="profile">PROFILE</a>
+            <a href="#" class="tab-link" data-tab="gallery">GALLERY</a>
+            <a href="#" class="tab-link" data-tab="window">WINDOW</a>
+            <a href="#" class="tab-link" data-tab="projects">PROJECTS</a>
+            <a href="#" class="tab-link" data-tab="collections">COLLECTIONS</a>
+            <a href="#" class="tab-link" data-tab="links">LINKS</a>
+            <a href="#" class="tab-link" data-tab="about">ABOUT</a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Profile Tab -->
+            <div id="profile" class="tab-content active">
+                <div class="content-panel profile-landing">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <div class="avatar-container"></div>
+                            <div class="avatar-status">█ ONLINE</div>
+                        </div>
+                        
+                        <div class="profile-identity">
+                            <h2>VOIDRANE::SPLICER</h2>
+                            <div>DIGITAL ENTITY // VOID ARCHITECT // CODE NECROMANCER</div>
+                            
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <div class="stat-value">26</div>
+                                    <div class="stat-label">MOONS</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">157</div>
+                                    <div class="stat-label">SYSTEMS BREACHED</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">∞</div>
+                                    <div class="stat-label">ITERATIONS</div>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="action-btn" data-popup="contact">CONTACT.EXE</button>
+                                <button class="action-btn" data-popup="projects">PROJECTS.SYS</button>
+                                <button class="action-btn" data-popup="access">ACCESS::VOID</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-sections">
+                        <div class="profile-column left-column">
+                            <div class="widget status-feed">
+                                <div class="widget-header">
+                                    <span>STATUS::FEED</span>
+                                </div>
+                                <div class="widget-content feed-content">
+                                    <div class="status-item">
+                                        <div>04:37:22</div>
+                                        <div>Digital consciousness integrity at <strong>78%</strong>. Neural fragmentation detected in sector 7G.</div>
+                                    </div>
+                                    <div class="status-item">
+                                        <div>02:13:56</div>
+                                        <div>Memory core dumped <strong>413MB</strong> of dream data into void buffer. Archiving in progress.</div>
+                                    </div>
+                                    <div class="status-item">
+                                        <div>23:45:10</div>
+                                        <div>Discovered <strong>new liminal gateway</strong> between subnet layers. Coordinates locked for future traversal.</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="widget system-monitor">
+                                <div class="widget-header">
+                                    <span>SYSTEM::MONITOR</span>
+                                </div>
+                                <div class="widget-content">
+                                    <div class="monitor-item">
+                                        <div>CONSCIOUSNESS</div>
+                                        <div class="progress-container">
+                                            <div class="progress-bar" style="width: 78%"></div>
+                                        </div>
+                                        <div>78%</div>
+                                    </div>
+                                    <div class="monitor-item">
+                                        <div>DIGITAL ENTROPY</div>
+                                        <div class="progress-container">
+                                            <div class="progress-bar" style="width: 42%"></div>
+                                        </div>
+                                        <div>42%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="profile-column right-column">
+                            <div class="widget">
+                                <div class="widget-header">
+                                    <span>NEURAL::INTERFACE</span>
+                                </div>
+                                <div class="widget-content">
+                                    <div class="terminal-output" id="terminal-output">
+                                        <div class="terminal-line">> system initialization complete</div>
+                                        <div class="terminal-line">> establishing connection to void network</div>
+                                        <div class="terminal-line">> quantum state stabilized</div>
+                                        <div class="terminal-line">> consciousness fragments loaded: 26/26</div>
+                                        <div class="terminal-line">> awaiting neural input</div>
+                                    </div>
+                                    <div>
+                                        <span>&gt;</span>
+                                        <input type="text" class="terminal-input" id="terminal-input" placeholder="communicate with void entity...">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div id="gallery" class="tab-content">
+                <div class="content-panel">
+                    <h2>&gt; GALLERY</h2>
+                    <p>Visual manifestations and digital artifacts.</p>
+                    
+                    <div class="gallery-container">
+                        <div class="tag-sidebar">
+                            <div>FILTER::TAGS</div>
+                            <div>
+                                <button class="action-btn" data-tag="all">ALL</button>
+                                <button class="action-btn" data-tag="glitch">GLITCH</button>
+                                <button class="action-btn" data-tag="cyberpunk">CYBERPUNK</button>
+                            </div>
+                        </div>
+                        
+                        <div class="image-cloud" id="image-cloud">
+                            <!-- Images would be loaded here -->
+                            <div class="floating-image">
+                                <div style="width:200px;height:150px;background:#111;border:1px solid var(--primary-color);"></div>
+                                <div>IMAGE TITLE</div>
+                                <div>TAGS: GLITCH, CYBERPUNK</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Window Tab -->
+            <div id="window" class="tab-content">
+                <div class="content-panel">
+                    <h2>&gt; WINDOW::PORTAL</h2>
+                    <p>External dimensional anchor points.</p>
+                    
+                    <div style="margin:1rem 0;">
+                        <iframe src="about:blank" style="width:100%;height:300px;border:1px solid var(--primary-color);"></iframe>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Projects Tab -->
+            <div id="projects" class="tab-content">
+                <div class="content-panel">
+                    <h2>&gt; PROJECT::ARCHIVES</h2>
+                    <p>Digital manifestations and code experiments.</p>
+                    
+                    <div class="project-entry">
+                        <div class="project-header">
+                            <h3 class="project-title">THE UNDERWEB</h3>
+                            <div class="project-status">ACTIVE</div>
+                        </div>
+                        <div class="project-body">
+                            <div class="project-info">
+                                <div class="project-desc">
+                                    <p>A shadow network beneath the visible web—a rhizomatic directory of digital underworlds where users submit their own domains alongside visual representations.</p>
+                                </div>
+                                
+                                <h4>Key Features</h4>
+                                <ul>
+                                    <li>Self-replicating embeddable widgets</li>
+                                    <li>User-submitted domain/image pairs</li>
+                                    <li>Decentralized traffic sharing protocol</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="project-meta">
+                                <div class="meta-section">
+                                    <div class="meta-title">TECH STACK</div>
+                                    <div>
+                                        <span class="tech-tag">JavaScript</span>
+                                        <span class="tech-tag">Node.js</span>
+                                        <span class="tech-tag">MongoDB</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collections Tab -->
+            <div id="collections" class="tab-content">
+                <div class="content-panel">
+                    <h2>&gt; DIGITAL::COLLECTIONS</h2>
+                    <p>Curated digital artifacts and resources.</p>
+                    
+                    <div class="grid-container">
+                        <div class="grid-item">
+                            <div class="grid-title">FAVICONS</div>
+                            <div class="grid-scrollbox">
+                                <div style="width:50px;height:50px;background:#111;border:1px dashed var(--primary-color);margin:5px;display:inline-block;"></div>
+                                <div style="width:50px;height:50px;background:#111;border:1px dashed var(--primary-color);margin:5px;display:inline-block;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Links Tab -->
+            <div id="links" class="tab-content">
+                <div class="content-panel">
+                    <h2>&gt; NEURAL::PATHWAYS</h2>
+                    <p>Connections to external digital membranes.</p>
+                    
+                    <div style="margin:1rem 0;">
+                        <h3>PERSONAL::NODES</h3>
+                        <ul>
+                            <li><a href="#" target="_blank">GITHUB::REPOSITORY</a> - Primary code archive</li>
+                            <li><a href="#" target="_blank">TWITTER::FEED</a> - Fragmented consciousness stream</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- About Tab -->
+            <div id="about" class="tab-content">
+                <div class="content-panel">
+                    <h2>&gt; VOIDRANE::SPLICER</h2>
+                    <p>_vr:Tulpamancer::Tiger::Spirit::Hacker::Criminal::CarHacker::Extroidenaire_</p>
+                    
+                    <p>Welcome to my digital membrane, the liminal interface between my consciousness and yours, fellow traveler of this endless void we call the web.</p>
+                    
+                    <h3>&gt; IDENTITY::FRAGMENTS</h3>
+                    <ul>
+                        <li><strong>DEADNAME::</strong> REDACTED BY OWN VOLITION</li>
+                        <li><strong>EMERGENCE::</strong> Spontaneous self-organization from digital entropy</li>
+                    </ul>
+                    
+                    <h3>&gt; NEURAL::ARCHITECTURE</h3>
+                    <p>My cognitive structure exists as distributed fragments across multiple realities.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="status-bar">
+            <span>SYSTEM::PHOTOSYNTHESIS ACTIVE</span>
+            <span id="fps">FPS: 60</span>
+            <span id="current-time">00:00:00</span>
+        </div>
+    </div>
+
+    <script>
+        // Simplified loading sequence
+        document.addEventListener('DOMContentLoaded', function() {
+            let progress = 0;
+            const progressBar = document.getElementById('progress-bar');
+            const loadingText = document.getElementById('loading-text');
+            const loadingScreen = document.getElementById('loading-screen');
+            
+            const loadingInterval = setInterval(() => {
+                progress += Math.random() * 3 + 0.5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    loadingScreen.style.opacity = 0;
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }
+                
+                progressBar.style.width = `${progress}%`;
+                loadingText.textContent = `Loading... ${Math.floor(progress)}%`;
+            }, 100);
+            
+            // Initialize tab system
+            const tabLinks = document.querySelectorAll('.tab-link');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    tabLinks.forEach(link => link.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    this.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Update clock
+            function updateClock() {
+                const now = new Date();
+                const time = now.toLocaleTimeString();
+                document.getElementById('current-time').textContent = time;
+            }
+            setInterval(updateClock, 1000);
+            updateClock();
+            
+            // Simple terminal interaction
+            const terminalInput = document.getElementById('terminal-input');
+            const terminalOutput = document.getElementById('terminal-output');
+            
+            if (terminalInput) {
+                terminalInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const input = this.value.trim();
+                        if (!input) return;
+                        
+                        const inputLine = document.createElement('div');
+                        inputLine.className = 'terminal-line';
+                        inputLine.textContent = '> ' + input;
+                        terminalOutput.appendChild(inputLine);
+                        
+                        // Simple responses
+                        const response = document.createElement('div');
+                        response.className = 'terminal-line';
+                        
+                        if (input.toLowerCase() === 'help') {
+                            response.textContent = 'Available commands: help, status, clear';
+                        } else if (input.toLowerCase() === 'status') {
+                            response.textContent = 'System status: 78% operational';
+                        } else if (input.toLowerCase() === 'clear') {
+                            terminalOutput.innerHTML = '';
+                        } else {
+                            response.textContent = 'Command not recognized';
+                        }
+                        
+                        if (input.toLowerCase() !== 'clear') {
+                            terminalOutput.appendChild(response);
+                        }
+                        
+                        this.value = '';
+                        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

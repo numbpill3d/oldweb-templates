@@ -1,0 +1,13 @@
+{
+  "title": "Purple Digital Sanctum",
+  "slug": "purple-digital-sanctum",
+  "category": "shrines",
+  "description": "Purple cyber-occult digital shrine composition.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/purplesanctum",
+  "source_commit": "e0446ed53b65ac571cd8f2ccfdba7cb1ffbda33d",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

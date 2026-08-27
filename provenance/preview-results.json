@@ -1,0 +1,544 @@
+[
+  {
+    "slug": "fruitiger-aero",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/profiles/fruitiger-aero/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 90116,
+        "path": "previews/fruitiger-aero/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 45936,
+        "path": "previews/fruitiger-aero/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "pastel-neurocore",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/profiles/pastel-neurocore/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 60354,
+        "path": "previews/pastel-neurocore/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 8934,
+        "path": "previews/pastel-neurocore/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "digital-soul",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/profiles/digital-soul/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 33436,
+        "path": "previews/digital-soul/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 21448,
+        "path": "previews/digital-soul/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "purple-digital-sanctum",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/shrines/purple-digital-sanctum/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 104582,
+        "path": "previews/purple-digital-sanctum/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 36704,
+        "path": "previews/purple-digital-sanctum/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "lain-profile-node",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/terminals/lain-profile-node/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 35790,
+        "path": "previews/lain-profile-node/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 14778,
+        "path": "previews/lain-profile-node/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "cyphercore-monolith",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/terminals/cyphercore-monolith/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 77520,
+        "path": "previews/cyphercore-monolith/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 35418,
+        "path": "previews/cyphercore-monolith/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "temporal-breach",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/terminals/temporal-breach/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 112326,
+        "path": "previews/temporal-breach/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 39670,
+        "path": "previews/temporal-breach/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "neurodigital-prayer-device",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/terminals/neurodigital-prayer-device/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 9668,
+        "path": "previews/neurodigital-prayer-device/desktop.webp",
+        "reused": true,
+        "method": "loader-hidden-for-capture"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 7460,
+        "path": "previews/neurodigital-prayer-device/mobile.webp",
+        "reused": true,
+        "method": "loader-hidden-for-capture"
+      }
+    ]
+  },
+  {
+    "slug": "oracle-chorus",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/terminals/oracle-chorus/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 56414,
+        "path": "previews/oracle-chorus/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 32164,
+        "path": "previews/oracle-chorus/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "darknet-bazaar",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/terminals/darknet-bazaar/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 55032,
+        "path": "previews/darknet-bazaar/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 35256,
+        "path": "previews/darknet-bazaar/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "dead-city-radio",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/publishing/dead-city-radio/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 83480,
+        "path": "previews/dead-city-radio/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 25204,
+        "path": "previews/dead-city-radio/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "strawberry-desktop",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/desktops/strawberry-desktop/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 6498,
+        "path": "previews/strawberry-desktop/desktop.webp",
+        "reused": true,
+        "method": "loader-hidden-for-capture"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 4360,
+        "path": "previews/strawberry-desktop/mobile.webp",
+        "reused": true,
+        "method": "loader-hidden-for-capture"
+      }
+    ]
+  },
+  {
+    "slug": "x11-profile",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/desktops/x11-profile/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 111616,
+        "path": "previews/x11-profile/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 29720,
+        "path": "previews/x11-profile/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "amiga-workbench",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/desktops/amiga-workbench/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 79622,
+        "path": "previews/amiga-workbench/desktop.webp",
+        "reused": true
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 32912,
+        "path": "previews/amiga-workbench/mobile.webp",
+        "reused": true
+      }
+    ]
+  },
+  {
+    "slug": "win98-homepage",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/desktops/win98-homepage/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 90790,
+        "path": "previews/win98-homepage/desktop.webp",
+        "method": "static-fallback-scripts-removed-for-capture"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 36450,
+        "path": "previews/win98-homepage/mobile.webp",
+        "method": "static-fallback-scripts-removed-for-capture"
+      }
+    ]
+  },
+  {
+    "slug": "decora-yumetwint",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/desktops/decora-yumetwint/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 130944,
+        "path": "previews/decora-yumetwint/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 37588,
+        "path": "previews/decora-yumetwint/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "margin-notes",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/publishing/margin-notes/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 31940,
+        "path": "previews/margin-notes/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 17784,
+        "path": "previews/margin-notes/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "ashen-gallery",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/publishing/ashen-gallery/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 14492,
+        "path": "previews/ashen-gallery/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 9446,
+        "path": "previews/ashen-gallery/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "retro-newsroom",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/publishing/retro-newsroom/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 23916,
+        "path": "previews/retro-newsroom/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 14020,
+        "path": "previews/retro-newsroom/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "scant-magazine",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/publishing/scant-magazine/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 62562,
+        "path": "previews/scant-magazine/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 28678,
+        "path": "previews/scant-magazine/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "trodden-links",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/directories/trodden-links/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 67718,
+        "path": "previews/trodden-links/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 23300,
+        "path": "previews/trodden-links/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "heartworm",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/diaries/heartworm/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 170296,
+        "path": "previews/heartworm/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 57302,
+        "path": "previews/heartworm/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "digital-grimoire",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/nature/digital-grimoire/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 41544,
+        "path": "previews/digital-grimoire/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 25454,
+        "path": "previews/digital-grimoire/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "dialup-aquarium",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/nature/dialup-aquarium/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 86276,
+        "path": "previews/dialup-aquarium/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 33966,
+        "path": "previews/dialup-aquarium/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "solarpunk-nexus",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/nature/solarpunk-nexus/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 4670,
+        "path": "previews/solarpunk-nexus/desktop.webp",
+        "method": "loader-hidden-for-capture"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 2946,
+        "path": "previews/solarpunk-nexus/mobile.webp",
+        "method": "loader-hidden-for-capture"
+      }
+    ]
+  },
+  {
+    "slug": "moss-altar",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/shrines/moss-altar/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 94642,
+        "path": "previews/moss-altar/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 28508,
+        "path": "previews/moss-altar/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "aetheros-umbralath",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/shrines/aetheros-umbralath/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 93674,
+        "path": "previews/aetheros-umbralath/desktop.webp",
+        "method": "static-fallback-scripts-removed-for-capture"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 31854,
+        "path": "previews/aetheros-umbralath/mobile.webp",
+        "method": "static-fallback-scripts-removed-for-capture"
+      }
+    ]
+  },
+  {
+    "slug": "celebi-temporal-rift",
+    "entrypoint": "/home/scorn/github-deep-review/oldweb-templates/templates/fandom/celebi-temporal-rift/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 50834,
+        "path": "previews/celebi-temporal-rift/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 30658,
+        "path": "previews/celebi-temporal-rift/mobile.webp"
+      }
+    ]
+  }
+]

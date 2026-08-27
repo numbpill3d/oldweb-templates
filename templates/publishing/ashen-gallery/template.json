@@ -1,0 +1,13 @@
+{
+  "title": "Ashen Gallery",
+  "slug": "ashen-gallery",
+  "category": "publishing",
+  "description": "Liminal art-gallery portfolio page.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/ashengallery",
+  "source_commit": "511bc5c172d3239bb35b501f577d2b20d973fbdd",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

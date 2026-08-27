@@ -1,0 +1,13 @@
+{
+  "title": "Oracle Chorus",
+  "slug": "oracle-chorus",
+  "category": "terminals",
+  "description": "Cyberwizard portal styled as an Oracle Chorus interface.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/oracle",
+  "source_commit": "025688d3a12b094d04affebaecc5df4a5dcfe810",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

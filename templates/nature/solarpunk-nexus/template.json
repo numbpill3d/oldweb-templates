@@ -1,0 +1,13 @@
+{
+  "title": "Solarpunk Nexus",
+  "slug": "solarpunk-nexus",
+  "category": "nature",
+  "description": "Solarpunk personal nexus and interface.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/vrane_alpha",
+  "source_commit": "f573706af40c6b35fcb5ce1a9a87f031db89e653",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

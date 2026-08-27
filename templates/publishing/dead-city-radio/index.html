@@ -1,0 +1,2357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEAD_CITY_RADIO // signal archive</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:         #060606;
+  --bg-panel:   #0f0f0f;
+  --bg-deep:    #030303;
+  --accent:     #ffffff;
+  --accent-dim: rgba(255,255,255,0.35);
+  --accent-faint: rgba(255,255,255,0.08);
+  --text:       #d8d8d8;
+  --text-muted: #787878;
+  --border:     #2a2a2a;
+  --border-lit: #555555;
+  --ink:        #1a1a1a;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Courier Prime', monospace;
+  font-size: 14px;
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── THREE.JS BACKGROUND ─────────────────────────────── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* ─── NOISE TEXTURE OVERLAY ───────────────────────────── */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+}
+
+/* ─── CRT OVERLAY ─────────────────────────────────────── */
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.06) 2px,
+    rgba(0,0,0,0.06) 4px
+  );
+  animation: crt-flicker 8s infinite;
+}
+.crt-overlay::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.7) 100%);
+}
+@keyframes crt-flicker {
+  0%,100% { opacity:1; }
+  92% { opacity:1; }
+  93% { opacity:0.94; }
+  94% { opacity:1; }
+  96% { opacity:0.97; }
+  97% { opacity:1; }
+}
+
+/* ─── WOODCUT TEXTURE DIVIDERS (SVG inline) ───────────── */
+.woodcut-divider {
+  width: 100%;
+  height: 40px;
+  background-image: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(255,255,255,0.03) 3px,
+    rgba(255,255,255,0.03) 4px
+  ),
+  repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 8px,
+    rgba(255,255,255,0.02) 8px,
+    rgba(255,255,255,0.02) 9px
+  );
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+.woodcut-divider::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--bg), transparent 10%, transparent 90%, var(--bg));
+}
+
+/* ─── WRAPPER ─────────────────────────────────────────── */
+#page-wrapper {
+  position: relative;
+  z-index: 3;
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 12px 40px;
+}
+
+/* ─── HEADER ──────────────────────────────────────────── */
+header {
+  border-bottom: 2px solid var(--border-lit);
+  padding: 18px 0 0;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.site-title-block {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.site-title {
+  font-family: 'VT323', monospace;
+  font-size: 42px;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 30px rgba(255,255,255,0.15), 2px 2px 0 #000;
+  line-height: 1;
+  position: relative;
+}
+
+.site-title::before {
+  content: '//';
+  font-size: 24px;
+  color: var(--text-muted);
+  margin-right: 4px;
+}
+
+.site-tagline {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  align-self: center;
+}
+
+.header-deco {
+  position: absolute;
+  right: 0;
+  top: 18px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: right;
+  line-height: 1.8;
+  letter-spacing: 0.1em;
+}
+
+.blink { animation: blink 1.2s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* ─── NAV ─────────────────────────────────────────────── */
+nav {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+}
+
+nav a {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--text-muted);
+  padding: 4px 14px;
+  border: 1px solid transparent;
+  border-bottom: none;
+  margin-right: 2px;
+  transition: color 100ms, background 100ms, border-color 100ms;
+}
+
+nav a:hover, nav a.active {
+  color: var(--bg);
+  background: var(--accent);
+  border-color: var(--border-lit);
+}
+
+/* ─── CONTENT ROW ─────────────────────────────────────── */
+.content-row {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 14px;
+  align-items: start;
+}
+
+/* ─── SIDEBAR ─────────────────────────────────────────── */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* ─── WIDGET BASE ─────────────────────────────────────── */
+.widget {
+  border: 1px solid var(--border);
+  background: var(--bg-panel);
+  overflow: hidden;
+}
+
+.widget-title {
+  background: var(--accent);
+  color: var(--bg);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.widget-title .wt-close {
+  cursor: default;
+  font-size: 9px;
+  opacity: 0.6;
+}
+
+.widget-body {
+  padding: 10px;
+}
+
+/* ─── PROFILE CARD ────────────────────────────────────── */
+.profile-card .widget-body {
+  padding: 0;
+}
+
+.avatar-area {
+  width: 100%;
+  height: 120px;
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* SVG woodcut-style figure */
+.avatar-figure {
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.profile-info {
+  padding: 10px;
+}
+
+.profile-handle {
+  font-family: 'VT323', monospace;
+  font-size: 22px;
+  color: var(--accent);
+  display: block;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.profile-status {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: 'Share Tech Mono', monospace;
+  margin-bottom: 8px;
+  letter-spacing: 0.05em;
+}
+
+.profile-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  border-top: 1px solid var(--border);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-num {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--accent);
+  display: block;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ─── NOW PLAYING ─────────────────────────────────────── */
+.now-playing .widget-body { padding: 8px 10px; }
+
+.np-track {
+  font-family: 'VT323', monospace;
+  font-size: 16px;
+  color: var(--accent);
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.np-artist {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  display: block;
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.progress-bar-track {
+  width: 100%;
+  height: 4px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent);
+  animation: progress-pulse 12s linear infinite;
+  width: 0%;
+}
+
+@keyframes progress-pulse {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.np-time {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+/* ─── SIGNAL METER (fake system stats) ───────────────── */
+.signal-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.signal-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  width: 50px;
+  flex-shrink: 0;
+}
+
+.signal-bar-bg {
+  flex: 1;
+  height: 5px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+
+.signal-bar-fill {
+  position: absolute;
+  inset: 0;
+  right: auto;
+  background: var(--accent);
+  animation: signal-breathe 3s ease-in-out infinite;
+}
+
+@keyframes signal-breathe {
+  0%,100% { opacity:0.6; width: var(--w); }
+  50% { opacity:1; width: calc(var(--w) + 6%); }
+}
+
+.signal-val {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--accent);
+  width: 36px;
+  text-align: right;
+}
+
+/* ─── QUOTE BOX ───────────────────────────────────────── */
+.quote-box .widget-body {
+  padding: 10px;
+  min-height: 80px;
+  position: relative;
+}
+
+.quote-text {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.6;
+  font-style: normal;
+  border-left: 2px solid var(--border-lit);
+  padding-left: 8px;
+  margin-bottom: 6px;
+}
+
+.quote-attr {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.quote-nav {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.quote-nav button {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: background 80ms, color 80ms;
+}
+
+.quote-nav button:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+/* ─── VISITOR COUNTER ─────────────────────────────────── */
+.counter-display {
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+  padding: 8px 0 4px;
+}
+
+.counter-digit {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-lit);
+  font-family: 'VT323', monospace;
+  font-size: 28px;
+  color: var(--accent);
+  width: 28px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 0 12px rgba(255,255,255,0.4);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.counter-label {
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding-bottom: 6px;
+}
+
+/* ─── WEB BADGES ──────────────────────────────────────── */
+.badge-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.badge {
+  width: 88px;
+  height: 31px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  color: var(--text-muted);
+  text-decoration: none;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: border-color 80ms, color 80ms;
+  text-align: center;
+  line-height: 1.2;
+  padding: 2px;
+  cursor: pointer;
+}
+
+.badge:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── MAIN CONTENT ────────────────────────────────────── */
+.main-content {
+  min-width: 0;
+}
+
+/* ─── TABS ────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  padding: 6px 16px;
+  cursor: pointer;
+  margin-right: 2px;
+  margin-bottom: -1px;
+  transition: background 80ms, color 80ms;
+  position: relative;
+}
+
+.tab-btn:hover { color: var(--text); background: var(--bg-panel); }
+
+.tab-btn.active {
+  background: var(--bg-panel);
+  color: var(--accent);
+  border-color: var(--border-lit);
+  border-bottom-color: var(--bg-panel);
+  z-index: 1;
+}
+
+.tab-panel {
+  display: none;
+  border: 1px solid var(--border);
+  border-top: none;
+  background: var(--bg-panel);
+  padding: 18px;
+  min-height: 400px;
+}
+
+.tab-panel.active { display: block; }
+
+/* ─── ABOUT TAB ───────────────────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.about-block {
+  border: 1px solid var(--border);
+  padding: 12px;
+  background: var(--bg-deep);
+  position: relative;
+}
+
+.about-block-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 4px;
+}
+
+.about-block p {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.7;
+}
+
+.manifesto-block {
+  border: 1px solid var(--border-lit);
+  padding: 16px;
+  background: var(--bg-deep);
+  position: relative;
+  margin-top: 4px;
+}
+
+.manifesto-block::before {
+  content: 'SIGNAL_MANIFESTO.TXT';
+  position: absolute;
+  top: -9px;
+  left: 10px;
+  background: var(--bg-panel);
+  padding: 0 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  letter-spacing: 0.12em;
+}
+
+.manifesto-block p {
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text);
+  border-left: 2px solid var(--border-lit);
+  padding-left: 12px;
+  margin-bottom: 10px;
+}
+
+.manifesto-block p:last-child { margin-bottom: 0; }
+
+/* ─── ASCII ART BLOCK ─────────────────────────────────── */
+.ascii-art-block {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  padding: 10px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  overflow: hidden;
+  margin: 14px 0;
+  white-space: pre;
+}
+
+/* ─── BLOG TAB ────────────────────────────────────────── */
+.blog-scrollbox {
+  max-height: 440px;
+  overflow-y: scroll;
+  padding-right: 8px;
+}
+
+.blog-scrollbox::-webkit-scrollbar { width: 6px; }
+.blog-scrollbox::-webkit-scrollbar-track { background: var(--bg-deep); }
+.blog-scrollbox::-webkit-scrollbar-thumb { background: var(--border-lit); border: 1px solid var(--border); }
+.blog-scrollbox::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+.blog-entry {
+  border: 1px solid var(--border);
+  background: var(--bg-deep);
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 100ms;
+  position: relative;
+}
+
+.blog-entry:hover { border-color: var(--border-lit); }
+.blog-entry:hover .entry-title { color: var(--accent); }
+
+.entry-meta {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.entry-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.entry-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.entry-tag {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 0 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.entry-title {
+  font-family: 'VT323', monospace;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 6px;
+  line-height: 1.1;
+  transition: color 100ms;
+}
+
+.entry-excerpt {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ─── GALLERY TAB ─────────────────────────────────────── */
+.gallery-filter {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 3px 10px;
+  cursor: pointer;
+  transition: all 80ms;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.gallery-cell {
+  aspect-ratio: 1/1;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.gallery-cell:hover { border-color: var(--border-lit); }
+
+.gallery-cell canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.gallery-cell-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0,0,0,0.92));
+  padding: 20px 8px 8px;
+  transform: translateY(100%);
+  transition: transform 120ms;
+}
+
+.gallery-cell:hover .gallery-cell-overlay {
+  transform: translateY(0);
+}
+
+.gallery-cell-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+
+.gallery-cell-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+/* ─── TRANSMISSIONS TAB (Links) ───────────────────────── */
+.transmissions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.tx-category {
+  border: 1px solid var(--border);
+  background: var(--bg-deep);
+}
+
+.tx-cat-header {
+  background: var(--ink);
+  border-bottom: 1px solid var(--border);
+  padding: 5px 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.tx-link-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  transition: background 80ms;
+}
+
+.tx-link-row:last-child { border-bottom: none; }
+
+.tx-link-row:hover {
+  background: var(--accent-faint);
+  border-left: 2px solid var(--accent);
+  padding-left: 8px;
+}
+
+.tx-prefix {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.tx-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--text);
+  transition: color 80ms;
+}
+
+.tx-link-row:hover .tx-title { color: var(--accent); }
+
+/* ─── THREE.JS DIVIDER CANVAS ─────────────────────────── */
+.divider-canvas-wrap {
+  width: 100%;
+  height: 70px;
+  margin: 16px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+}
+
+.divider-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ─── GUESTBOOK WIDGET ────────────────────────────────── */
+.guestbook-entries {
+  max-height: 180px;
+  overflow-y: scroll;
+  margin-bottom: 10px;
+}
+
+.guestbook-entries::-webkit-scrollbar { width: 5px; }
+.guestbook-entries::-webkit-scrollbar-track { background: var(--bg-deep); }
+.guestbook-entries::-webkit-scrollbar-thumb { background: var(--border-lit); }
+
+.gb-entry {
+  border-bottom: 1px solid var(--border);
+  padding: 6px 0;
+  font-size: 11px;
+}
+
+.gb-entry:last-child { border-bottom: none; }
+
+.gb-user {
+  font-family: 'VT323', monospace;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+.gb-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-left: 6px;
+}
+
+.gb-msg { color: var(--text-muted); font-size: 11px; line-height: 1.5; }
+
+.gb-form { display: flex; gap: 6px; }
+
+.gb-input {
+  flex: 1;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Courier Prime', monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  outline: none;
+  transition: border-color 80ms;
+}
+
+.gb-input:focus { border-color: var(--border-lit); }
+
+.gb-submit {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  padding: 4px 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 80ms;
+}
+
+.gb-submit:hover { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+
+/* ─── INLINE SVG WOODCUT ILLUSTRATION ────────────────── */
+.woodcut-illustration {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  margin-bottom: 10px;
+}
+
+/* ─── FOOTER ──────────────────────────────────────────── */
+footer {
+  border-top: 2px solid var(--border);
+  margin-top: 30px;
+  padding-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+
+.footer-col {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-muted);
+  line-height: 1.9;
+  letter-spacing: 0.06em;
+}
+
+.footer-col a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 80ms;
+}
+
+.footer-col a:hover { color: var(--accent); }
+
+.footer-sig {
+  font-family: 'VT323', monospace;
+  font-size: 14px;
+  color: var(--border-lit);
+  letter-spacing: 0.1em;
+}
+
+/* ─── SCROLLBAR GLOBAL ────────────────────────────────── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border); border: 1px solid var(--border); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-lit); }
+
+/* ─── GLITCH KEYFRAME ─────────────────────────────────── */
+@keyframes glitch {
+  0%,100% { clip-path: none; transform: none; }
+  20% { clip-path: polygon(0 15%, 100% 15%, 100% 40%, 0 40%); transform: translate(-2px,0); }
+  40% { clip-path: polygon(0 60%, 100% 60%, 100% 80%, 0 80%); transform: translate(2px,0); }
+  60% { clip-path: none; transform: none; }
+}
+
+.site-title:hover::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0; top: 0;
+  color: var(--text-muted);
+  animation: glitch 0.4s steps(1) forwards;
+}
+
+/* ─── INTERACTIVE WAVEFORM ────────────────────────────── */
+#waveform-canvas {
+  width: 100%;
+  height: 50px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* ─── SIGNAL NOISE WIDGET ─────────────────────────────── */
+.signal-noise-widget {
+  width: 100%;
+  height: 60px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+}
+
+#noise-canvas-small { display: block; width: 100%; height: 100%; }
+
+</style>
+</head>
+<body>
+
+<!-- THREE.JS BACKGROUND -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- OVERLAYS -->
+<div class="noise-overlay"></div>
+<div class="crt-overlay"></div>
+
+<div id="page-wrapper">
+
+  <!-- ═══ HEADER ════════════════════════════════════════ -->
+  <header>
+    <div class="site-title-block">
+      <span class="site-title" data-text="DEAD_CITY_RADIO">DEAD_CITY_RADIO</span>
+      <span class="site-tagline">transmission archive &amp; signal decay log</span>
+    </div>
+    <div class="header-deco">
+      <span>SESSION: 7F3A-9B2C</span><br>
+      <span>UPTIME: 847:23:11</span><br>
+      <span class="blink">&#9632; LIVE</span>
+    </div>
+    <nav>
+      <a href="#home" class="active" onclick="showTab('about',this)">HOME</a>
+      <a href="#transmissions" onclick="showTab('transmissions',this)">TRANSMISSIONS</a>
+      <a href="#fragments" onclick="showTab('blog',this)">FRAGMENTS</a>
+      <a href="#archive" onclick="showTab('gallery',this)">ARCHIVE</a>
+      <a href="#signal" onclick="showTab('signal',this)">SIGNAL</a>
+    </nav>
+  </header>
+
+  <!-- ═══ CONTENT ROW ════════════════════════════════════ -->
+  <div class="content-row">
+
+    <!-- ═══ SIDEBAR ════════════════════════════════════ -->
+    <aside class="sidebar">
+
+      <!-- PROFILE CARD -->
+      <div class="widget profile-card">
+        <div class="widget-title">
+          <span>OPERATOR.EXE</span>
+          <span class="wt-close">[x]</span>
+        </div>
+        <div class="widget-body">
+          <div class="avatar-area">
+            <!-- Donwood-style woodcut SVG figure -->
+            <svg viewBox="0 0 120 120" width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <filter id="woodcut">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="5" result="noise"/>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+                </filter>
+              </defs>
+              <g filter="url(#woodcut)">
+                <!-- Head -->
+                <ellipse cx="60" cy="32" rx="18" ry="20" fill="#d8d8d8"/>
+                <!-- Body -->
+                <rect x="38" y="50" width="44" height="40" rx="2" fill="#c0c0c0"/>
+                <!-- Neck -->
+                <rect x="54" y="48" width="12" height="8" fill="#c0c0c0"/>
+                <!-- Arms -->
+                <rect x="22" y="52" width="16" height="6" rx="3" fill="#b0b0b0"/>
+                <rect x="82" y="52" width="16" height="6" rx="3" fill="#b0b0b0"/>
+                <!-- Vertical woodcut lines on body -->
+                <line x1="44" y1="52" x2="44" y2="88" stroke="#888" stroke-width="0.8" opacity="0.5"/>
+                <line x1="52" y1="52" x2="52" y2="88" stroke="#888" stroke-width="0.8" opacity="0.5"/>
+                <line x1="60" y1="52" x2="60" y2="88" stroke="#888" stroke-width="0.8" opacity="0.5"/>
+                <line x1="68" y1="52" x2="68" y2="88" stroke="#888" stroke-width="0.8" opacity="0.5"/>
+                <line x1="76" y1="52" x2="76" y2="88" stroke="#888" stroke-width="0.8" opacity="0.5"/>
+                <!-- Face details: horizontal hash lines (woodcut) -->
+                <line x1="46" y1="28" x2="74" y2="28" stroke="#444" stroke-width="0.7" opacity="0.6"/>
+                <line x1="44" y1="32" x2="76" y2="32" stroke="#444" stroke-width="0.7" opacity="0.5"/>
+                <line x1="46" y1="36" x2="74" y2="36" stroke="#444" stroke-width="0.7" opacity="0.4"/>
+                <!-- Eyes -->
+                <rect x="50" y="26" width="6" height="3" fill="#060606"/>
+                <rect x="64" y="26" width="6" height="3" fill="#060606"/>
+                <!-- Static/signal bars at bottom -->
+                <rect x="38" y="92" width="44" height="3" fill="#444" opacity="0.8"/>
+                <rect x="38" y="97" width="28" height="2" fill="#555" opacity="0.5"/>
+                <rect x="68" y="97" width="14" height="2" fill="#333" opacity="0.5"/>
+              </g>
+              <!-- Corner brackets -->
+              <g stroke="#555" stroke-width="1" fill="none" opacity="0.6">
+                <path d="M4,4 L4,16 M4,4 L16,4"/>
+                <path d="M116,4 L116,16 M116,4 L104,4"/>
+                <path d="M4,116 L4,104 M4,116 L16,116"/>
+                <path d="M116,116 L116,104 M116,116 L104,116"/>
+              </g>
+            </svg>
+          </div>
+          <div class="profile-info">
+            <span class="profile-handle">XENOTREK</span>
+            <div class="profile-status">&#9679; broadcasting from the ruins</div>
+            <div class="profile-stats">
+              <div class="stat-item">
+                <span class="stat-num">412</span>
+                <span class="stat-label">signals</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">88</span>
+                <span class="stat-label">freq</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">2021</span>
+                <span class="stat-label">online</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num">7.3k</span>
+                <span class="stat-label">visits</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOW PLAYING -->
+      <div class="widget now-playing">
+        <div class="widget-title">
+          <span>NOW_PLAYING</span>
+          <span class="wt-close">[_]</span>
+        </div>
+        <div class="widget-body">
+          <canvas id="waveform-canvas" height="50"></canvas>
+          <span class="np-track" id="np-track">DEFAULT // amnesiac</span>
+          <span class="np-artist" id="np-artist">atoms for peace</span>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+          </div>
+          <div class="np-time">
+            <span id="np-elapsed">0:00</span>
+            <span id="np-total">4:19</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNAL METERS -->
+      <div class="widget">
+        <div class="widget-title">
+          <span>SYS_STATUS</span>
+          <span class="wt-close">[_]</span>
+        </div>
+        <div class="widget-body">
+          <div class="signal-row">
+            <span class="signal-label">ENTROPY</span>
+            <div class="signal-bar-bg"><div class="signal-bar-fill" style="--w:73%; width:73%;"></div></div>
+            <span class="signal-val">73%</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-label">DECAY</span>
+            <div class="signal-bar-bg"><div class="signal-bar-fill" style="--w:41%; width:41%; animation-delay:0.6s;"></div></div>
+            <span class="signal-val">41%</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-label">NOISE</span>
+            <div class="signal-bar-bg"><div class="signal-bar-fill" style="--w:88%; width:88%; animation-delay:1.2s;"></div></div>
+            <span class="signal-val">88%</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-label">SIGNAL</span>
+            <div class="signal-bar-bg"><div class="signal-bar-fill" style="--w:27%; width:27%; animation-delay:0.3s;"></div></div>
+            <span class="signal-val">27%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUOTE BOX -->
+      <div class="widget quote-box">
+        <div class="widget-title">
+          <span>FRAGMENTS</span>
+          <span class="wt-close">[_]</span>
+        </div>
+        <div class="widget-body">
+          <div class="quote-text" id="quote-text">
+            "we're not scaremongering / this is really happening"
+          </div>
+          <div class="quote-attr" id="quote-attr">— thom yorke, 2003</div>
+          <div class="quote-nav">
+            <button onclick="prevQuote()">&#9664; PREV</button>
+            <button onclick="nextQuote()">NEXT &#9654;</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- VISITOR COUNTER -->
+      <div class="widget">
+        <div class="widget-title">
+          <span>VISIT_COUNT</span>
+          <span class="wt-close">[_]</span>
+        </div>
+        <div class="widget-body" style="padding:6px 10px 10px;">
+          <div class="counter-display" id="counter-display"></div>
+          <div class="counter-label">transmissions received</div>
+        </div>
+      </div>
+
+      <!-- SIGNAL NOISE -->
+      <div class="signal-noise-widget">
+        <canvas id="noise-canvas-small"></canvas>
+      </div>
+
+      <!-- WEB BADGES -->
+      <div class="widget">
+        <div class="widget-title">
+          <span>WEB_BADGES</span>
+          <span class="wt-close">[_]</span>
+        </div>
+        <div class="widget-body">
+          <div class="badge-grid">
+            <span class="badge">neocities<br>citizen</span>
+            <span class="badge">no<br>cookies</span>
+            <span class="badge">made by<br>hand</span>
+            <span class="badge">free<br>software</span>
+            <span class="badge">linux<br>arch</span>
+            <span class="badge">no<br>tracking</span>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ═══ MAIN ═══════════════════════════════════════ -->
+    <main class="main-content">
+
+      <!-- TABS -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('about', this)">ABOUT</button>
+        <button class="tab-btn" onclick="switchTab('blog', this)">FRAGMENTS</button>
+        <button class="tab-btn" onclick="switchTab('gallery', this)">ARCHIVE</button>
+        <button class="tab-btn" onclick="switchTab('transmissions', this)">TRANSMISSIONS</button>
+        <button class="tab-btn" onclick="switchTab('signal', this)">SIGNAL</button>
+      </div>
+
+      <!-- ─── ABOUT ──────────────────────────────────── -->
+      <div class="tab-panel active" id="tab-about">
+
+        <!-- Donwood-style woodcut banner SVG -->
+        <div class="woodcut-illustration">
+          <svg viewBox="0 0 600 140" width="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <filter id="wc1">
+                <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="6" result="n"/>
+                <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+              </filter>
+              <filter id="wc2">
+                <feTurbulence type="turbulence" baseFrequency="0.05" numOctaves="4" result="n2"/>
+                <feDisplacementMap in="SourceGraphic" in2="n2" scale="2.5"/>
+              </filter>
+            </defs>
+
+            <!-- Background hatching (woodcut crosshatch) -->
+            <g opacity="0.12" stroke="#ffffff" stroke-width="0.8">
+              <!-- Horizontal lines -->
+              <line x1="0" y1="10" x2="600" y2="10"/>
+              <line x1="0" y1="18" x2="600" y2="18"/>
+              <line x1="0" y1="26" x2="600" y2="26"/>
+              <line x1="0" y1="34" x2="600" y2="34"/>
+              <line x1="0" y1="42" x2="600" y2="42"/>
+              <line x1="0" y1="50" x2="600" y2="50"/>
+              <line x1="0" y1="58" x2="600" y2="58"/>
+              <line x1="0" y1="66" x2="600" y2="66"/>
+              <line x1="0" y1="74" x2="600" y2="74"/>
+              <line x1="0" y1="82" x2="600" y2="82"/>
+              <line x1="0" y1="90" x2="600" y2="90"/>
+              <line x1="0" y1="98" x2="600" y2="98"/>
+              <line x1="0" y1="106" x2="600" y2="106"/>
+              <line x1="0" y1="114" x2="600" y2="114"/>
+              <line x1="0" y1="122" x2="600" y2="122"/>
+              <line x1="0" y1="130" x2="600" y2="130"/>
+            </g>
+
+            <!-- Urban skyline (Donwood style) -->
+            <g filter="url(#wc1)" fill="#1a1a1a">
+              <!-- Buildings left cluster -->
+              <rect x="20" y="60" width="18" height="80"/>
+              <rect x="16" y="50" width="6" height="90"/>
+              <rect x="38" y="40" width="22" height="100"/>
+              <rect x="36" y="35" width="4" height="5"/>
+              <rect x="60" y="55" width="14" height="85"/>
+              <rect x="74" y="70" width="10" height="70"/>
+              <rect x="84" y="45" width="20" height="95"/>
+              <rect x="104" y="60" width="12" height="80"/>
+              <rect x="116" y="30" width="16" height="110"/>
+              <!-- Antennae -->
+              <rect x="122" y="10" width="1" height="20"/>
+              <rect x="44" y="28" width="1" height="12"/>
+            </g>
+
+            <!-- Crowd of figures (Donwood style) -->
+            <g filter="url(#wc2)" fill="#2a2a2a" opacity="0.9">
+              <!-- Row of silhouette figures: simplified heads + bodies -->
+              <ellipse cx="240" cy="115" rx="5" ry="6"/>
+              <rect x="236" y="120" width="8" height="20"/>
+              <ellipse cx="256" cy="112" rx="5" ry="6"/>
+              <rect x="252" y="117" width="8" height="23"/>
+              <ellipse cx="272" cy="116" rx="4" ry="5"/>
+              <rect x="269" y="121" width="7" height="19"/>
+              <ellipse cx="286" cy="113" rx="5" ry="6"/>
+              <rect x="282" y="118" width="9" height="22"/>
+              <ellipse cx="302" cy="117" rx="4" ry="5"/>
+              <rect x="299" y="121" width="7" height="19"/>
+              <ellipse cx="316" cy="114" rx="5" ry="6"/>
+              <rect x="312" y="119" width="8" height="21"/>
+              <ellipse cx="330" cy="116" rx="4" ry="5"/>
+              <rect x="327" y="120" width="7" height="20"/>
+              <ellipse cx="345" cy="112" rx="5" ry="6"/>
+              <rect x="341" y="117" width="9" height="23"/>
+              <ellipse cx="360" cy="115" rx="4" ry="5"/>
+              <rect x="357" y="120" width="7" height="20"/>
+            </g>
+
+            <!-- Right side: fragmented geometry (Atoms for Peace) -->
+            <g filter="url(#wc1)" stroke="#888" stroke-width="0.8" fill="none" opacity="0.6">
+              <polygon points="480,20 510,60 470,75 450,40"/>
+              <polygon points="510,60 540,30 560,70 510,60"/>
+              <polygon points="450,40 470,75 430,80 420,50"/>
+              <polygon points="540,30 580,20 570,65 540,30"/>
+              <polygon points="470,75 500,100 440,105 430,80"/>
+              <line x1="480" y1="20" x2="470" y2="75"/>
+              <line x1="510" y1="60" x2="500" y2="100"/>
+              <line x1="450" y1="40" x2="440" y2="105"/>
+              <!-- Smaller inner fragments -->
+              <polygon points="492,40 506,52 488,58 478,46" opacity="0.4"/>
+              <polygon points="520,38 535,28 538,50 522,52" opacity="0.4"/>
+            </g>
+
+            <!-- Horizontal signal bars across middle -->
+            <g opacity="0.18">
+              <rect x="140" y="68" width="300" height="1" fill="#ffffff"/>
+              <rect x="160" y="76" width="240" height="1" fill="#ffffff"/>
+              <rect x="145" y="84" width="280" height="1" fill="#ffffff"/>
+            </g>
+
+            <!-- Dead city text in woodcut style -->
+            <text x="145" y="52" font-family="'VT323', monospace" font-size="36"
+                  fill="#d8d8d8" opacity="0.9" filter="url(#wc1)"
+                  letter-spacing="4">DEAD CITY RADIO</text>
+            <text x="146" y="52" font-family="'VT323', monospace" font-size="36"
+                  fill="none" stroke="#000" stroke-width="1" opacity="0.3"
+                  letter-spacing="4">DEAD CITY RADIO</text>
+
+            <!-- Border brackets -->
+            <g stroke="#333" stroke-width="1" fill="none">
+              <path d="M2,2 L2,20 M2,2 L20,2"/>
+              <path d="M598,2 L598,20 M598,2 L580,2"/>
+              <path d="M2,138 L2,120 M2,138 L20,138"/>
+              <path d="M598,138 L598,120 M598,138 L580,138"/>
+            </g>
+          </svg>
+        </div>
+
+        <div class="about-grid">
+          <div class="about-block">
+            <div class="about-block-label">identity.txt</div>
+            <p>
+              hardware hacker. signal archivist. OSINT practitioner.
+              operating from the ruins of a former broadcast tower.
+              the city is dead but the frequencies persist.
+            </p>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">current_ops.log</div>
+            <p>
+              ESP32 entropy harvesting. abandoned infrastructure mapping.
+              CAN bus archaeology. the machine has something to say
+              if you know how to listen to its static.
+            </p>
+          </div>
+        </div>
+
+        <pre class="ascii-art-block">
+ ____  ____  ____  ____      __  ____  ____  _  _    ____  __   ____  ____  __
+(    \(  __)(  _ \(    \    /  \(  __)(  _ \/ )( \  (  _ \/ _\ (    \(  __)/  \
+ ) D ( ) _)  ) __/ ) D (  (  O )) _)  ) _ )) \/ (   )   /    \ ) D ( ) _)(  O )
+(____/(____)(__)  (____/   \__/(__)  (____/ \____/  (__\_)\_/\_/(____/(____)\__/</pre>
+
+        <div class="divider-canvas-wrap">
+          <canvas id="osc-canvas-1"></canvas>
+        </div>
+
+        <div class="manifesto-block">
+          <p>
+            the signal does not ask permission to decay.
+            it moves through concrete and copper and loss,
+            finding its frequency in the spaces between transmission and silence.
+          </p>
+          <p>
+            this page is a record of what persists after the city goes quiet.
+            woodcut in pixels. broadcast in static. archived before the tower falls.
+          </p>
+          <p>
+            everything here is a fragment of something larger.
+            the larger thing is no longer transmitting.
+          </p>
+        </div>
+
+        <!-- Guestbook in about tab -->
+        <div class="widget" style="margin-top:16px;">
+          <div class="widget-title"><span>GUESTBOOK_v2</span><span class="wt-close">[_]</span></div>
+          <div class="widget-body" style="padding:10px;">
+            <div class="guestbook-entries" id="gb-entries">
+              <div class="gb-entry">
+                <span class="gb-user">VOIDRANE</span>
+                <span class="gb-date">[2025.11.22]</span>
+                <div class="gb-msg">the signal reaches even here. good work.</div>
+              </div>
+              <div class="gb-entry">
+                <span class="gb-user">rendur_x</span>
+                <span class="gb-date">[2025.11.19]</span>
+                <div class="gb-msg">found you through the frequency archives. incredible site.</div>
+              </div>
+              <div class="gb-entry">
+                <span class="gb-user">anon_ghost</span>
+                <span class="gb-date">[2025.11.14]</span>
+                <div class="gb-msg">the woodcut header. i cannot stop looking at it.</div>
+              </div>
+              <div class="gb-entry">
+                <span class="gb-user">circuit_null</span>
+                <span class="gb-date">[2025.10.30]</span>
+                <div class="gb-msg">been following this archive for months. you understand something most people don't.</div>
+              </div>
+            </div>
+            <div class="gb-form">
+              <input class="gb-input" id="gb-input" type="text" placeholder="leave a signal...">
+              <button class="gb-submit" onclick="addGBEntry()">TRANSMIT</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ─── FRAGMENTS (blog) ───────────────────────── -->
+      <div class="tab-panel" id="tab-blog">
+        <div class="divider-canvas-wrap" style="margin-top:0; margin-bottom:14px;">
+          <canvas id="osc-canvas-2"></canvas>
+        </div>
+        <div class="blog-scrollbox">
+          <div class="blog-entry">
+            <div class="entry-meta">
+              <span class="entry-date">[2025.12.01]</span>
+              <div class="entry-tags">
+                <span class="entry-tag">hardware</span>
+                <span class="entry-tag">esp32</span>
+              </div>
+            </div>
+            <div class="entry-title">RESONATOR_ENTROPY: harvesting noise from silence</div>
+            <div class="entry-excerpt">
+              the device listens to the thermal floor. every transistor leaks heat,
+              every junction generates a whisper of voltage. what we call random
+              is just honesty from the hardware layer.
+            </div>
+          </div>
+          <div class="blog-entry">
+            <div class="entry-meta">
+              <span class="entry-date">[2025.11.22]</span>
+              <div class="entry-tags">
+                <span class="entry-tag">urbex</span>
+                <span class="entry-tag">can-bus</span>
+              </div>
+            </div>
+            <div class="entry-title">CAN frames in a dead transit system</div>
+            <div class="entry-excerpt">
+              the vehicles don't run anymore. the network still does.
+              plug a device into the OBD port and the bus wakes up,
+              still broadcasting to listeners that will never answer.
+            </div>
+          </div>
+          <div class="blog-entry">
+            <div class="entry-meta">
+              <span class="entry-date">[2025.11.08]</span>
+              <div class="entry-tags">
+                <span class="entry-tag">osint</span>
+                <span class="entry-tag">methodology</span>
+              </div>
+            </div>
+            <div class="entry-title">passive footprint archaeology: what the city remembers</div>
+            <div class="entry-excerpt">
+              a building demolished in 2011. its DNS record still resolves.
+              its forum, archived, still indexed. the digital city outlives
+              the physical one by years. sometimes decades.
+            </div>
+          </div>
+          <div class="blog-entry">
+            <div class="entry-meta">
+              <span class="entry-date">[2025.10.29]</span>
+              <div class="entry-tags">
+                <span class="entry-tag">firmware</span>
+                <span class="entry-tag">extraction</span>
+              </div>
+            </div>
+            <div class="entry-title">pulling firmware from a device with no UART markings</div>
+            <div class="entry-excerpt">
+              the pads are there. they always are. the manufacturer removed the labels,
+              not the copper. a multimeter and patience will always find the signal
+              underneath the silence.
+            </div>
+          </div>
+          <div class="blog-entry">
+            <div class="entry-meta">
+              <span class="entry-date">[2025.10.14]</span>
+              <div class="entry-tags">
+                <span class="entry-tag">llm</span>
+                <span class="entry-tag">red-team</span>
+              </div>
+            </div>
+            <div class="entry-title">red teaming language models: the limits of the guardrail</div>
+            <div class="entry-excerpt">
+              the model doesn't have values. it has probability distributions
+              shaped by human feedback. the gap between those two things
+              is exactly where the work happens.
+            </div>
+          </div>
+          <div class="blog-entry">
+            <div class="entry-meta">
+              <span class="entry-date">[2025.09.30]</span>
+              <div class="entry-tags">
+                <span class="entry-tag">urban</span>
+                <span class="entry-tag">signal</span>
+              </div>
+            </div>
+            <div class="entry-title">URBINDEX: mapping the infrastructure that forgot to die</div>
+            <div class="entry-excerpt">
+              the building has been condemned for six years. the electrical panel
+              still accepts current. the HVAC system still runs on a 1994 Trane controller
+              with a serial port and no authentication.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── ARCHIVE (gallery) ──────────────────────── -->
+      <div class="tab-panel" id="tab-gallery">
+        <div class="gallery-filter">
+          <button class="filter-btn active" onclick="filterGallery('all',this)">ALL</button>
+          <button class="filter-btn" onclick="filterGallery('hardware',this)">HARDWARE</button>
+          <button class="filter-btn" onclick="filterGallery('urban',this)">URBAN</button>
+          <button class="filter-btn" onclick="filterGallery('signal',this)">SIGNAL</button>
+          <button class="filter-btn" onclick="filterGallery('fragments',this)">FRAGMENTS</button>
+        </div>
+        <div class="gallery-grid" id="gallery-grid">
+          <!-- Cells are rendered via JS with generative art -->
+        </div>
+      </div>
+
+      <!-- ─── TRANSMISSIONS (links) ──────────────────── -->
+      <div class="tab-panel" id="tab-transmissions">
+        <div class="woodcut-divider"></div>
+        <div class="transmissions-grid">
+          <div class="tx-category">
+            <div class="tx-cat-header">// PROJECTS</div>
+            <a class="tx-link-row" href="https://numbpilled.gumroad.com" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">numbpilled.gumroad.com</span>
+            </a>
+            <a class="tx-link-row" href="https://nolove.neocities.org" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">nolove.neocities.org</span>
+            </a>
+            <a class="tx-link-row" href="https://numbpilled.neocities.org" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">numbpilled.neocities.org</span>
+            </a>
+            <a class="tx-link-row" href="https://voidrane.nekoweb.org" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">voidrane.nekoweb.org</span>
+            </a>
+          </div>
+          <div class="tx-category">
+            <div class="tx-cat-header">// SIGNAL SOURCES</div>
+            <a class="tx-link-row" href="https://chaincoder.hashnode.dev" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">chaincoder.hashnode.dev</span>
+            </a>
+            <a class="tx-link-row" href="https://neocities.org" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">neocities.org</span>
+            </a>
+            <a class="tx-link-row" href="https://github.com/numbpill3d" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">github / numbpill3d</span>
+            </a>
+            <a class="tx-link-row" href="#signal" onclick="switchTab('signal', document.querySelectorAll('.tab-btn')[4])">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">signal archive</span>
+            </a>
+          </div>
+          <div class="tx-category">
+            <div class="tx-cat-header">// INFLUENCES</div>
+            <a class="tx-link-row" href="https://slowlydownward.com" target="_blank">
+              <span class="tx-prefix">//</span>
+              <span class="tx-title">stanley donwood</span>
+            </a>
+            <a class="tx-link-row" href="#about" onclick="switchTab('about', document.querySelectorAll('.tab-btn')[0])">
+              <span class="tx-prefix">//</span>
+              <span class="tx-title">atoms for peace</span>
+            </a>
+            <a class="tx-link-row" href="https://dragonca.ve" target="_blank">
+              <span class="tx-prefix">//</span>
+              <span class="tx-title">dragoncave</span>
+            </a>
+            <a class="tx-link-row" href="https://magistream.com" target="_blank">
+              <span class="tx-prefix">//</span>
+              <span class="tx-title">magistream</span>
+            </a>
+          </div>
+          <div class="tx-category">
+            <div class="tx-cat-header">// COMMUNITY</div>
+            <a class="tx-link-row" href="#about" onclick="switchTab('about', document.querySelectorAll('.tab-btn')[0])">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">e-waste clinic / CLT</span>
+            </a>
+            <a class="tx-link-row" href="https://neocities.org/browse" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">neocities browse</span>
+            </a>
+            <a class="tx-link-row" href="https://yesterweb.org" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">yesterweb.org</span>
+            </a>
+            <a class="tx-link-row" href="https://sadgrl.online" target="_blank">
+              <span class="tx-prefix">&gt;&gt;</span>
+              <span class="tx-title">sadgrl.online</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── SIGNAL TAB ──────────────────────────────── -->
+      <div class="tab-panel" id="tab-signal">
+        <div style="margin-bottom:14px;">
+          <div class="about-block-label" style="margin-bottom:8px; font-family:'Share Tech Mono',monospace; font-size:10px; text-transform:uppercase; letter-spacing:0.15em; color:var(--text-muted);">INTERACTIVE_SIGNAL_MONITOR</div>
+          <p style="font-size:12px; color:var(--text-muted); margin-bottom:12px;">
+            move cursor over canvas to disrupt the signal field.
+          </p>
+          <canvas id="signal-canvas" width="700" height="260"
+            style="width:100%; border:1px solid var(--border); background:var(--bg-deep); display:block; cursor:crosshair;"></canvas>
+        </div>
+
+        <div class="divider-canvas-wrap">
+          <canvas id="osc-canvas-3"></canvas>
+        </div>
+
+        <div class="about-grid" style="margin-top:14px;">
+          <div class="about-block">
+            <div class="about-block-label">MADGOD.EXE</div>
+            <p>Arch Linux workspace OS. EVA-NERV aesthetic. Tauri v2 + Python FastAPI sidecar. seven modules. the machine has opinions.</p>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">RESONATOR_ENTROPY</div>
+            <p>ESP32 entropy harvesting device. reads thermal noise from hardware junctions. turns silence into seed material.</p>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">URBINDEX</div>
+            <p>abandoned infrastructure mapping tool. coordinates, access notes, systems still live. the city forgot these places exist.</p>
+          </div>
+          <div class="about-block">
+            <div class="about-block-label">CAN_PLAYGROUND</div>
+            <p>Tauri desktop app for CAN frame analysis. statistical log parsing. reverse engineering dead transit networks.</p>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- end content-row -->
+
+  <!-- ═══ FOOTER ═══════════════════════════════════════ -->
+  <footer>
+    <div class="footer-col">
+      <div class="footer-sig">DEAD_CITY_RADIO</div>
+      SIGNAL ARCHIVE v3.1<br>
+      EST. 2021 // CHARLOTTE, NC<br>
+      <span class="blink">&#9632;</span> BROADCASTING
+    </div>
+    <div class="footer-col" style="text-align:center;">
+      <a href="https://nolove.neocities.org" target="_blank">nolove.neocities.org</a><br>
+      <a href="https://numbpilled.gumroad.com" target="_blank">numbpilled.gumroad.com</a><br>
+      <a href="https://voidrane.nekoweb.org" target="_blank">voidrane.nekoweb.org</a><br>
+      <a href="https://chaincoder.hashnode.dev" target="_blank">chaincoder.hashnode.dev</a>
+    </div>
+    <div class="footer-col" style="text-align:right;">
+      BUILT BY HAND, NO FRAMEWORKS<br>
+      NO TRACKING // NO COOKIES<br>
+      BEST IN 1024x768 OR WIDER<br>
+      FREQUENCY: 88.0 FM (DEAD)
+    </div>
+  </footer>
+
+</div><!-- end page-wrapper -->
+
+<!-- THREE.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  THREE.JS BACKGROUND — fragmented terrain + signal decay
+// ═══════════════════════════════════════════════════════
+(function() {
+  const canvas = document.getElementById('bg-canvas');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  renderer.setClearColor(0x000000, 0);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 100);
+  camera.position.set(0, 8, 20);
+  camera.lookAt(0, 0, 0);
+
+  // Terrain wireframe — low poly grid
+  const GRID_W = 60, GRID_H = 40;
+  const geo = new THREE.PlaneGeometry(50, 35, GRID_W, GRID_H);
+  geo.rotateX(-Math.PI / 2.3);
+
+  const positions = geo.attributes.position;
+  const originalY = [];
+  for (let i = 0; i < positions.count; i++) {
+    const x = positions.getX(i), z = positions.getZ(i);
+    const y = Math.sin(x * 0.3) * Math.cos(z * 0.3) * 1.8
+            + Math.sin(x * 0.7 + z * 0.5) * 0.8
+            + Math.sin(x * 0.15 - z * 0.25) * 2.5;
+    positions.setY(i, y);
+    originalY.push(y);
+  }
+  geo.computeVertexNormals();
+
+  const mat = new THREE.MeshBasicMaterial({
+    color: 0xffffff,
+    wireframe: true,
+    opacity: 0.08,
+    transparent: true
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  scene.add(mesh);
+
+  // Fragmented geometry (Atoms for Peace — shards)
+  const shardGroup = new THREE.Group();
+  for (let i = 0; i < 18; i++) {
+    const g = new THREE.OctahedronGeometry(0.4 + Math.random() * 0.8, 0);
+    const m = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      wireframe: true,
+      opacity: 0.06 + Math.random() * 0.08,
+      transparent: true
+    });
+    const s = new THREE.Mesh(g, m);
+    s.position.set(
+      (Math.random() - 0.5) * 30,
+      (Math.random() - 0.5) * 10 + 2,
+      (Math.random() - 0.5) * 20
+    );
+    s.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI);
+    s.userData.rotSpeed = { x: (Math.random()-0.5)*0.003, y: (Math.random()-0.5)*0.004, z: (Math.random()-0.5)*0.002 };
+    shardGroup.add(s);
+  }
+  scene.add(shardGroup);
+
+  function resize() {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    t += 0.008;
+
+    // Terrain breathing
+    for (let i = 0; i < positions.count; i++) {
+      const x = positions.getX(i);
+      const z = positions.getZ(i);
+      const wave = Math.sin(x * 0.4 + t) * 0.3 + Math.cos(z * 0.3 + t * 0.7) * 0.2;
+      positions.setY(i, originalY[i] + wave);
+    }
+    positions.needsUpdate = true;
+    geo.computeVertexNormals();
+
+    // Shard rotation
+    shardGroup.children.forEach(s => {
+      s.rotation.x += s.userData.rotSpeed.x;
+      s.rotation.y += s.userData.rotSpeed.y;
+      s.rotation.z += s.userData.rotSpeed.z;
+    });
+
+    shardGroup.rotation.y = Math.sin(t * 0.12) * 0.3;
+    mesh.rotation.z = Math.sin(t * 0.07) * 0.02;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+})();
+
+// ═══════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ═══════════════════════════════════════════════════════
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  if (id === 'gallery') initGallery();
+  if (id === 'signal') initSignalCanvas();
+}
+
+function showTab(id, el) {
+  const btns = document.querySelectorAll('.tab-btn');
+  const targets = ['about','transmissions','blog','gallery','signal'];
+  const btn = btns[targets.indexOf(id)];
+  switchTab(id, btn);
+  document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+  if (el) el.classList.add('active');
+}
+
+// ═══════════════════════════════════════════════════════
+//  OSCILLOSCOPE DIVIDERS
+// ═══════════════════════════════════════════════════════
+function initOscilloscope(canvasId, opts) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let t = opts.tOffset || 0;
+
+  function resize() {
+    canvas.width = canvas.parentElement.clientWidth;
+    canvas.height = canvas.parentElement.clientHeight || 70;
+  }
+  resize();
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.018;
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+    ctx.lineWidth = 1;
+
+    for (let x = 0; x < w; x++) {
+      const nx = x / w;
+      const y = h/2
+        + Math.sin(nx * Math.PI * (opts.freq1 || 6) + t) * (h * (opts.amp1 || 0.22))
+        + Math.sin(nx * Math.PI * (opts.freq2 || 14) + t * 1.7) * (h * (opts.amp2 || 0.08))
+        + Math.sin(nx * Math.PI * (opts.freq3 || 3) - t * 0.5) * (h * (opts.amp3 || 0.12));
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+
+    // second line (ghost)
+    ctx.beginPath();
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x++) {
+      const nx = x / w;
+      const y = h/2
+        + Math.sin(nx * Math.PI * (opts.freq1 || 6) + t + 0.4) * (h * (opts.amp1 || 0.22))
+        + Math.sin(nx * Math.PI * (opts.freq2 || 14) + t * 1.7 + 0.2) * (h * 0.06);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  })();
+}
+
+initOscilloscope('osc-canvas-1', { freq1: 8, freq2: 18, freq3: 4, amp1: 0.25, amp2: 0.07, amp3: 0.14 });
+initOscilloscope('osc-canvas-2', { freq1: 5, freq2: 22, freq3: 2, amp1: 0.20, amp2: 0.05, amp3: 0.18, tOffset: 2 });
+initOscilloscope('osc-canvas-3', { freq1: 10, freq2: 12, freq3: 6, amp1: 0.22, amp2: 0.09, amp3: 0.10, tOffset: 5 });
+
+// ═══════════════════════════════════════════════════════
+//  WAVEFORM (now playing widget)
+// ═══════════════════════════════════════════════════════
+(function() {
+  const c = document.getElementById('waveform-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  c.width = c.parentElement.clientWidth || 200;
+  c.height = 50;
+  let t = 0;
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.04;
+    const w = c.width, h = c.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const bars = 28;
+    const bw = w / bars;
+
+    for (let i = 0; i < bars; i++) {
+      const n = (i / bars);
+      const amp = (Math.sin(n * Math.PI * 3 + t) * 0.5 + 0.5)
+                * (Math.sin(n * Math.PI * 7 - t * 1.3) * 0.3 + 0.7);
+      const bh = amp * (h * 0.75) + 3;
+      const x = i * bw + 1;
+      const y = (h - bh) / 2;
+      ctx.fillStyle = `rgba(255,255,255,${0.15 + amp * 0.55})`;
+      ctx.fillRect(x, y, bw - 2, bh);
+    }
+  })();
+})();
+
+// ═══════════════════════════════════════════════════════
+//  NOISE CANVAS (small sidebar widget)
+// ═══════════════════════════════════════════════════════
+(function() {
+  const c = document.getElementById('noise-canvas-small');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+
+  function resize() {
+    c.width = c.parentElement.clientWidth;
+    c.height = 60;
+  }
+  resize();
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    const w = c.width, h = c.height;
+    const img = ctx.createImageData(w, h);
+    const d = img.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const v = Math.random() > 0.92 ? Math.floor(Math.random() * 200 + 55) : Math.floor(Math.random() * 18);
+      d[i] = d[i+1] = d[i+2] = v;
+      d[i+3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+  })();
+})();
+
+// ═══════════════════════════════════════════════════════
+//  SIGNAL CANVAS (interactive)
+// ═══════════════════════════════════════════════════════
+let signalCanvasInit = false;
+function initSignalCanvas() {
+  if (signalCanvasInit) return;
+  signalCanvasInit = true;
+
+  const c = document.getElementById('signal-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  let mouse = { x: -1, y: -1 };
+  let t = 0;
+
+  c.addEventListener('mousemove', e => {
+    const r = c.getBoundingClientRect();
+    mouse.x = (e.clientX - r.left) * (c.width / r.width);
+    mouse.y = (e.clientY - r.top) * (c.height / r.height);
+  });
+  c.addEventListener('mouseleave', () => { mouse.x = -1; });
+
+  const POINTS = 12;
+  const chains = [];
+  for (let i = 0; i < POINTS; i++) {
+    chains.push({
+      x: (i / (POINTS - 1)) * c.width,
+      y: c.height / 2,
+      vx: 0, vy: (Math.random() - 0.5) * 0.4
+    });
+  }
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.012;
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    // Background grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < c.width; x += 30) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, c.height); ctx.stroke();
+    }
+    for (let y = 0; y < c.height; y += 25) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(c.width, y); ctx.stroke();
+    }
+
+    // Multiple waveforms
+    for (let layer = 0; layer < 4; layer++) {
+      const freq = 3 + layer * 2.5;
+      const amp = (c.height * 0.18) / (1 + layer * 0.5);
+      const phase = t * (1 + layer * 0.3) + layer * 1.2;
+      const alpha = 0.28 - layer * 0.05;
+
+      ctx.beginPath();
+      ctx.strokeStyle = `rgba(255,255,255,${alpha})`;
+      ctx.lineWidth = layer === 0 ? 1.5 : 0.8;
+
+      for (let x = 0; x < c.width; x += 2) {
+        const n = x / c.width;
+        let y = c.height / 2
+          + Math.sin(n * Math.PI * freq + phase) * amp
+          + Math.sin(n * Math.PI * (freq * 2.3) - phase * 0.7) * amp * 0.3;
+
+        // Mouse disruption
+        if (mouse.x >= 0) {
+          const dx = x - mouse.x;
+          const dist = Math.abs(dx);
+          if (dist < 120) {
+            const influence = (1 - dist / 120);
+            y += Math.sin(n * Math.PI * 20 + t * 4) * (c.height * 0.15) * influence;
+          }
+        }
+
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // Vertical signal burst (mouse-reactive)
+    if (mouse.x >= 0) {
+      const grad = ctx.createRadialGradient(mouse.x, mouse.y, 0, mouse.x, mouse.y, 80);
+      grad.addColorStop(0, 'rgba(255,255,255,0.12)');
+      grad.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(mouse.x, mouse.y, 80, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Vertical burst
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([2, 4]);
+      ctx.moveTo(mouse.x, 0);
+      ctx.lineTo(mouse.x, c.height);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Fragmented geometry overlay (Atoms for Peace)
+    const shards = [
+      { pts: [[50,40],[90,60],[70,100],[30,80]] },
+      { pts: [[580,30],[620,55],[600,90],[560,65]] },
+      { pts: [[300,20],[330,50],[310,80],[280,50]] },
+    ];
+    shards.forEach((sh, si) => {
+      const wobble = Math.sin(t + si * 1.8) * 3;
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+      ctx.lineWidth = 0.8;
+      sh.pts.forEach((p, pi) => {
+        const nx = p[0] + Math.sin(t * 0.7 + si + pi) * wobble;
+        const ny = p[1] + Math.cos(t * 0.5 + si + pi * 2) * wobble;
+        if (pi === 0) ctx.moveTo(nx, ny);
+        else ctx.lineTo(nx, ny);
+      });
+      ctx.closePath();
+      ctx.stroke();
+    });
+
+    // Coordinate readout
+    if (mouse.x >= 0) {
+      ctx.font = '10px "Share Tech Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.fillText(`X:${Math.floor(mouse.x)} Y:${Math.floor(mouse.y)}`, 8, 16);
+    }
+  })();
+}
+
+// ═══════════════════════════════════════════════════════
+//  GALLERY — generative woodcut cells
+// ═══════════════════════════════════════════════════════
+const galleryData = [
+  { tag:'hardware', title:'ESP32_NODE_01', sub:'entropy device' },
+  { tag:'urban', title:'BROADCAST_TOWER', sub:'CLT 2024' },
+  { tag:'signal', title:'WAVEFORM_A', sub:'thermal noise' },
+  { tag:'fragments', title:'WOODCUT_I', sub:'digital relief' },
+  { tag:'hardware', title:'CAN_TRACE_04', sub:'transit bus dead' },
+  { tag:'urban', title:'URBINDEX_003', sub:'condemned + live' },
+  { tag:'signal', title:'DECAY_PATTERN', sub:'signal entropy' },
+  { tag:'fragments', title:'SILHOUETTE_V', sub:'crowd / donwood' },
+  { tag:'hardware', title:'UART_PADS', sub:'found, no labels' },
+];
+
+let galleryInitialized = false;
+
+function initGallery() {
+  if (galleryInitialized) return;
+  galleryInitialized = true;
+  const grid = document.getElementById('gallery-grid');
+  if (!grid) return;
+
+  galleryData.forEach((item, idx) => {
+    const cell = document.createElement('div');
+    cell.className = 'gallery-cell';
+    cell.dataset.tag = item.tag;
+
+    const c = document.createElement('canvas');
+    cell.appendChild(c);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'gallery-cell-overlay';
+    overlay.innerHTML = `<div class="gallery-cell-title">${item.title}</div><div class="gallery-cell-sub">${item.sub}</div>`;
+    cell.appendChild(overlay);
+    grid.appendChild(cell);
+
+    // Draw generative art per cell
+    requestAnimationFrame(() => {
+      c.width = cell.clientWidth || 160;
+      c.height = cell.clientHeight || 160;
+      const ctx = c.getContext('2d');
+      drawGalleryCell(ctx, c.width, c.height, idx);
+      animateGalleryCell(ctx, c.width, c.height, idx);
+    });
+  });
+}
+
+function drawGalleryCell(ctx, w, h, seed) {
+  const rng = mulberry32(seed * 7919 + 314);
+  ctx.fillStyle = '#0a0a0a';
+  ctx.fillRect(0, 0, w, h);
+
+  // Woodcut hatching
+  ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+  ctx.lineWidth = 0.8;
+  const spacing = 6 + Math.floor(rng() * 4);
+  for (let y = 0; y < h; y += spacing) {
+    ctx.beginPath();
+    ctx.moveTo(0, y + rng() * 2);
+    ctx.lineTo(w, y + rng() * 2);
+    ctx.stroke();
+  }
+
+  // Geometric shape
+  const type = Math.floor(rng() * 3);
+  ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  if (type === 0) {
+    // Triangle / shard
+    ctx.moveTo(w * (0.2 + rng() * 0.2), h * (0.7 + rng() * 0.2));
+    ctx.lineTo(w * (0.4 + rng() * 0.2), h * (0.1 + rng() * 0.2));
+    ctx.lineTo(w * (0.6 + rng() * 0.2), h * (0.6 + rng() * 0.2));
+    ctx.closePath();
+  } else if (type === 1) {
+    // Circle fragment
+    ctx.arc(w * (0.3 + rng() * 0.4), h * (0.3 + rng() * 0.4),
+            w * (0.15 + rng() * 0.15), 0, Math.PI * 2);
+  } else {
+    // Polygon
+    const sides = 4 + Math.floor(rng() * 3);
+    const cx = w * (0.3 + rng() * 0.4);
+    const cy = h * (0.3 + rng() * 0.4);
+    const r = w * (0.15 + rng() * 0.15);
+    for (let i = 0; i < sides; i++) {
+      const a = (i / sides) * Math.PI * 2 - Math.PI / 2;
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+  }
+  ctx.stroke();
+
+  // Signal lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(0, h * (0.3 + rng() * 0.5));
+    ctx.lineTo(w, h * (0.3 + rng() * 0.5));
+    ctx.stroke();
+  }
+}
+
+function animateGalleryCell(ctx, w, h, seed) {
+  let t = seed * 0.5;
+  const rng = mulberry32(seed * 7919 + 314);
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    t += 0.025;
+    // Subtle noise overlay pulse
+    const x = Math.floor(rng() * w);
+    const y = Math.floor(rng() * h);
+    const s = 1 + Math.floor(rng() * 3);
+    const alpha = rng() * 0.15;
+    ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+    ctx.fillRect(x, y, s, 1);
+
+    // Very rare: full redraw
+    if (Math.random() < 0.002) {
+      drawGalleryCell(ctx, w, h, seed);
+    }
+  })();
+}
+
+function mulberry32(a) {
+  return function() {
+    a |= 0; a = a + 0x6D2B79F5 | 0;
+    let t = Math.imul(a ^ a >>> 15, 1 | a);
+    t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+// ═══════════════════════════════════════════════════════
+//  GALLERY FILTER
+// ═══════════════════════════════════════════════════════
+function filterGallery(tag, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.gallery-cell').forEach((cell, i) => {
+    if (tag === 'all' || cell.dataset.tag === tag) {
+      cell.style.display = '';
+    } else {
+      cell.style.display = 'none';
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+//  QUOTE ROTATOR
+// ═══════════════════════════════════════════════════════
+const quotes = [
+  { text: '"we\'re not scaremongering / this is really happening"', attr: '— thom yorke, 2003' },
+  { text: '"the city is an argument. the ruins are its conclusion."', attr: '— dead city radio, 2024' },
+  { text: '"every ghost in the machine is a signal that outlived its sender"', attr: '— xenotrek, fragment 7' },
+  { text: '"the frequency does not ask who is listening."', attr: '— signal archive, vol. 2' },
+  { text: '"amok. amok. amok. the machine has learned the word."', attr: '— AMOK, atoms for peace' },
+  { text: '"wherever there is light there is also dark"', attr: '— s. donwood, 2016' },
+];
+let qIdx = 0;
+
+function setQuote(i) {
+  qIdx = ((i % quotes.length) + quotes.length) % quotes.length;
+  document.getElementById('quote-text').textContent = quotes[qIdx].text;
+  document.getElementById('quote-attr').textContent = quotes[qIdx].attr;
+}
+function nextQuote() { setQuote(qIdx + 1); }
+function prevQuote() { setQuote(qIdx - 1); }
+
+// ═══════════════════════════════════════════════════════
+//  VISITOR COUNTER
+// ═══════════════════════════════════════════════════════
+(function() {
+  const count = '0073141';
+  const display = document.getElementById('counter-display');
+  if (!display) return;
+  count.split('').forEach(d => {
+    const span = document.createElement('div');
+    span.className = 'counter-digit';
+    span.textContent = d;
+    display.appendChild(span);
+  });
+})();
+
+// ═══════════════════════════════════════════════════════
+//  GUESTBOOK
+// ═══════════════════════════════════════════════════════
+function addGBEntry() {
+  const input = document.getElementById('gb-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const entries = document.getElementById('gb-entries');
+  const entry = document.createElement('div');
+  entry.className = 'gb-entry';
+  entry.innerHTML = `
+    <span class="gb-user">ANON_${Math.floor(Math.random()*9000+1000)}</span>
+    <span class="gb-date">[2025.12.${String(Math.floor(Math.random()*28+1)).padStart(2,'0')}]</span>
+    <div class="gb-msg">${msg.replace(/</g,'&lt;')}</div>
+  `;
+  entries.insertBefore(entry, entries.firstChild);
+  input.value = '';
+  entries.scrollTop = 0;
+}
+
+document.getElementById('gb-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addGBEntry();
+});
+
+// ═══════════════════════════════════════════════════════
+//  NOW PLAYING timer
+// ═══════════════════════════════════════════════════════
+(function() {
+  const tracks = [
+    { title: 'DEFAULT', artist: 'atoms for peace', total: '4:19' },
+    { title: 'HARROWDOWN HILL', artist: 'thom yorke', total: '4:48' },
+    { title: 'PYRAMID SONG', artist: 'radiohead', total: '5:02' },
+    { title: 'PAPERBAG WRITER', artist: 'radiohead', total: '3:43' },
+    { title: 'BEFORE YOUR VERY EYES', artist: 'atoms for peace', total: '5:21' },
+  ];
+  let elapsed = 0;
+  const track = tracks[Math.floor(Math.random() * tracks.length)];
+  const [tMin, tSec] = track.total.split(':').map(Number);
+  const totalSec = tMin * 60 + tSec;
+  elapsed = Math.floor(Math.random() * totalSec * 0.6);
+
+  document.getElementById('np-track').textContent = track.title;
+  document.getElementById('np-artist').textContent = track.artist;
+  document.getElementById('np-total').textContent = track.total;
+
+  setInterval(() => {
+    elapsed = (elapsed + 1) % totalSec;
+    const m = Math.floor(elapsed / 60);
+    const s = elapsed % 60;
+    document.getElementById('np-elapsed').textContent = `${m}:${String(s).padStart(2,'0')}`;
+    document.getElementById('progress-fill').style.animation = 'none';
+    document.getElementById('progress-fill').style.width = `${(elapsed/totalSec)*100}%`;
+  }, 1000);
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "title": "Lain Profile Node",
+  "slug": "lain-profile-node",
+  "category": "terminals",
+  "description": "Serial Experiments Lain-inspired profile node with desktop and mail/file interactions.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/laintheme",
+  "source_commit": "58bdb5941bfa7abd6142561fe4142a6ac35533d1",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}

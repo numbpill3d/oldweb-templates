@@ -1,0 +1,13 @@
+{
+  "title": "Dead City Radio",
+  "slug": "dead-city-radio",
+  "category": "publishing",
+  "description": "Pirate-radio signal archive with transmission and creator-network links.",
+  "entrypoint": "index.html",
+  "source_repo": "https://github.com/numbpill3d/deadcityradio",
+  "source_commit": "1679266d6dd44b6b6675e197c2ed608a8ad8baa6",
+  "source_branch": "main",
+  "migrated_at": "2026-08-27",
+  "license_status": "no-license-detected",
+  "notes": "Faithful snapshot. Existing attribution and embedded notices are preserved."
+}
