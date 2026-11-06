@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Frutiger Aero Profile</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;400;700&display=swap');
+
+        :root {
+            --bg-color: #e0f0ff;
+            --text-color: #333;
+            --accent-color: #007bff;
+            --glass-bg: rgba(255, 255, 255, 0.3);
+            --glass-bg-darker: rgba(255, 255, 255, 0.2);
+        }
+
+        body {
+            font-family: 'Comfortaa', sans-serif;
+            background: linear-gradient(135deg, #e0f0ff, #b0d0ff);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid white;
+            box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+        }
+
+        h1, h2 {
+            color: var(--accent-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 1rem 0;
+        }
+
+        .tagline {
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .social-link {
+            color: var(--accent-color);
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .social-link:hover {
+            transform: scale(1.2);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        .audio-player {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .project-card {
+            background: var(--glass-bg-darker);
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .project-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background: #0056b3;
+        }
+
+        .testimonial {
+            font-style: italic;
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+            .glass-panel {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-panel">
+            <header class="profile-header">
+                <img src="https://via.placeholder.com/200" alt="Profile Picture" class="profile-image">
+                <h1 id="name">Your Name</h1>
+                <p id="tagline" class="tagline">Web Developer & Designer</p>
+            </header>
+
+            <section class="section">
+                <h2>About Me</h2>
+                <p id="about">Hello! I'm a passionate web developer and designer with a love for creating beautiful, functional websites. I specialize in front-end development and user experience design.</p>
+            </section>
+
+            <section class="section">
+                <h2>Skills</h2>
+                <div id="skills" class="skills">
+                    <!-- Skills will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>My Work</h2>
+                <div id="gallery" class="gallery">
+                    <!-- Gallery images will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Featured Project</h2>
+                <div id="featured-project" class="project-card">
+                    <!-- Featured project will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Listen to My Podcast</h2>
+                <audio id="audio-player" controls class="audio-player">
+                    <source src="https://example.com/podcast-episode.mp3" type="audio/mpeg">
+                    Your browser does not support the audio element.
+                </audio>
+            </section>
+
+            <section class="section">
+                <h2>Testimonial</h2>
+                <blockquote id="testimonial" class="testimonial">
+                    <!-- Testimonial will be populated by JavaScript -->
+                </blockquote>
+            </section>
+
+            <section class="section">
+                <h2>Connect</h2>
+                <div id="social-links" class="social-links">
+                    <!-- Social links will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <section class="section">
+                <h2>Get in Touch</h2>
+                <a href="#" class="cta-button">Contact Me</a>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        // This script will populate the content from a JSON object
+        // In a real Carrd site, this would be handled by Carrd's system
+        const content = {
+            name: "Alex Johnson",
+            tagline: "Full-Stack Developer & UX Enthusiast",
+            about: "I'm Alex, a full-stack developer with a passion for creating intuitive and visually appealing web applications. With 5 years of experience, I specialize in React, Node.js, and modern CSS techniques.",
+            skills: ["HTML5", "CSS3", "JavaScript", "React", "Node.js", "UI/UX Design", "GraphQL", "MongoDB"],
+            gallery: [
+                "https://via.placeholder.com/300x200?text=Project+1",
+                "https://via.placeholder.com/300x200?text=Project+2",
+                "https://via.placeholder.com/300x200?text=Project+3",
+                "https://via.placeholder.com/300x200?text=Project+4"
+            ],
+            featuredProject: {
+                title: "E-commerce Platform",
+                image: "https://via.placeholder.com/300x200?text=E-commerce+Platform",
+                description: "A fully responsive e-commerce platform built with React and Node.js, featuring real-time inventory management and secure payment processing."
+            },
+            podcastUrl: "https://example.com/podcast-episode.mp3",
+            testimonial: "Alex's expertise in both front-end and back-end development made our project a breeze. Their attention to detail and commitment to user experience truly sets them apart.",
+            socialLinks: [
+                { icon: "📷", url: "#" },
+                { icon: "🐦", url: "#" },
+                { icon: "💼", url: "#" },
+                { icon: "🐙", url: "#" }
+            ]
+        };
+
+        // Populate content
+        document.getElementById('name').textContent = content.name;
+        document.getElementById('tagline').textContent = content.tagline;
+        document.getElementById('about').textContent = content.about;
+
+        const skillsContainer = document.getElementById('skills');
+        content.skills.forEach(skill => {
+            const skillTag = document.createElement('span');
+            skillTag.className = 'skill-tag';
+            skillTag.textContent = skill;
+            skillsContainer.appendChild(skillTag);
+        });
+
+        const galleryContainer = document.getElementById('gallery');
+        content.gallery.forEach(imageUrl => {
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.alt = "Project Image";
+            galleryContainer.appendChild(img);
+        });
+
+        const featuredProject = document.getElementById('featured-project');
+        featuredProject.innerHTML = `
+            <img src="${content.featuredProject.image}" alt="${content.featuredProject.title}">
+            <h3>${content.featuredProject.title}</h3>
+            <p>${content.featuredProject.description}</p>
+        `;
+
+        document.getElementById('audio-player').src = content.podcastUrl;
+
+        document.getElementById('testimonial').textContent = content.testimonial;
+
+        const socialLinksContainer = document.getElementById('social-links');
+        content.socialLinks.forEach(link => {
+            const a = document.createElement('a');
+            a.href = link.url;
+            a.className = 'social-link';
+            a.textContent = link.icon;
+            socialLinksContainer.appendChild(a);
+        });
+    </script>
+</body>
+</html>

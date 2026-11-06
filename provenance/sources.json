@@ -450,5 +450,207 @@
         "size": 78939
       }
     ]
+  },
+  {
+    "repository": "numbpill3d/cyberpunkhtml",
+    "url": "https://github.com/numbpill3d/cyberpunkhtml",
+    "branch": "main",
+    "commit": "d0b31f495bcae449684c52ee2cb1bbfc37ca35bb",
+    "destination": "templates/profiles/cyberpunk",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "c34a54d4adad903bd9d2f354e43fb7da83d193e793fbce08d9ea09c3d58723bb",
+        "size": 18458
+      },
+      {
+        "path": "README.md",
+        "sha256": "23e2f53aca091b65ce281e5ab6eeb2a3d14c90df7755312d6ae22ff2e32e2077",
+        "size": 1068
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/pixelpastahtml",
+    "url": "https://github.com/numbpill3d/pixelpastahtml",
+    "branch": "main",
+    "commit": "2bd19e3edf64c449a7c713f7babc526f57206d0a",
+    "destination": "templates/terminals/pixelpasta",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "687d00630a443e66247c64ed574b9d878600518a8f92e7b856ed59c5de6d5d61",
+        "size": 2771
+      },
+      {
+        "path": "README.md",
+        "sha256": "84c1825fa6ae33f13b569f37ac9eeb1ead202f48312fab57c401c2fe3e5e5f14",
+        "size": 1050
+      },
+      {
+        "path": "scripts.js",
+        "sha256": "e5b885fc24200c8a4701cc53bc7ce345d65245d38f92b33dafdd07466604c928",
+        "size": 5532
+      },
+      {
+        "path": "style.css",
+        "sha256": "9965b1239b922ffa3cf5ad300d5bfd65d0413464bae5bd9b8255af0081d69724",
+        "size": 6439
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/angelware98",
+    "url": "https://github.com/numbpill3d/angelware98",
+    "branch": "main",
+    "commit": "643e5f9d6e3cde0b955912bd48458b849e661d46",
+    "destination": "templates/desktops/angelware-98",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "b6ad866a2a05d0ac82ea6b22b301abe2ba13fd1353c90db072bc64c421f4d755",
+        "size": 201412
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/discrot",
+    "url": "https://github.com/numbpill3d/discrot",
+    "branch": "main",
+    "commit": "fac252fd245fe76db1b4270ae7807c8a329ed347",
+    "destination": "templates/terminals/discrot",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "9536d067ed4c302f52da783e04b44b253aae160aa7d0502ae02261ad90a99e2a",
+        "size": 45009
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/doll6rave",
+    "url": "https://github.com/numbpill3d/doll6rave",
+    "branch": "main",
+    "commit": "537181feefe5c53e8bd967be44db3a1111b92601",
+    "destination": "templates/shrines/dollgrave",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "2f64f654980fe230262e56e92f7ae71dfd8478e5904739f478fcfb48aa253f86",
+        "size": 47342
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/motwort",
+    "url": "https://github.com/numbpill3d/motwort",
+    "branch": "main",
+    "commit": "6d262cd59b68b9cb1580d011bb6224c06069dcae",
+    "destination": "templates/shrines/mothwort",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "7865819b93acee54c456336e04dceb9911f351626c9b315d640eff9a5225d676",
+        "size": 45289
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/swampwitch",
+    "url": "https://github.com/numbpill3d/swampwitch",
+    "branch": "main",
+    "commit": "37017bb5464aa9878c80e2de78b8397231229203",
+    "destination": "templates/shrines/swampwitch",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "304bfd2b1676fd057c002ba639489fda577f71ef1371085863da59e5aeea56d2",
+        "size": 21842
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/decora-pastel",
+    "url": "https://github.com/numbpill3d/decora-pastel",
+    "branch": "main",
+    "commit": "6391b49d494913a5e701fe7aaa588d1352a2b516",
+    "destination": "templates/desktops/yumetwint",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "5d646584c262c3d95b542f5818ca4176bbec010a66b2623f11d8e8ca66c55916",
+        "size": 56314
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/paranoia.sys",
+    "url": "https://github.com/numbpill3d/paranoia.sys",
+    "branch": "main",
+    "commit": "37add39bd597fef1b21f823e1e7698f8b3d421b3",
+    "destination": "templates/terminals/paranoia-sys",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "f9a542ad46cb672282edfa0cea4ff046818bbd57525a82782e3eed83d2c901f8",
+        "size": 27417
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/goricamilia",
+    "url": "https://github.com/numbpill3d/goricamilia",
+    "branch": "main",
+    "commit": "982ba1ef77c4a52932baa2fdd14456457419cd79",
+    "destination": "templates/shrines/goricamilia",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "42ea95b610d736825ae6c441dff07917ab4c6f8a6d7c88fc7c5188dcfd8bbc9f",
+        "size": 25322
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/mire-theme",
+    "url": "https://github.com/numbpill3d/mire-theme",
+    "branch": "main",
+    "commit": "a35d91f08e00d560eacdda5bc580016e0e0cc9cd",
+    "destination": "templates/shrines/ethereal-mire",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "3f95f021f36e82aee9a03f04527fdbc2c932f44cabba20b903a4aee0023c0e6c",
+        "size": 5557
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/lore-log-template",
+    "url": "https://github.com/numbpill3d/lore-log-template",
+    "branch": "main",
+    "commit": "95873975cf3f34d29742cdfc972614d8e5f7a851",
+    "destination": "templates/publishing/ascii-hackers-journal",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "b4ac4514be2cc80085e2f9f3aa5fbc668464dc14390449118b3215e17fdccca9",
+        "size": 12379
+      }
+    ]
+  },
+  {
+    "repository": "numbpill3d/frtgraerocarrd",
+    "url": "https://github.com/numbpill3d/frtgraerocarrd",
+    "branch": "main",
+    "commit": "a5294bea70ac802a221b7c56639333ca33eb0de5",
+    "destination": "templates/profiles/frutiger-aero-profile",
+    "files": [
+      {
+        "path": "index.html",
+        "sha256": "9d549a269cae3395b434d8e7f9e437870f1ceb6c81d549a8e8b835e27212565a",
+        "size": 10272
+      }
+    ]
   }
 ]

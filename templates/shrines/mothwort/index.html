@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MOTHWORT &#8212; a hedgewitch's grimoire</title>
+<meta name="description" content="MOTHWORT — an era-true naturalist/mystical personal shrine & grimoire template. offline moon-phase almanac, oracle draw, drifting-spore canvas, guestbook, webring.">
+<!--
+  ============================================================
+   MOTHWORT  ·  a hedgewitch's grimoire
+   era-true naturalist / mystical personal shrine template
+   ------------------------------------------------------------
+   - single file. no external anything. works offline.
+   - system fonts only (Times New Roman / Courier New).
+   - hard corners, period chrome, tiled bg, bevelled frames.
+   - store-agnostic: no checkout, no ko-fi/gumroad links.
+   - swap the copy, the links, the counter seed. make it yours.
+   ============================================================
+-->
+<style>
+/* ---------- palette: dark hearth + moss + candlelight --------- */
+:root{
+  --bg:        #16110c;   /* hearth dark, warm */
+  --bg-tile:   #1b140d;
+  --panel:     #241b12;   /* warm panel */
+  --panel-2:   #2d2216;   /* raised panel */
+  --deep:      #0f0b07;   /* ink inset */
+  --ink:       #ede0c8;   /* warm cream text */
+  --ink-dim:   #b39f7c;   /* muted parchment */
+  --ink-faint: #7d6b4e;
+  --amber:     #d9a24a;   /* candlelight */
+  --amber-hi:  #f1c877;
+  --moss:      #7f9a57;   /* botanical green */
+  --moss-dk:   #4c5f33;
+  --rust:      #a5572e;   /* dried blood / ochre */
+  --bord:      #5a4526;   /* warm border */
+  --bord-hi:   #7a5f36;
+  --bord-lo:   #2c200f;
+}
+
+/* ---------- reset-ish ---------- */
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Times New Roman",Georgia,"Nimbus Roman",serif;
+  font-size:16px;
+  line-height:1.75;
+  /* tiled botanical background drawn inline (fern + mote) */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='88' height='88' viewBox='0 0 88 88'%3E%3Crect width='88' height='88' fill='%231b140d'/%3E%3Cg stroke='%233a2c18' stroke-width='1.2' fill='none' opacity='0.9'%3E%3Cpath d='M22 70 C22 52 22 40 30 26'/%3E%3Cpath d='M24 58 C18 56 14 54 11 49'/%3E%3Cpath d='M24 58 C30 56 34 54 37 49'/%3E%3Cpath d='M26 48 C20 46 16 44 13 39'/%3E%3Cpath d='M26 48 C32 46 36 44 39 39'/%3E%3Cpath d='M28 38 C23 36 19 34 16 30'/%3E%3Cpath d='M28 38 C33 36 37 34 40 30'/%3E%3C/g%3E%3Cg fill='%23332715'%3E%3Ccircle cx='66' cy='18' r='1.4'/%3E%3Ccircle cx='74' cy='60' r='1.1'/%3E%3Ccircle cx='58' cy='74' r='1.2'/%3E%3C/g%3E%3Cg stroke='%23322414' stroke-width='1' fill='none' opacity='0.7'%3E%3Cpath d='M64 40 C66 34 70 30 76 29'/%3E%3Cpath d='M68 36 C64 35 61 34 59 31'/%3E%3C/g%3E%3C/svg%3E");
+  background-attachment:fixed;
+}
+/* faint paper grain over everything */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  opacity:0.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* drifting spores live on this canvas, behind content */
+#spores{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+a{color:var(--amber);text-decoration:none;}
+a:hover{color:var(--amber-hi);text-decoration:underline;}
+
+/* ---------- custom sprig cursor ---------- */
+body{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Cpath d='M4 20 C6 13 9 8 16 4' stroke='%23d9a24a' stroke-width='1.6' fill='none'/%3E%3Cpath d='M8 13 C5 12 4 11 3 8' stroke='%237f9a57' stroke-width='1.4' fill='none'/%3E%3Cpath d='M8 13 C11 12 13 11 14 8' stroke='%237f9a57' stroke-width='1.4' fill='none'/%3E%3Cpath d='M11 9 C8 8 7 7 6 4' stroke='%237f9a57' stroke-width='1.2' fill='none'/%3E%3Cpath d='M11 9 C14 8 15 7 16 4' stroke='%237f9a57' stroke-width='1.2' fill='none'/%3E%3C/svg%3E") 4 20, auto;}
+a,button,summary,.deck,.wr-btn{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='11' cy='11' r='4' fill='none' stroke='%23f1c877' stroke-width='1.6'/%3E%3Cpath d='M11 1 V5 M11 17 V21 M1 11 H5 M17 11 H21' stroke='%23f1c877' stroke-width='1.4'/%3E%3C/svg%3E") 11 11, pointer;}
+
+/* ---------- outer frame (table-era, fixed, centered) ---------- */
+.shell{
+  position:relative;z-index:1;
+  width:780px;max-width:96vw;
+  margin:26px auto 40px;
+}
+.frame{
+  background:var(--panel);
+  border:3px solid var(--bord);
+  border-top-color:var(--bord-hi);border-left-color:var(--bord-hi);
+  border-right-color:var(--bord-lo);border-bottom-color:var(--bord-lo);
+  padding:4px;
+}
+.frame-in{
+  border:2px solid var(--bord-lo);
+  border-top-color:var(--bord-lo);border-left-color:var(--bord-lo);
+  border-right-color:var(--bord-hi);border-bottom-color:var(--bord-hi);
+  padding:0;
+}
+
+/* ---------- header / banner ---------- */
+header.hero{
+  position:relative;
+  background:
+     radial-gradient(130% 120% at 50% -20%, rgba(217,162,74,0.18), transparent 60%),
+     linear-gradient(180deg,var(--panel-2),var(--deep));
+  border-bottom:2px solid var(--bord);
+  padding:18px 16px 14px;
+  text-align:center;
+  overflow:hidden;
+}
+.sigil-wrap{display:flex;align-items:center;justify-content:center;gap:16px;}
+#sigil{display:block;filter:drop-shadow(0 0 6px rgba(217,162,74,0.25));}
+.title-blk{text-align:center;}
+h1.wordmark{
+  margin:0;
+  font-size:52px;line-height:1;
+  letter-spacing:0.14em;
+  font-weight:700;
+  color:var(--amber-hi);
+  text-shadow:0 2px 0 #3a2a12, 0 0 14px rgba(217,162,74,0.35);
+}
+h1.wordmark .drop{color:var(--moss);}
+.tagline{
+  margin:6px 0 0;
+  font-family:"Courier New",monospace;
+  font-size:12px;letter-spacing:0.22em;
+  color:var(--ink-dim);text-transform:lowercase;
+}
+.hero-rule{
+  margin:10px auto 0;color:var(--amber);font-size:13px;letter-spacing:0.3em;opacity:0.8;
+}
+
+/* ---------- marquee incantation band ---------- */
+.band{
+  background:var(--deep);
+  border-top:1px solid var(--bord-lo);
+  border-bottom:1px solid var(--bord);
+  color:var(--moss);
+  font-family:"Courier New",monospace;
+  font-size:12.5px;letter-spacing:0.1em;
+  padding:4px 0;
+}
+.band marquee{vertical-align:middle;}
+.band .star{color:var(--amber);}
+.band b{color:var(--ink-dim);font-weight:normal;}
+
+/* ---------- body grid ---------- */
+.grid{display:flex;align-items:flex-start;gap:0;}
+.side{
+  width:248px;flex:0 0 248px;
+  background:var(--panel);
+  border-right:2px solid var(--bord);
+  padding:14px 13px;
+}
+.main{flex:1 1 auto;padding:16px 18px;min-width:0;}
+
+/* ---------- panels ---------- */
+.panel{
+  background:var(--panel-2);
+  border:2px solid var(--bord-lo);
+  border-top-color:var(--bord-hi);border-left-color:var(--bord-hi);
+  margin-bottom:14px;
+}
+.panel > .cap{
+  background:linear-gradient(180deg,var(--panel),var(--deep));
+  border-bottom:1px solid var(--bord-lo);
+  color:var(--amber);
+  font-family:"Courier New",monospace;
+  font-size:11px;letter-spacing:0.18em;text-transform:lowercase;
+  padding:4px 9px;
+  display:flex;justify-content:space-between;align-items:center;
+}
+.panel > .cap .mk{color:var(--moss);}
+.panel .body{padding:10px 11px;}
+.side .panel .body{font-size:13px;line-height:1.6;}
+
+/* ---------- nav ---------- */
+nav.menu .body{padding:6px 10px;}
+nav.menu a{
+  display:block;color:var(--ink-dim);
+  font-size:15px;letter-spacing:0.08em;
+  padding:3px 4px;border-bottom:1px dotted var(--bord-lo);
+}
+nav.menu a:last-child{border-bottom:none;}
+nav.menu a:hover{color:var(--amber-hi);background:rgba(217,162,74,0.07);text-decoration:none;}
+nav.menu a .g{color:var(--moss);}
+nav.menu a .ct{float:right;color:var(--ink-faint);font-family:"Courier New",monospace;font-size:10px;}
+
+/* ---------- moon almanac ---------- */
+.moon-wrap{display:flex;gap:11px;align-items:center;}
+#moon{background:#0b0906;border:1px solid var(--bord-lo);}
+.moon-meta{font-family:"Courier New",monospace;font-size:11px;line-height:1.55;color:var(--ink-dim);}
+.moon-meta .ph{color:var(--amber-hi);font-size:12px;letter-spacing:0.05em;display:block;margin-bottom:2px;}
+.moon-meta .lit{color:var(--moss);}
+.moon-next{margin-top:8px;font-family:"Courier New",monospace;font-size:10.5px;color:var(--ink-faint);border-top:1px dotted var(--bord-lo);padding-top:6px;}
+.moon-next b{color:var(--ink-dim);font-weight:normal;}
+
+/* ---------- oracle deck ---------- */
+.deck-stage{text-align:center;padding:4px 0 2px;}
+.deck{
+  display:inline-block;position:relative;width:98px;height:150px;
+  perspective:700px;
+}
+.deck .card{
+  position:relative;width:100%;height:100%;
+  transform-style:preserve-3d;transition:transform 620ms cubic-bezier(.2,.8,.2,1);
+}
+.deck.flipped .card{transform:rotateY(180deg);}
+.face{
+  position:absolute;inset:0;backface-visibility:hidden;
+  border:2px solid var(--bord);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:6px;
+}
+.back{
+  background:
+    repeating-linear-gradient(45deg,#2a2013 0 6px,#201810 6px 12px),
+    var(--panel-2);
+  color:var(--amber);
+}
+.back .bk-sig{font-size:30px;color:var(--amber);text-shadow:0 0 8px rgba(217,162,74,0.4);}
+.back .bk-t{font-family:"Courier New",monospace;font-size:9px;letter-spacing:0.15em;margin-top:6px;color:var(--ink-faint);}
+.front{
+  background:linear-gradient(180deg,#2c2114,#1a130c);
+  transform:rotateY(180deg);color:var(--ink);
+}
+.front .c-glyph{font-size:30px;line-height:1;color:var(--moss);}
+.front .c-name{font-size:14px;letter-spacing:0.06em;color:var(--amber-hi);margin:5px 2px 3px;text-align:center;}
+.front .c-key{font-family:"Courier New",monospace;font-size:9px;color:var(--ink-faint);letter-spacing:0.1em;}
+.oracle-read{
+  min-height:34px;margin-top:9px;font-size:12.5px;font-style:italic;
+  color:var(--ink-dim);line-height:1.5;text-align:center;
+}
+.oracle-read .pname{color:var(--amber-hi);font-style:normal;}
+.btn{
+  font-family:"Courier New",monospace;font-size:11px;letter-spacing:0.08em;
+  color:var(--ink);background:linear-gradient(180deg,var(--panel-2),var(--deep));
+  border:2px solid var(--bord);
+  border-top-color:var(--bord-hi);border-left-color:var(--bord-hi);
+  border-right-color:var(--bord-lo);border-bottom-color:var(--bord-lo);
+  padding:4px 12px;margin-top:8px;
+}
+.btn:active{
+  border-top-color:var(--bord-lo);border-left-color:var(--bord-lo);
+  border-right-color:var(--bord-hi);border-bottom-color:var(--bord-hi);
+}
+.btn:hover{color:var(--amber-hi);}
+
+/* ---------- "currently tending" ---------- */
+.c-row{display:flex;gap:7px;padding:2px 0;font-size:12.5px;align-items:baseline;}
+.c-row + .c-row{border-top:1px dotted var(--bord-lo);}
+.c-label{color:var(--moss);font-style:italic;min-width:64px;font-size:11px;}
+.c-val{color:var(--ink-dim);}
+
+/* ---------- hit counter ---------- */
+.counter{text-align:center;}
+.odo{
+  display:inline-flex;gap:2px;background:#09060a;padding:4px 5px;
+  border:2px solid var(--bord-lo);
+  border-top-color:#000;border-left-color:#000;
+}
+.odo span{
+  display:inline-block;width:16px;text-align:center;
+  font-family:"Courier New",monospace;font-weight:bold;font-size:17px;
+  color:var(--moss);background:#140f09;border:1px solid #060405;
+  text-shadow:0 0 6px rgba(127,154,87,0.6);
+}
+.counter .lbl{font-family:"Courier New",monospace;font-size:10px;color:var(--ink-faint);margin-top:5px;letter-spacing:0.06em;}
+
+/* ---------- webring ---------- */
+.ring{text-align:center;font-size:12px;}
+.ring .rn{color:var(--amber-hi);letter-spacing:0.05em;font-size:13px;}
+.ring-nav{margin-top:7px;display:flex;justify-content:center;gap:5px;}
+.wr-btn{
+  font-family:"Courier New",monospace;font-size:11px;
+  color:var(--ink);background:var(--panel-2);
+  border:2px solid var(--bord);
+  border-top-color:var(--bord-hi);border-left-color:var(--bord-hi);
+  border-right-color:var(--bord-lo);border-bottom-color:var(--bord-lo);
+  padding:2px 8px;
+}
+.wr-btn:hover{color:var(--amber-hi);}
+.ring .cnt{margin-top:6px;color:var(--ink-faint);font-family:"Courier New",monospace;font-size:10px;}
+
+/* ---------- 88x31 wall ---------- */
+.btn88-wall{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;}
+.b88{
+  width:88px;height:31px;overflow:hidden;
+  border:1px solid #000;
+  display:flex;align-items:center;justify-content:center;
+  font-family:"Courier New",monospace;font-size:9px;line-height:1.05;
+  text-align:center;letter-spacing:0.02em;color:#fff;
+  text-shadow:1px 1px 0 #000;
+  image-rendering:pixelated;
+}
+.b88 b{font-size:10px;}
+
+/* ---------- main content ---------- */
+.main h2{
+  font-size:23px;color:var(--amber-hi);margin:2px 0 2px;letter-spacing:0.04em;
+  border-bottom:2px groove var(--bord);padding-bottom:4px;
+}
+.main h2 .sm{font-size:12px;color:var(--ink-faint);font-family:"Courier New",monospace;letter-spacing:0.1em;}
+.lede{color:var(--ink-dim);font-size:15px;margin:10px 0 16px;}
+.dropcap::first-letter{
+  float:left;font-size:52px;line-height:0.8;padding:4px 8px 0 0;color:var(--moss);
+  font-weight:bold;
+}
+
+/* herbarium specimen cards */
+.herbs{display:flex;flex-wrap:wrap;gap:12px;margin:6px 0 4px;}
+.herb{
+  flex:1 1 200px;min-width:0;
+  background:var(--panel);
+  border:2px solid var(--bord-lo);
+  border-top-color:var(--bord-hi);border-left-color:var(--bord-hi);
+  padding:0;
+}
+.herb .hc{
+  background:var(--deep);border-bottom:1px solid var(--bord-lo);
+  font-family:"Courier New",monospace;font-size:10px;letter-spacing:0.1em;color:var(--moss);
+  padding:3px 7px;display:flex;justify-content:space-between;
+}
+.herb .hc .lat{color:var(--ink-faint);font-style:italic;}
+.herb .hb{padding:8px 9px;display:flex;gap:9px;}
+.herb .hb .pic{flex:0 0 46px;}
+.herb .hb .txt{font-size:12px;color:var(--ink-dim);line-height:1.5;}
+.herb .hb .txt .use{color:var(--amber);display:block;font-size:10.5px;font-family:"Courier New",monospace;margin-top:4px;letter-spacing:0.04em;}
+
+/* a charm / recipe block */
+.charm{
+  background:var(--deep);
+  border:2px dashed var(--bord);
+  padding:12px 14px;margin:14px 0;
+}
+.charm .ct{color:var(--moss);font-family:"Courier New",monospace;font-size:11px;letter-spacing:0.14em;margin-bottom:6px;}
+.charm ul{margin:0 0 8px;padding-left:20px;color:var(--ink-dim);font-size:13px;}
+.charm ul li{margin:1px 0;}
+.charm ul li::marker{content:"\273F  ";color:var(--amber);}
+.charm .method{font-size:13px;color:var(--ink);font-style:italic;line-height:1.6;}
+
+/* tending log */
+.log .body{padding:8px 11px;}
+.log-list{list-style:none;margin:0;padding:0;}
+.log-list li{
+  padding:4px 0;border-bottom:1px dotted var(--bord-lo);
+  font-size:12.5px;color:var(--ink-dim);line-height:1.5;
+}
+.log-list li:last-child{border-bottom:none;}
+.log-list .d{font-family:"Courier New",monospace;font-size:10.5px;color:var(--amber);margin-right:8px;letter-spacing:0.03em;}
+.log-list s{color:var(--ink-faint);}
+.newtag{
+  font-family:"Courier New",monospace;font-size:9px;color:#111;background:var(--amber-hi);
+  padding:0 3px;margin-left:5px;letter-spacing:0.05em;animation:blink 1.1s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:0;}}
+
+/* guestbook */
+.gb-entry{
+  background:var(--panel);border:1px solid var(--bord-lo);
+  padding:7px 9px;margin-bottom:8px;
+}
+.gb-entry .gb-head{font-family:"Courier New",monospace;font-size:10.5px;color:var(--moss);margin-bottom:3px;display:flex;justify-content:space-between;}
+.gb-entry .gb-head .nm{color:var(--amber-hi);}
+.gb-entry .gb-msg{font-size:13px;color:var(--ink-dim);font-style:italic;line-height:1.5;}
+.gb-form{margin-top:6px;}
+.gb-form label{display:block;font-family:"Courier New",monospace;font-size:10.5px;color:var(--ink-faint);margin:6px 0 2px;letter-spacing:0.06em;}
+.gb-form input,.gb-form textarea{
+  width:100%;background:var(--deep);color:var(--ink);
+  border:2px solid var(--bord-lo);border-top-color:#000;border-left-color:#000;
+  font-family:"Times New Roman",serif;font-size:14px;padding:5px 7px;
+}
+.gb-form textarea{resize:vertical;min-height:52px;line-height:1.5;}
+.gb-form input:focus,.gb-form textarea:focus{outline:none;border-color:var(--amber);}
+.gb-note{font-size:10.5px;color:var(--ink-faint);font-family:"Courier New",monospace;margin-top:4px;}
+
+/* ---------- under construction ---------- */
+.uc{
+  display:inline-flex;align-items:center;gap:7px;
+  background:repeating-linear-gradient(45deg,#2a2013 0 10px,#171009 10px 20px);
+  border:2px solid var(--bord);padding:4px 10px;
+  font-family:"Courier New",monospace;font-size:11px;color:var(--amber-hi);letter-spacing:0.08em;
+}
+.uc .bang{animation:blink 0.9s steps(1) infinite;}
+
+/* ---------- footer ---------- */
+footer.foot{
+  background:var(--deep);border-top:2px solid var(--bord);
+  padding:14px 16px;text-align:center;
+  font-family:"Courier New",monospace;font-size:11px;color:var(--ink-faint);line-height:1.8;
+}
+footer.foot .big{color:var(--ink-dim);}
+footer.foot a{color:var(--moss);}
+footer.foot .div{color:var(--bord-hi);margin:6px 0;letter-spacing:0.3em;}
+
+/* ---------- responsive: stack the table ---------- */
+@media(max-width:680px){
+  .shell{margin:12px auto 24px;}
+  .grid{flex-direction:column;}
+  .side{width:100%;flex:none;border-right:none;border-bottom:2px solid var(--bord);}
+  h1.wordmark{font-size:40px;}
+  #sigil{width:48px;height:48px;}
+  .main{padding:14px 13px;}
+}
+@media(max-width:420px){
+  h1.wordmark{font-size:32px;letter-spacing:0.08em;}
+  .sigil-wrap{gap:9px;}
+  .herb{flex:1 1 100%;}
+}
+</style>
+</head>
+<body>
+<canvas id="spores"></canvas>
+
+<div class="shell">
+<div class="frame"><div class="frame-in">
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <div class="sigil-wrap">
+      <svg id="sigil" width="64" height="64" viewBox="0 0 64 64" aria-hidden="true">
+        <g fill="none" stroke="#d9a24a" stroke-width="1.4">
+          <circle cx="32" cy="32" r="29" opacity="0.6"/>
+          <circle cx="32" cy="32" r="23" opacity="0.4"/>
+          <g id="sigrot">
+            <path d="M32 9 L32 55" stroke-width="1"/>
+            <path d="M12 20 L52 44" stroke-width="1"/>
+            <path d="M52 20 L12 44" stroke-width="1"/>
+            <polygon points="32,15 45,46 19,46" stroke="#7f9a57" stroke-width="1.3"/>
+            <circle cx="32" cy="32" r="7" stroke="#f1c877"/>
+          </g>
+        </g>
+        <!-- moth -->
+        <g stroke="#ede0c8" stroke-width="1" fill="none" opacity="0.85">
+          <path d="M32 29 C26 23 20 24 22 31 C24 36 29 34 32 33"/>
+          <path d="M32 29 C38 23 44 24 42 31 C40 36 35 34 32 33"/>
+        </g>
+      </svg>
+      <div class="title-blk">
+        <h1 class="wordmark">M<span class="drop">O</span>THWORT</h1>
+        <p class="tagline">a hedgewitch&#8217;s grimoire &#183; est. in the slow rot of years</p>
+      </div>
+    </div>
+    <div class="hero-rule">&#10023; &#183; &#8212; &#183; &#10023; &#183; &#8212; &#183; &#10023;</div>
+  </header>
+
+  <!-- ================= MARQUEE BAND ================= -->
+  <div class="band">
+    <marquee scrollamount="4" behavior="scroll" direction="left">
+      <span class="star">&#10023;</span> welcome, wanderer, to the thicket &#8212; mind the nettles &#183;&#183;&#183;
+      <b>the moon is read below &#183; draw a leaf for your omen &#183; sign the visitor&#8217;s book before you drift off</b>
+      &#183;&#183;&#183; nothing here is finished &#183; everything is tended <span class="star">&#10023;</span>
+      &#8226; this grimoire grows like moss, a little each turning &#8226;
+    </marquee>
+  </div>
+
+  <!-- ================= GRID ================= -->
+  <div class="grid">
+
+    <!-- --------- SIDEBAR --------- -->
+    <aside class="side">
+
+      <nav class="menu panel">
+        <div class="cap"><span>&#8250; paths</span><span class="mk">&#10047;</span></div>
+        <div class="body">
+          <a href="#">the <span class="g">d</span>oor<span class="ct">home</span></a>
+          <a href="#herbarium">herb<span class="g">:</span>arium<span class="ct">plants</span></a>
+          <a href="#charm">the <span class="g">c</span>harms<span class="ct">spells</span></a>
+          <a href="#log">tend<span class="g">_</span>ing log<span class="ct">news</span></a>
+          <a href="#book">visitor&#8217;s <span class="g">b</span>ook<span class="ct">sign</span></a>
+          <a href="#">scr<span class="g">o</span>lls<span class="ct">diary</span></a>
+          <a href="#">the <span class="g">r</span>each<span class="ct">links</span></a>
+        </div>
+      </nav>
+
+      <!-- MOON ALMANAC (offline, real lunar math) -->
+      <div class="panel">
+        <div class="cap"><span>&#9790; the almanac</span><span class="mk" id="todayStamp">&#183;&#183;</span></div>
+        <div class="body">
+          <div class="moon-wrap">
+            <canvas id="moon" width="58" height="58"></canvas>
+            <div class="moon-meta">
+              <span class="ph" id="phaseName">&#183;</span>
+              illum <span class="lit" id="illum">&#183;&#183;</span><br>
+              age <span id="moonAge">&#183;&#183;</span> days<br>
+              <span id="moonSign">&#183;</span>
+            </div>
+          </div>
+          <div class="moon-next">
+            <b>next full</b> &#8212; <span id="nextFull">&#183;&#183;</span><br>
+            <b>next dark</b> &#8212; <span id="nextNew">&#183;&#183;</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ORACLE DRAW -->
+      <div class="panel">
+        <div class="cap"><span>&#10048; leaf oracle</span><span class="mk">draw</span></div>
+        <div class="body">
+          <div class="deck-stage">
+            <div class="deck" id="deck" title="draw a leaf" role="button" tabindex="0">
+              <div class="card">
+                <div class="face back"><span class="bk-sig">&#10048;</span><span class="bk-t">MOTHWORT</span></div>
+                <div class="face front">
+                  <span class="c-glyph" id="cGlyph">&#9752;</span>
+                  <span class="c-name" id="cName">&#8212;</span>
+                  <span class="c-key" id="cKey">&#8212;</span>
+                </div>
+              </div>
+            </div>
+            <div class="oracle-read" id="oracleRead">tap the deck. let a leaf fall where it will.</div>
+            <button class="btn" id="drawBtn">&#8634; draw again</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CURRENTLY TENDING -->
+      <div class="panel">
+        <div class="cap"><span>&#10057; currently tending</span><span class="mk">&#9763;</span></div>
+        <div class="body">
+          <div class="c-row"><span class="c-label">drying</span><span class="c-val">mugwort, over the hearth</span></div>
+          <div class="c-row"><span class="c-label">reading</span><span class="c-val">a damp field guide to lichens</span></div>
+          <div class="c-row"><span class="c-label">brewing</span><span class="c-val">nettle &amp; rosehip, third steep</span></div>
+          <div class="c-row"><span class="c-label">listening</span><span class="c-val">rain, mostly. a little dungeon synth</span></div>
+          <div class="c-row"><span class="c-label">mood</span><span class="c-val">soft-rotted, content</span></div>
+        </div>
+      </div>
+
+      <!-- HIT COUNTER -->
+      <div class="panel">
+        <div class="cap"><span>&#9880; souls gathered</span><span class="mk">&#9733;</span></div>
+        <div class="body counter">
+          <div class="odo" id="odo"></div>
+          <div class="lbl">have wandered the thicket</div>
+        </div>
+      </div>
+
+      <!-- WEBRING -->
+      <div class="panel">
+        <div class="cap"><span>&#8734; webring</span><span class="mk">&#10070;</span></div>
+        <div class="body ring">
+          <div class="rn">~ the mossgrown ring ~</div>
+          <div class="ring-nav">
+            <a class="wr-btn" href="#" data-ring="prev">&#8592; prev</a>
+            <a class="wr-btn" href="#" data-ring="rand">? rand</a>
+            <a class="wr-btn" href="#" data-ring="next">next &#8594;</a>
+          </div>
+          <div class="cnt" id="ringCnt">site 14 of 211 grottos</div>
+        </div>
+      </div>
+
+      <!-- 88x31 WALL -->
+      <div class="panel">
+        <div class="cap"><span>&#9638; the button wall</span><span class="mk">88&#215;31</span></div>
+        <div class="body">
+          <div class="btn88-wall" id="btnWall"></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- --------- MAIN --------- -->
+    <main class="main">
+
+      <h2>at the threshold <span class="sm">// index.htm</span></h2>
+      <p class="lede dropcap">
+        Here is a house built of damp paper and patience. It does not hurry, and neither
+        should you. Leave your boots at the door; the floor is all moss now, and it remembers
+        every footfall. What grows here was planted slowly &#8212; a page, a pressed leaf, a small
+        quiet spell &#8212; and it is left to soften at its own pace, the way all tended things
+        eventually must.
+      </p>
+      <p style="color:var(--ink-dim);font-size:14px;">
+        This is a <b style="color:var(--moss)">template</b> dressed as a living shrine: swap the copy,
+        hang your own specimens, re-seed the counter, point the links wherever your own grottos
+        lie. Everything below works with the power off &#8212; the moon is reckoned by arithmetic,
+        the oracle keeps its own small deck, and the visitor&#8217;s book remembers for as long as
+        the window stays open.
+      </p>
+
+      <!-- HERBARIUM -->
+      <h2 id="herbarium">herbarium <span class="sm">// pressed &amp; labelled</span></h2>
+      <div class="herbs">
+        <div class="herb">
+          <div class="hc"><span>no. 001</span><span class="lat">artemisia vulgaris</span></div>
+          <div class="hb">
+            <svg class="pic" width="46" height="60" viewBox="0 0 46 60" aria-hidden="true"><g stroke="#7f9a57" stroke-width="1.3" fill="none"><path d="M23 58 L23 10"/><path d="M23 48 C15 46 10 42 8 34"/><path d="M23 48 C31 46 36 42 38 34"/><path d="M23 38 C16 36 12 32 11 25"/><path d="M23 38 C30 36 34 32 35 25"/><path d="M23 28 C17 26 14 22 14 16"/><path d="M23 28 C29 26 32 22 32 16"/><path d="M23 18 C19 16 17 13 18 9"/><path d="M23 18 C27 16 29 13 28 9"/></g></svg>
+            <div class="txt">mugwort &#8212; the traveller&#8217;s crown. hung at the door, burned for dreaming.
+              <span class="use">&#8250; dreamwork &#183; threshold &#183; wards</span></div>
+          </div>
+        </div>
+        <div class="herb">
+          <div class="hc"><span>no. 002</span><span class="lat">leonurus cardiaca</span></div>
+          <div class="hb">
+            <svg class="pic" width="46" height="60" viewBox="0 0 46 60" aria-hidden="true"><g stroke="#7f9a57" stroke-width="1.3" fill="none"><path d="M23 58 L23 8"/><path d="M23 44 L10 36 M23 44 L36 36"/><path d="M23 44 L9 48 M23 44 L37 48"/><path d="M23 30 L11 24 M23 30 L35 24"/><path d="M23 30 L10 34 M23 30 L36 34"/><path d="M23 18 L14 13 M23 18 L32 13"/></g><g fill="#a5572e"><circle cx="19" cy="22" r="1.4"/><circle cx="27" cy="22" r="1.4"/><circle cx="20" cy="14" r="1.2"/><circle cx="26" cy="14" r="1.2"/></g></svg>
+            <div class="txt">motherwort &#8212; lion-hearted, bitter. steadies the pulse, loosens the clenched chest.
+              <span class="use">&#8250; the heart &#183; grief &#183; steadiness</span></div>
+          </div>
+        </div>
+        <div class="herb">
+          <div class="hc"><span>no. 003</span><span class="lat">verbascum thapsus</span></div>
+          <div class="hb">
+            <svg class="pic" width="46" height="60" viewBox="0 0 46 60" aria-hidden="true"><g stroke="#7f9a57" stroke-width="1.4" fill="none"><path d="M23 58 L23 6"/></g><g fill="#d9a24a"><circle cx="23" cy="10" r="2"/><circle cx="20" cy="14" r="1.8"/><circle cx="26" cy="15" r="1.8"/><circle cx="22" cy="19" r="1.8"/><circle cx="25" cy="22" r="1.6"/></g><g stroke="#4c5f33" stroke-width="2" fill="none" stroke-linecap="round"><path d="M23 50 C12 48 7 42 8 34"/><path d="M23 50 C34 48 39 42 38 34"/><path d="M23 40 C14 38 10 33 12 27"/><path d="M23 40 C32 38 36 33 34 27"/></g></svg>
+            <div class="txt">mullein &#8212; the hag&#8217;s taper, the corpse-candle. a torch dipped in tallow, a light for the long dark.
+              <span class="use">&#8250; the lungs &#183; courage &#183; funeral light</span></div>
+          </div>
+        </div>
+        <div class="herb">
+          <div class="hc"><span>no. 004</span><span class="lat">sambucus nigra</span></div>
+          <div class="hb">
+            <svg class="pic" width="46" height="60" viewBox="0 0 46 60" aria-hidden="true"><g stroke="#4c5f33" stroke-width="1.3" fill="none"><path d="M23 58 L23 30"/><path d="M23 42 L12 32 M23 42 L34 32 M23 36 L15 26 M23 36 L31 26"/></g><g fill="#5a4a8a"><circle cx="15" cy="18" r="2.2"/><circle cx="20" cy="15" r="2.2"/><circle cx="25" cy="16" r="2.2"/><circle cx="30" cy="19" r="2.2"/><circle cx="18" cy="21" r="2.2"/><circle cx="23" cy="20" r="2.2"/><circle cx="27" cy="22" r="2.2"/><circle cx="22" cy="25" r="2"/></g></svg>
+            <div class="txt">elder &#8212; the old mother of the hedge. ask before you cut her, and leave an offering.
+              <span class="use">&#8250; protection &#183; passage &#183; the dead</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CHARM / RECIPE -->
+      <h2 id="charm">a small charm <span class="sm">// for a restless house</span></h2>
+      <div class="charm">
+        <div class="ct">&#10047; to quiet a room that will not settle &#10047;</div>
+        <ul>
+          <li>one sprig mugwort, dried until it whispers</li>
+          <li>a pinch of hearth-ash, cold three nights</li>
+          <li>salt that has sat out under one full moon</li>
+          <li>a grey thread, long as your forearm</li>
+        </ul>
+        <p class="method">
+          Bind the sprig in the thread and name, under your breath, the thing the room is holding.
+          Walk the walls once, widdershins, trailing ash at the corners. Hang the bundle where the
+          draught finds it. When it has gone to powder, the room has let go &#8212; and so, perhaps,
+          have you. Sweep the remains outward, never in.
+        </p>
+      </div>
+
+      <!-- TENDING LOG -->
+      <div class="panel log" id="log">
+        <div class="cap"><span>&#9880; tending log</span><span class="mk">what has grown</span></div>
+        <div class="body">
+          <ul class="log-list">
+            <li><span class="d">10.03</span> added the leaf oracle &#8212; thirteen omens, shuffled by hand <span class="newtag">NEW</span></li>
+            <li><span class="d">09.28</span> re-pressed the herbarium, relabelled no. 003</li>
+            <li><span class="d">09.21</span> the almanac now reckons the dark moon too</li>
+            <li><span class="d">09.14</span> <s>fix the leaking cursor</s> &#8212; done, it drips sap now on purpose</li>
+            <li><span class="d">09.02</span> planted the visitor&#8217;s book. be kind in it</li>
+            <li><span class="d">08.19</span> first stones laid. the thicket opens.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- GUESTBOOK -->
+      <div class="panel" id="book">
+        <div class="cap"><span>&#10057; visitor&#8217;s book</span><span class="mk">leave a petal</span></div>
+        <div class="body">
+          <div id="gbList"></div>
+          <form class="gb-form" id="gbForm" autocomplete="off">
+            <label for="gbName">who passed through</label>
+            <input type="text" id="gbName" maxlength="32" placeholder="a name, or a shape you go by">
+            <label for="gbMsg">what you leave behind</label>
+            <textarea id="gbMsg" maxlength="240" placeholder="a petal, a word, a small haunting&#8230;"></textarea>
+            <button class="btn" type="submit">&#10047; press it into the book</button>
+            <div class="gb-note">&#8250; kept only while this window stays open &#8212; the book forgets at dusk</div>
+          </form>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin:18px 0 4px;">
+        <span class="uc"><span class="bang">&#9888;</span> perpetually under construction <span class="bang">&#9888;</span></span>
+      </div>
+
+    </main>
+  </div><!-- /grid -->
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="foot">
+    <div class="big">&#10023; best viewed in netscape navigator at 800&#215;600 &#10023;</div>
+    <div class="div">&#8212; &#183; &#8212; &#183; &#8212; &#183; &#8212; &#183; &#8212;</div>
+    hand-tended with notepad &amp; patience &#183; no trackers, no javascript that phones home<br>
+    all specimens pressed by the keeper &#183; <a href="#">no-ai webring</a> &#183; <a href="#">the quiet web</a><br>
+    &#169; the mothwort grimoire &#183; let it rot gently &#183; <span id="yearStamp">&#183;&#183;&#183;&#183;</span>
+  </footer>
+
+</div></div><!-- /frame -->
+</div><!-- /shell -->
+
+<script>
+"use strict";
+/* ============================================================
+   MOTHWORT — all behaviour, no dependencies, works offline
+   ============================================================ */
+
+/* ---------- 1. drifting spores (ambient canvas) ---------- */
+(function spores(){
+  var cvs=document.getElementById('spores');
+  var ctx=cvs.getContext('2d');
+  var motes=[],W,H,DPR=Math.min(window.devicePixelRatio||1,2);
+  function resize(){
+    W=cvs.width=Math.floor(innerWidth*DPR);
+    H=cvs.height=Math.floor(innerHeight*DPR);
+    cvs.style.width=innerWidth+'px';cvs.style.height=innerHeight+'px';
+    var want=Math.round((innerWidth*innerHeight)/26000);
+    want=Math.max(18,Math.min(want,70));
+    motes=[];
+    for(var i=0;i<want;i++)motes.push(make(true));
+  }
+  function make(rand){
+    return {
+      x:Math.random()*W,
+      y:rand?Math.random()*H:-10*DPR,
+      r:(0.6+Math.random()*1.8)*DPR,
+      vy:(0.12+Math.random()*0.4)*DPR,
+      drift:(Math.random()*0.6-0.3)*DPR,
+      ph:Math.random()*Math.PI*2,
+      sw:0.4+Math.random()*0.9,
+      a:0.15+Math.random()*0.4,
+      green:Math.random()<0.35
+    };
+  }
+  function tick(){
+    ctx.clearRect(0,0,W,H);
+    for(var i=0;i<motes.length;i++){
+      var m=motes[i];
+      m.ph+=0.01;
+      m.y+=m.vy;
+      m.x+=m.drift+Math.sin(m.ph)*m.sw*DPR*0.3;
+      if(m.y>H+12*DPR||m.x<-12*DPR||m.x>W+12*DPR){
+        motes[i]=make(false);continue;
+      }
+      ctx.beginPath();
+      ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+      ctx.fillStyle=(m.green?'rgba(127,154,87,':'rgba(217,162,74,')+m.a+')';
+      ctx.fill();
+    }
+    raf=requestAnimationFrame(tick);
+  }
+  var raf;
+  addEventListener('resize',resize);
+  document.addEventListener('visibilitychange',function(){
+    if(document.hidden){cancelAnimationFrame(raf);}else{raf=requestAnimationFrame(tick);}
+  });
+  resize();tick();
+})();
+
+/* ---------- 2. moon almanac (real synodic arithmetic) ---------- */
+(function almanac(){
+  var SYN=29.53058867;                 // synodic month, days
+  var REF=Date.UTC(2000,0,6,18,14,0);  // known new moon
+  var now=new Date();
+  var days=(now.getTime()-REF)/86400000;
+  var age=days%SYN; if(age<0)age+=SYN;
+  var phase=age/SYN;                   // 0..1
+  var illum=(1-Math.cos(2*Math.PI*phase))/2;
+
+  // phase name
+  var names=[
+    [0.02,'new moon'],[0.24,'waxing crescent'],[0.26,'first quarter'],
+    [0.49,'waxing gibbous'],[0.51,'full moon'],[0.74,'waning gibbous'],
+    [0.76,'last quarter'],[0.98,'waning crescent'],[1.01,'new moon']
+  ];
+  var pname='';for(var i=0;i<names.length;i++){if(phase<=names[i][0]){pname=names[i][1];break;}}
+
+  // zodiac the moon drifts through (approx, ecliptic longitude rough)
+  var signs=['aries','taurus','gemini','cancer','leo','virgo','libra',
+             'scorpio','sagittarius','capricorn','aquarius','pisces'];
+  // crude moon longitude: mean motion 13.176°/day from a ref
+  var moonLon=(218.316 + 13.176396*days)%360; if(moonLon<0)moonLon+=360;
+  var sign=signs[Math.floor(moonLon/30)%12];
+
+  function waitDays(target){ // days until phase reaches target (0..1)
+    var d=(target-phase); d=((d%1)+1)%1; return d*SYN;
+  }
+  function stamp(dcount){
+    var t=new Date(now.getTime()+dcount*86400000);
+    var mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    return mo[t.getMonth()]+' '+t.getDate();
+  }
+
+  function set(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+  set('phaseName',pname);
+  set('illum',Math.round(illum*100)+'%');
+  set('moonAge',age.toFixed(1));
+  set('moonSign','in '+sign);
+  set('nextFull',stamp(waitDays(0.5)));
+  set('nextNew',stamp(waitDays(0.9995)));
+  var mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+  set('todayStamp',mo[now.getMonth()]+' '+now.getDate());
+  var ys=document.getElementById('yearStamp'); if(ys)ys.textContent=now.getFullYear();
+
+  // draw moon (half-disk + terminator-ellipse composite)
+  var c=document.getElementById('moon'),x=c.getContext('2d');
+  var LIT='#ece0c6',DARK='#17120b';
+  var S=c.width,R=S/2,r=R-3;
+  x.clearRect(0,0,S,S);
+  x.beginPath();x.arc(R,R,r,0,Math.PI*2);x.fillStyle=DARK;x.fill();
+  var th=2*Math.PI*phase,cos=Math.cos(th),rx=r*Math.abs(cos);
+  var waxing=phase<0.5;
+  x.fillStyle=LIT;
+  x.beginPath();
+  if(waxing)x.arc(R,R,r,-Math.PI/2,Math.PI/2,false);  // right semicircle
+  else x.arc(R,R,r,Math.PI/2,Math.PI*1.5,false);       // left semicircle
+  x.closePath();x.fill();
+  x.beginPath();x.ellipse(R,R,rx,r,0,0,Math.PI*2);
+  if(cos<0){x.fillStyle=LIT;}else{x.fillStyle=DARK;} // gibbous add light / crescent subtract
+  x.fill();
+  // soft craters on lit part
+  x.globalAlpha=0.12;x.fillStyle='#8c7a5a';
+  [[R-4,R-6,2.2],[R+5,R+3,1.6],[R-2,R+7,1.4],[R+7,R-5,1.2]].forEach(function(p){
+    x.beginPath();x.arc(p[0],p[1],p[2],0,Math.PI*2);x.fill();
+  });
+  x.globalAlpha=1;
+  x.beginPath();x.arc(R,R,r,0,Math.PI*2);x.strokeStyle='#5a4526';x.lineWidth=1;x.stroke();
+})();
+
+/* ---------- 3. leaf oracle (own deck, in-memory shuffle) ---------- */
+(function oracle(){
+  var deck=[
+    {g:'⚘',n:'nettle',k:'STING / BOUNDARY',r:'something asks to be touched carefully. the sting is a teacher, not a punishment — let it mark where your edges are.'},
+    {g:'❀',n:'moss',k:'SLOW / PATIENCE',r:'you are growing, only slower than the eye can follow. do not mistake stillness for failure. the green is already spreading.'},
+    {g:'☘',n:'clover',k:'LUCK / TRIPLE',r:'a small fortune, threefold and quiet. it will not announce itself. watch the low ground.'},
+    {g:'❦',n:'elder',k:'THRESHOLD / ELDER',r:'an old door opens. ask permission before you pass, and leave something behind in thanks.'},
+    {g:'✿',n:'mugwort',k:'DREAM / TRAVEL',r:'the veil is thin where you sleep. keep a page by the bed; the dream is trying to tell you the route.'},
+    {g:'⚘',n:'fern',k:'UNFURLING / TIME',r:'what is coiled will open in its season. forcing the frond only tears it. wait for the warmth.'},
+    {g:'☙',n:'rose hip',k:'AFTER / SWEETNESS',r:'the bloom is gone and what remains is sweeter for it. gather the fruit of the thing that ended.'},
+    {g:'♠',n:'yew',k:'DEATH / RETURN',r:'an ending that is also a hollow you can shelter in. the oldest trees are mostly empty, and still alive.'},
+    {g:'❁',n:'thistle',k:'DEFENCE / PRIDE',r:'stand your ground, armoured and purple-crowned. not everything that approaches deserves your softness.'},
+    {g:'❀',n:'willow',k:'GRIEF / BEND',r:'weep if you must; the willow does, and never breaks. flexibility is not weakness, it is how you survive the flood.'},
+    {g:'✽',n:'wormwood',k:'BITTER / CLARITY',r:'a bitterness that clears the head. the truth you are avoiding is the medicine. take it in small doses.'},
+    {g:'⚘',n:'lichen',k:'SYMBIOSIS / SLOW',r:'you are not one thing but many, living together. tend the alliance. you were never meant to do this alone.'},
+    {g:'★',n:'mandrake',k:'ROOT / SCREAM',r:'something buried wants pulling up, and it will cry when it comes. do it at the right hour, and do not do it alone.'}
+  ];
+  var deckEl=document.getElementById('deck');
+  var read=document.getElementById('oracleRead');
+  var cGlyph=document.getElementById('cGlyph');
+  var cName=document.getElementById('cName');
+  var cKey=document.getElementById('cKey');
+  var btn=document.getElementById('drawBtn');
+  var busy=false,last=-1;
+
+  function draw(){
+    if(busy)return;busy=true;
+    deckEl.classList.remove('flipped');
+    var i; do{i=Math.floor(Math.random()*deck.length);}while(i===last&&deck.length>1);
+    last=i;
+    // short beat so the flip reads, even on first draw
+    setTimeout(function(){
+      var card=deck[i];
+      cGlyph.innerHTML=card.g;
+      cName.textContent=card.n;
+      cKey.textContent=card.k;
+      deckEl.classList.add('flipped');
+      read.innerHTML='<span class="pname">'+card.n+'</span> — '+card.r;
+    },160);
+    setTimeout(function(){busy=false;},820);
+  }
+  deckEl.addEventListener('click',draw);
+  deckEl.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();draw();}});
+  btn.addEventListener('click',draw);
+})();
+
+/* ---------- 4. souls-gathered hit counter ---------- */
+(function counter(){
+  var odo=document.getElementById('odo');
+  // seeded base; "increments" a touch each visit (session only)
+  var base=103471;
+  var bump=Math.floor(Math.random()*7)+1;
+  var n=base+bump;
+  var s=String(n).padStart(6,'0');
+  odo.innerHTML='';
+  for(var i=0;i<s.length;i++){
+    var d=document.createElement('span');
+    d.textContent=s[i];
+    odo.appendChild(d);
+  }
+})();
+
+/* ---------- 5. webring (local, no navigation off-page) ---------- */
+(function webring(){
+  var cnt=document.getElementById('ringCnt');
+  var total=211,cur=14;
+  document.querySelectorAll('[data-ring]').forEach(function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var k=a.getAttribute('data-ring');
+      if(k==='next')cur=cur%total+1;
+      else if(k==='prev')cur=(cur-2+total)%total+1;
+      else cur=Math.floor(Math.random()*total)+1;
+      cnt.textContent='site '+cur+' of '+total+' grottos';
+    });
+  });
+})();
+
+/* ---------- 6. 88x31 button wall (css-drawn, no images) ---------- */
+(function wall(){
+  var wall=document.getElementById('btnWall');
+  var btns=[
+    {t:'MOTH<b>WORT</b>',bg:'linear-gradient(180deg,#2d2216,#120b07)',c:'#f1c877'},
+    {t:'no<br><b>A.I.</b>',bg:'linear-gradient(180deg,#4c5f33,#20290f)',c:'#eaf2d6'},
+    {t:'grown on<br><b>NEOCITIES</b>',bg:'linear-gradient(180deg,#5a4a8a,#241c3b)',c:'#efe9ff'},
+    {t:'the<br><b>QUIET WEB</b>',bg:'linear-gradient(180deg,#24201a,#0e0c08)',c:'#b39f7c'},
+    {t:'made w/<br><b>NOTEPAD</b>',bg:'linear-gradient(180deg,#a5572e,#4a2512)',c:'#ffe7cf'},
+    {t:'<b>HEDGE</b><br>craft',bg:'linear-gradient(180deg,#3a2c18,#171009)',c:'#7f9a57'},
+    {t:'best in<br><b>800&#215;600</b>',bg:'linear-gradient(180deg,#1b140d,#000)',c:'#7f9a57'},
+    {t:'let it<br><b>ROT</b>',bg:'linear-gradient(180deg,#2a1810,#0a0504)',c:'#d9a24a'}
+  ];
+  btns.forEach(function(b){
+    var el=document.createElement('a');
+    el.className='b88';el.href='#';
+    el.style.background=b.bg;el.style.color=b.c;
+    el.innerHTML=b.t;
+    el.addEventListener('click',function(e){e.preventDefault();});
+    wall.appendChild(el);
+  });
+})();
+
+/* ---------- 7. guestbook (in-memory) ---------- */
+(function guestbook(){
+  var list=document.getElementById('gbList');
+  var form=document.getElementById('gbForm');
+  var nameI=document.getElementById('gbName');
+  var msgI=document.getElementById('gbMsg');
+  var entries=[
+    {n:'sorrelghost',m:'the moss page undid a knot in my chest i didn’t know was tied. staying a while.',t:'oct 1'},
+    {n:'a passing moth',m:'found you through the ring. it smells of rain and old books in here. i left a little dust.',t:'sep 26'},
+    {n:'wyrmfed',m:'drew the yew three times running. i think i know what it means now. thank you, keeper.',t:'sep 19'}
+  ];
+  function esc(s){return s.replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function render(){
+    list.innerHTML='';
+    entries.forEach(function(e){
+      var d=document.createElement('div');d.className='gb-entry';
+      d.innerHTML='<div class="gb-head"><span class="nm">'+esc(e.n)+'</span><span>'+esc(e.t)+'</span></div>'+
+                  '<div class="gb-msg">“'+esc(e.m)+'”</div>';
+      list.appendChild(d);
+    });
+  }
+  function today(){
+    var mo=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
+    var t=new Date();return mo[t.getMonth()]+' '+t.getDate();
+  }
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var n=nameI.value.trim()||'a nameless wanderer';
+    var m=msgI.value.trim();
+    if(!m){msgI.focus();return;}
+    entries.unshift({n:n.slice(0,32),m:m.slice(0,240),t:today()});
+    nameI.value='';msgI.value='';
+    render();
+    list.scrollIntoView({behavior:'smooth',block:'nearest'});
+  });
+  render();
+})();
+
+/* ---------- 8. slow sigil rotation ---------- */
+(function sigil(){
+  var g=document.getElementById('sigrot');
+  if(!g)return;
+  var a=0;
+  function spin(){a+=0.08;g.setAttribute('transform','rotate('+a+' 32 32)');requestAnimationFrame(spin);}
+  // honour reduced-motion
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches)spin();
+})();
+</script>
+</body>
+</html>

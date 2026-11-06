@@ -1,6 +1,6 @@
 # Oldweb Templates
 
-A curated archive of 28 independently runnable old-web, Neocities, desktop-metaphor, terminal, shrine, diary, directory, and publishing templates by [numbpill3d](https://github.com/numbpill3d).
+A curated archive of 41 independently runnable old-web, Neocities, desktop-metaphor, terminal, shrine, diary, directory, and publishing templates by [numbpill3d](https://github.com/numbpill3d).
 
 Each folder is a faithful snapshot of its source repository rather than a shared-framework rewrite. Source URL, branch, immutable commit, file list, and checksums are recorded under [`provenance/`](provenance/).
 
@@ -47,12 +47,26 @@ Then visit the desired path under `templates/`.
 | [Aetheros Umbralath](templates/shrines/aetheros-umbralath/index.html) | shrines | Lore-heavy homepage for a fictional forgotten divinity. | [preview](previews/aetheros-umbralath/desktop.webp) |
 | [Celebi Temporal Rift](templates/fandom/celebi-temporal-rift/index.html) | fandom | Unofficial Pokémon Mystery Dungeon and Celebi-inspired temporal-rift garden page. | [preview](previews/celebi-temporal-rift/desktop.webp) |
 
+| [Cyberpunk HTML](templates/profiles/cyberpunk/index.html) | profiles | Neon cyberpunk Neocities theme with glitch effects, sidebars, and a rotating cube. | [preview](previews/cyberpunk/desktop.webp) |
+| [Pixel Pasta](templates/terminals/pixelpasta/index.html) | terminals | Pixel-horror and creepycore Neocities theme with a cursed arcade interface. | [preview](previews/pixelpasta/desktop.webp) |
+| [Angelware 98](templates/desktops/angelware-98/index.html) | desktops | Angelware 98 desktop-metaphor homepage with a nostalgic soft-computer interface. | [preview](previews/angelware-98/desktop.webp) |
+| [DISCROT.PSX](templates/terminals/discrot/index.html) | terminals | Disc-rot PlayStation-era personal interface with a corrupted media-console aesthetic. | [preview](previews/discrot/desktop.webp) |
+| [Dollgrave](templates/shrines/dollgrave/index.html) | shrines | Dark-kawaii doll shrine with a dense scrapbook-like personal-page layout. | [preview](previews/dollgrave/desktop.webp) |
+| [Mothwort](templates/shrines/mothwort/index.html) | shrines | Naturalist and mystical personal shrine and grimoire with an offline almanac, oracle draw, and webring. | [preview](previews/mothwort/desktop.webp) |
+| [Swampwitch](templates/shrines/swampwitch/index.html) | shrines | Green-black swamp-witch personal shrine with a compact responsive layout. | [source repository](https://github.com/numbpill3d/swampwitch) |
+| [YumeTwint.exe](templates/desktops/yumetwint/index.html) | desktops | Bright Decora and YumeTwint faux desktop operating system page. | [preview](previews/yumetwint/desktop.webp) |
+| [Paranoia.sys](templates/terminals/paranoia-sys/index.html) | terminals | Radical cyber-psychological Neocities theme presented as a system interface. | [preview](previews/paranoia-sys/desktop.webp) |
+| [Goricamilia](templates/shrines/goricamilia/index.html) | shrines | Cyber-spiritual apocalypse shrine with a maximalist personal-site composition. | [preview](previews/goricamilia/desktop.webp) |
+| [Ethereal Mire](templates/shrines/ethereal-mire/index.html) | shrines | Atmospheric mire-themed Neocities homepage with a switchable visual mood. | [preview](previews/ethereal-mire/desktop.webp) |
+| [ASCII Hacker's Journal](templates/publishing/ascii-hackers-journal/index.html) | publishing | ASCII hacker journal template for a text-forward personal site. | [preview](previews/ascii-hackers-journal/desktop.webp) |
+| [Frutiger Aero Profile](templates/profiles/frutiger-aero-profile/index.html) | profiles | Responsive Frutiger Aero profile template with editable profile, projects, and links. | [preview](previews/frutiger-aero-profile/desktop.webp) |
+
 ## Standalone projects
 
-These stronger old-web projects remain in their own repositories and are intentionally not duplicated here: [mallhtml](https://github.com/numbpill3d/mallhtml), [lore-log-template](https://github.com/numbpill3d/lore-log-template), [retrobbs](https://github.com/numbpill3d/retrobbs), and [cyberpunkhtml](https://github.com/numbpill3d/cyberpunkhtml).
+The KDE desktop suites, desktop asset packs, and other full applications remain in their own repositories. This directory is for runnable HTML templates and themes; each entry keeps its original source link and commit in `provenance/`.
 
 ## Licensing and attribution
 
-No GitHub-recognized license was detected in the 28 source repositories at migration time. Existing credits and notices are preserved. The collection does not apply a blanket open-source license to template code or bundled assets; see [`docs/licensing.md`](docs/licensing.md) and [`CREDITS.md`](CREDITS.md). Unless a template states otherwise, no permission beyond viewing the public source is implied.
+No GitHub-recognized license was detected in the 41 source repositories at migration time. Existing credits and notices are preserved. The collection does not apply a blanket open-source license to template code or bundled assets; see [`docs/licensing.md`](docs/licensing.md) and [`CREDITS.md`](CREDITS.md). Unless a template states otherwise, no permission beyond viewing the public source is implied.
 
 `celebi-temporal-rift` is unofficial fan work. Pokémon-related names, characters, and marks belong to their respective owners.

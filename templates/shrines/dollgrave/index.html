@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DOLLGRAVE</title>
+<!--
+  ========================================================================
+  ★ DOLLGRAVE ★  — a dead girl's homepage, est. 1999
+  aesthetic lane: retro webcore / old-web (geocities-era personal homepage)
+                  blended with kawaii-dark "pastel night"
+  single-file · self-contained · offline · no cdn · no external images
+  store-agnostic: no checkout / shop links hardcoded. buyer edits TODO lines.
+  ========================================================================
+-->
+<style>
+/* layout concept: faux-frameset — top banner frame + [nav | main | widgets]
+   beveled window-chrome columns, fixed-width centered, stacks at phone width */
+:root{
+  color-scheme: dark; /* committed single dark-kawaii world — no theme toggle */
+  --void:    #140b1f;  /* deep mourning violet */
+  --void-2:  #1d1030;  /* panel ground */
+  --void-3:  #0d0715;  /* inset / scrollbox ground */
+  --rose:    #ff9de2;  /* hot pink accent */
+  --rose-dk: #c25fa0;  /* dim rose */
+  --lav:     #b8a9ff;  /* lavender */
+  --mint:    #9dffe0;  /* sickly mint */
+  --bone:    #f3e8fb;  /* near-white text */
+  --ash:     #b79fcf;  /* muted text */
+  --blood:   #e24a6a;  /* warning red */
+  --hi:      #3a2250;  /* bevel highlight */
+  --lo:      #060309;  /* bevel shadow */
+  --bar:     #2a1640;  /* titlebar */
+}
+
+*{ box-sizing: border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  background-color: var(--void);
+  background-image:
+    radial-gradient(rgba(184,169,255,.10) 1px, transparent 1.6px),
+    radial-gradient(rgba(255,157,226,.07) 1px, transparent 1.6px);
+  background-size: 22px 22px, 22px 22px;
+  background-position: 0 0, 11px 11px;
+  background-attachment: fixed;
+  color: var(--bone);
+  font-family: "MS Sans Serif", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 10px 16px 40px;
+  min-height: 100vh;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22'%3E%3Cpath d='M2 2 L2 15 L6 11 L9 18 L12 17 L9 10 L15 10 Z' fill='%23ffffff' stroke='%23140b1f' stroke-width='1.2'/%3E%3C/svg%3E") 2 2, auto;
+}
+
+/* ---- crt / scanline overlay (toned down for kawaii) ---- */
+#crt{
+  position: fixed; inset: 0; z-index: 9000; pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,.05) 2px, rgba(0,0,0,.05) 3px);
+}
+#crt::after{
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(ellipse at center, transparent 58%, rgba(0,0,0,.45) 100%);
+}
+
+/* ---- bevel helpers (win9x / geocities chrome) ---- */
+.outset{ border: 2px solid; border-color: var(--hi) var(--lo) var(--lo) var(--hi); }
+.inset { border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo); }
+
+/* ============ the "frameset" ============ */
+#site{ max-width: 820px; margin: 0 auto; }
+
+.frame{
+  background: var(--void-2);
+  border: 3px solid;
+  border-color: var(--hi) var(--lo) var(--lo) var(--hi);
+  box-shadow: 0 0 0 1px #000, 4px 4px 0 rgba(0,0,0,.55);
+  margin-bottom: 10px;
+}
+.titlebar{
+  background: linear-gradient(90deg, var(--bar), #4a2370 55%, var(--rose-dk));
+  color: var(--bone);
+  font-family: Tahoma, "MS Sans Serif", sans-serif;
+  font-weight: bold;
+  font-size: 12px;
+  letter-spacing: .04em;
+  padding: 3px 6px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 2px solid var(--lo);
+  text-shadow: 1px 1px 0 #000;
+}
+.titlebar .dots{ font-family:"Courier New",monospace; color: var(--lav); letter-spacing:-1px; }
+.tb-btns span{
+  display:inline-block; width:14px; height:12px; margin-left:2px;
+  background: var(--void-2); color: var(--bone); text-align:center; line-height:11px;
+  border:1px solid; border-color: var(--hi) var(--lo) var(--lo) var(--hi);
+  font-size:9px;
+}
+
+/* ---- top banner frame ---- */
+#banner{ padding: 0; overflow:hidden; }
+#banner .inner{ padding: 10px 8px 12px; text-align:center; position:relative; }
+#banner .halo{
+  position:absolute; inset:0; pointer-events:none;
+  background: radial-gradient(ellipse at 50% 120%, rgba(255,157,226,.18), transparent 60%);
+}
+.logo{
+  font-family: "Comic Sans MS","Times New Roman",serif;
+  font-size: clamp(30px, 8vw, 52px);
+  font-weight: bold; line-height: .95; margin: 2px 0 0;
+  color: var(--rose);
+  letter-spacing: .02em;
+  text-shadow:
+    0 0 1px #fff,
+    2px 2px 0 #7a1f55,
+    4px 4px 0 #3a0f28,
+    0 0 16px rgba(255,157,226,.6);
+  position:relative;
+}
+.logo .star{ color: var(--mint); text-shadow: 0 0 10px var(--mint); }
+.subtitle{
+  font-family:"Times New Roman",Georgia,serif; font-style:italic;
+  color: var(--lav); font-size: 14px; margin-top: 2px;
+  text-shadow: 1px 1px 0 #000;
+}
+marquee{ overflow:hidden; }
+.welcome-mq{
+  margin-top: 8px;
+  background: var(--void-3);
+  border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo);
+  color: var(--mint);
+  font-family:"Courier New",monospace; font-size: 12px; letter-spacing:.04em;
+  padding: 3px 0;
+}
+.welcome-mq b{ color: var(--rose); }
+.welcome-mq .sep{ color: var(--lav); }
+
+/* ---- main grid: nav | content | widgets ---- */
+#grid{ display:flex; gap:10px; align-items:flex-start; }
+#navcol{ width: 150px; flex: 0 0 150px; }
+#maincol{ flex: 1 1 auto; min-width: 0; }
+#widcol{ width: 184px; flex: 0 0 184px; }
+
+/* nav frame */
+.navlist{ padding: 7px; display:flex; flex-direction:column; gap:5px; }
+.navlink{
+  display:block; text-decoration:none;
+  font-family: Tahoma,"MS Sans Serif",sans-serif; font-weight:bold; font-size:12px;
+  color: var(--bone); background: linear-gradient(180deg,#2c1a44,#1a0f2a);
+  border: 2px solid; border-color: var(--hi) var(--lo) var(--lo) var(--hi);
+  padding: 5px 7px; letter-spacing:.03em;
+  transition: color 90ms, background 90ms;
+  position:relative;
+}
+.navlink::before{ content:"\2726"; color: var(--rose-dk); margin-right:6px; font-size:10px; }
+.navlink:hover{ color: var(--void); background: var(--rose); border-color: var(--lo) var(--hi) var(--hi) var(--lo); }
+.navlink:hover::before{ color: var(--void); }
+.navlink.active{ color: var(--mint); background:#241339; }
+.navlink.active::before{ color: var(--mint); }
+
+.nav-sep{ height:0; border-top:1px dotted var(--rose-dk); margin:3px 1px; }
+.now-block{ padding:7px; text-align:center; }
+.now-block .lbl{ font-size:10px; color:var(--ash); text-transform:uppercase; letter-spacing:.12em; }
+.ghost-face{ font-family:"Courier New",monospace; color:var(--lav); font-size:11px; line-height:1.2; white-space:pre; margin-top:4px; }
+
+/* ---- content panels ---- */
+.panel{ display:none; padding: 11px 13px 14px; }
+.panel.active{ display:block; animation: flick .18s steps(2) 1; }
+@keyframes flick{ 0%{opacity:.4} 100%{opacity:1} }
+.panel h2{
+  font-family:"Comic Sans MS","Times New Roman",serif;
+  color: var(--rose); font-size: 21px; margin: 0 0 8px;
+  text-shadow: 1px 1px 0 #000, 0 0 10px rgba(255,157,226,.35);
+  border-bottom: 2px groove var(--rose-dk); padding-bottom: 4px;
+}
+.panel h3{
+  font-family: Tahoma, sans-serif; color: var(--mint); font-size: 14px;
+  margin: 14px 0 5px; letter-spacing:.03em;
+}
+.panel p{ font-family:"Times New Roman",Georgia,serif; font-size:15px; color:var(--bone); margin:7px 0; }
+.panel a.inl{ color: var(--mint); }
+.panel a.inl:hover{ color:var(--rose); }
+.dim{ color: var(--ash); }
+
+/* diary scrollbox */
+.scrollbox{
+  max-height: 300px; overflow-y: scroll; background: var(--void-3);
+  border: 2px solid; border-color: var(--lo) var(--hi) var(--hi) var(--lo);
+  padding: 8px 10px;
+}
+.scrollbox::-webkit-scrollbar{ width: 15px; }
+.scrollbox::-webkit-scrollbar-track{ background: var(--void); border-left:2px solid var(--lo); }
+.scrollbox::-webkit-scrollbar-thumb{ background: var(--rose-dk); border:2px solid; border-color:var(--hi) var(--lo) var(--lo) var(--hi); }
+.scrollbox::-webkit-scrollbar-thumb:hover{ background: var(--rose); }
+.scrollbox{ scrollbar-color: var(--rose-dk) var(--void); scrollbar-width: thin; }
+
+.entry{ border-bottom:1px dashed var(--rose-dk); padding:7px 0; }
+.entry:last-child{ border-bottom:none; }
+.entry .date{ font-family:"Courier New",monospace; color: var(--mint); font-size:12px; }
+.entry .mood{ color: var(--lav); font-size:11px; font-style:italic; }
+.entry .title{ font-family:"Comic Sans MS",cursive; color: var(--rose); font-size:14px; display:block; margin:2px 0; }
+.entry p{ margin:3px 0; font-size:13.5px; }
+.tag{ display:inline-block; font-size:10px; background:#2a1640; color:var(--lav); border:1px solid var(--rose-dk); padding:0 4px; margin-right:3px; }
+
+/* stamp wall */
+.stamp-wall{ display:flex; flex-wrap:wrap; gap:4px; padding:5px; background:var(--void-3);
+  border:2px solid; border-color:var(--lo) var(--hi) var(--hi) var(--lo); }
+.stamp{ width:60px; height:46px; border:2px solid var(--void); display:flex; flex-direction:column;
+  align-items:center; justify-content:center; font-size:9px; text-align:center; line-height:1.05;
+  color:var(--void); font-weight:bold; font-family:Tahoma,sans-serif; image-rendering:pixelated;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.4); }
+
+/* dollz shelf */
+.doll-shelf{ display:flex; flex-wrap:wrap; gap:10px; padding:10px; background:var(--void-3);
+  border:2px solid; border-color:var(--lo) var(--hi) var(--hi) var(--lo); align-items:flex-end; }
+.doll{ text-align:center; cursor:pointer; }
+.doll svg{ display:block; margin:0 auto 3px; image-rendering:pixelated; filter: drop-shadow(2px 3px 0 rgba(0,0,0,.6)); }
+.doll .nm{ font-size:10px; color:var(--lav); font-family:"Courier New",monospace; }
+.doll:hover .nm{ color:var(--rose); }
+.doll.wobble svg{ animation: wob .5s ease-in-out; }
+@keyframes wob{ 0%,100%{transform:rotate(0)} 25%{transform:rotate(-7deg)} 75%{transform:rotate(7deg)} }
+
+/* link hub */
+.linklist{ list-style:none; margin:0; padding:0; }
+.linklist li{ padding:4px 6px; border-bottom:1px dotted var(--rose-dk); display:flex; gap:8px; align-items:baseline; }
+.linklist li:hover{ background:#20122f; border-left:3px solid var(--rose); }
+.linklist .pfx{ color:var(--mint); font-family:"Courier New",monospace; }
+.linklist a{ color:var(--bone); text-decoration:none; }
+.linklist a:hover{ color:var(--rose); text-decoration:underline; }
+.linklist .note{ color:var(--ash); font-size:11px; font-style:italic; margin-left:auto; }
+
+/* guestbook */
+.gb-entry{ background:var(--void-3); border:2px solid; border-color:var(--lo) var(--hi) var(--hi) var(--lo);
+  padding:6px 8px; margin-bottom:6px; }
+.gb-entry .who{ color:var(--rose); font-weight:bold; font-family:Tahoma,sans-serif; }
+.gb-entry .when{ color:var(--ash); font-size:10px; font-family:"Courier New",monospace; }
+.gb-entry .msg{ font-family:"Times New Roman",serif; font-size:14px; color:var(--bone); margin-top:2px; }
+.gb-form{ margin-top:10px; background:#1a0f2a; padding:8px; border:2px solid; border-color:var(--hi) var(--lo) var(--lo) var(--hi); }
+.gb-form label{ display:block; font-size:11px; color:var(--lav); margin:4px 0 2px; letter-spacing:.05em; }
+input[type=text], textarea{
+  width:100%; background:var(--void-3); color:var(--mint); font-family:"Courier New",monospace; font-size:13px;
+  border:2px solid; border-color:var(--lo) var(--hi) var(--hi) var(--lo); padding:4px 5px; }
+input[type=text]:focus, textarea:focus{ outline:none; border-color:var(--rose); color:var(--bone); }
+textarea{ resize:vertical; min-height:52px; }
+.btn{
+  font-family:Tahoma,"MS Sans Serif",sans-serif; font-weight:bold; font-size:12px;
+  color:var(--void); background:linear-gradient(180deg,#ffb8ec,#ff6fd0);
+  border:2px solid; border-color:var(--hi) var(--lo) var(--lo) var(--hi);
+  padding:4px 14px; cursor:pointer; margin-top:7px; letter-spacing:.04em;
+}
+.btn:active{ border-color:var(--lo) var(--hi) var(--hi) var(--lo); }
+.btn:hover{ background:linear-gradient(180deg,#fff,#ff9de2); }
+
+/* ---- widget column ---- */
+.wtitle{ background:var(--bar); color:var(--rose); font-weight:bold; font-size:11px;
+  padding:2px 6px; letter-spacing:.06em; border-bottom:2px solid var(--lo); text-shadow:1px 1px 0 #000; }
+.wbody{ padding:7px; }
+
+/* visitor counter */
+.odometer{ display:flex; justify-content:center; gap:2px; background:#000; padding:5px;
+  border:2px solid; border-color:var(--lo) var(--hi) var(--hi) var(--lo); }
+.odometer .dg{ font-family:"Courier New",monospace; font-weight:bold; font-size:20px; color:#39ff6a;
+  background:#071b0b; padding:1px 4px; border:1px solid #0a3317; text-shadow:0 0 6px #39ff6a; min-width:15px; text-align:center; }
+.counter-cap{ text-align:center; font-size:10px; color:var(--ash); margin-top:4px; }
+
+/* now playing */
+.np{ display:flex; gap:8px; align-items:center; }
+.cd{ width:46px; height:46px; flex:0 0 46px; border-radius:50%; position:relative;
+  background: repeating-conic-gradient(from 0deg, #2a1640 0deg 10deg, #3a1f55 10deg 20deg);
+  box-shadow: inset 0 0 0 2px #120a1e, 0 0 8px rgba(184,169,255,.4); }
+.cd::before{ content:""; position:absolute; inset:0; border-radius:50%;
+  background: conic-gradient(from 0deg, rgba(255,157,226,.0), rgba(157,255,224,.35), rgba(184,169,255,.0) 60%, rgba(255,157,226,.3)); mix-blend-mode:screen; }
+.cd::after{ content:""; position:absolute; top:50%; left:50%; width:12px; height:12px; margin:-6px;
+  border-radius:50%; background:#0d0715; box-shadow:0 0 0 2px #b8a9ff; }
+.cd.spin{ animation: spin 3.2s linear infinite; }
+@keyframes spin{ to{ transform: rotate(360deg); } }
+.np-info{ min-width:0; flex:1; }
+.np-info .t{ color:var(--rose); font-size:11px; font-weight:bold; white-space:nowrap; overflow:hidden; }
+.np-info .a{ color:var(--lav); font-size:10px; }
+.eq{ display:flex; gap:2px; height:14px; align-items:flex-end; margin-top:3px; }
+.eq i{ width:4px; background:var(--mint); display:block; animation: eqp .9s ease-in-out infinite; }
+.eq i:nth-child(2){ animation-delay:.15s } .eq i:nth-child(3){ animation-delay:.3s }
+.eq i:nth-child(4){ animation-delay:.45s } .eq i:nth-child(5){ animation-delay:.6s }
+.eq i:nth-child(6){ animation-delay:.2s } .eq i:nth-child(7){ animation-delay:.5s }
+@keyframes eqp{ 0%,100%{height:3px} 50%{height:14px} }
+.progress{ height:7px; background:#000; border:1px solid var(--lo); margin-top:5px; }
+.progress i{ display:block; height:100%; width:38%; background:linear-gradient(90deg,var(--rose-dk),var(--rose)); }
+.np-meta{ font-size:10px; color:var(--ash); font-family:"Courier New",monospace; display:flex; justify-content:space-between; margin-top:2px; }
+
+/* currently widget */
+.curr .row{ display:flex; gap:6px; font-size:11px; padding:1px 0; border-bottom:1px dotted #3a2250; }
+.curr .k{ color:var(--mint); width:58px; flex:0 0 58px; font-family:"Courier New",monospace; }
+.curr .v{ color:var(--bone); }
+
+/* blinkies */
+.blinkies{ display:flex; flex-direction:column; gap:3px; }
+.blinkie{ height:20px; width:100%; display:flex; align-items:center; justify-content:center;
+  font-size:10px; font-weight:bold; letter-spacing:.03em; font-family:Tahoma,sans-serif;
+  border:1px solid #000; image-rendering:pixelated; }
+.blinkie.blink{ animation: blink 1s steps(1) infinite; }
+@keyframes blink{ 50%{ filter: brightness(.4) saturate(.6); } }
+
+/* webring */
+.webring{ text-align:center; }
+.webring .rt{ color:var(--rose); font-size:11px; letter-spacing:.05em; }
+.webring .member{ font-family:"Courier New",monospace; color:var(--mint); font-size:12px; margin:4px 0;
+  background:#000; border:1px solid var(--lo); padding:3px; min-height:18px; }
+.ring-nav{ display:flex; justify-content:center; gap:4px; }
+.ring-nav button{ font-family:Tahoma,sans-serif; font-size:10px; font-weight:bold; cursor:pointer;
+  color:var(--bone); background:#2c1a44; border:2px solid; border-color:var(--hi) var(--lo) var(--lo) var(--hi);
+  padding:2px 6px; }
+.ring-nav button:hover{ background:var(--rose); color:var(--void); }
+.ring-nav button:active{ border-color:var(--lo) var(--hi) var(--hi) var(--lo); }
+
+/* 88x31 button wall */
+.btnwall{ display:flex; flex-wrap:wrap; gap:3px; justify-content:center; }
+.b88{ width:88px; height:31px; border:1px solid #000; display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:bold; font-family:Tahoma,sans-serif; text-align:center; line-height:1.0;
+  text-decoration:none; overflow:hidden; image-rendering:pixelated; letter-spacing:.02em; }
+.b88:hover{ outline:1px dotted #fff; outline-offset:-3px; }
+
+/* ghost pet */
+#pet{ position:fixed; bottom:14px; left:14px; z-index:8500; cursor:pointer; filter: drop-shadow(0 4px 6px rgba(0,0,0,.6)); }
+#pet.drift{ animation: drift 26s ease-in-out infinite alternate; }
+@keyframes drift{ 0%{ transform: translate(0,0);} 50%{ transform: translate(40vw,-8px);} 100%{ transform: translate(78vw,4px);} }
+#pet svg{ display:block; }
+#petbubble{ position:fixed; z-index:8600; max-width:170px; background:var(--bone); color:#2a1030;
+  font-family:"Comic Sans MS",cursive; font-size:12px; padding:5px 8px; border:2px solid var(--rose-dk);
+  box-shadow:3px 3px 0 rgba(0,0,0,.5); display:none; }
+#petbubble::after{ content:""; position:absolute; bottom:-8px; left:14px; border:6px solid transparent; border-top-color:var(--bone); }
+
+/* sparkle trail sprites */
+.spark{ position:fixed; z-index:8800; pointer-events:none; width:12px; height:12px; }
+
+/* footer */
+#foot{ text-align:center; padding:9px 8px; font-size:11px; color:var(--ash); font-family:Tahoma,sans-serif; }
+#foot .uc{ display:inline-flex; align-items:center; gap:6px; margin-bottom:6px; }
+#foot .ucblink{ height:20px; width:168px; background:repeating-linear-gradient(45deg,#000 0 8px,#f7d000 8px 16px);
+  border:1px solid #000; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:9px; letter-spacing:.02em; }
+#foot .ucblink span{ background:#000; color:#f7d000; padding:1px 4px; }
+#foot .ucblink.blink{ animation: blink 1.1s steps(1) infinite; }
+#foot a{ color:var(--mint); }
+#foot .mail{ color:var(--rose); font-family:"Courier New",monospace; user-select:all; }
+#foot .best{ color:var(--lav); font-family:"Times New Roman",serif; font-style:italic; }
+
+a:focus-visible, .btn:focus-visible, button:focus-visible, .navlink:focus-visible{ outline:2px dashed var(--mint); outline-offset:1px; }
+
+/* ---------- responsive: stack the frames at phone width ---------- */
+@media (max-width: 680px){
+  body{ padding:8px 12px 44px; }
+  #grid{ flex-direction:column; }
+  #navcol,#widcol,#maincol{ width:100%; flex:1 1 auto; }
+  #navcol .navlist{ flex-direction:row; flex-wrap:wrap; }
+  .navlink{ flex:1 1 40%; }
+  .logo{ text-shadow: 0 0 1px #fff, 2px 2px 0 #7a1f55, 0 0 14px rgba(255,157,226,.6); }
+  #pet{ display:none; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .cd.spin{ animation:none; }
+  .eq i{ animation:none; height:8px; }
+  .blinkie.blink, #foot .ucblink.blink{ animation:none; }
+  #pet.drift{ animation:none; }
+  .panel.active{ animation:none; }
+  marquee{ } /* native; left as-is */
+}
+</style>
+</head>
+<body>
+<div id="crt"></div>
+
+<div id="site">
+
+  <!-- ============ TOP BANNER FRAME ============ -->
+  <div class="frame" id="banner">
+    <div class="titlebar">
+      <span><span class="dots">░▒▓</span> DOLLGRAVE.HTML</span>
+      <span class="tb-btns"><span>_</span><span>□</span><span>x</span></span>
+    </div>
+    <div class="inner">
+      <div class="halo"></div>
+      <h1 class="logo"><span class="star">&#10022;</span> dollgrave <span class="star">&#10022;</span></h1>
+      <div class="subtitle">&mdash; the homepage of a girl who isn't here anymore &mdash;</div>
+      <marquee class="welcome-mq" scrollamount="4" behavior="scroll" direction="left">
+        <b>&#10022; welcome to my little grave on the world wide web &#10022;</b>
+        <span class="sep">&nbsp;&middot;&nbsp;</span> sign the guestbook before you leave
+        <span class="sep">&nbsp;&middot;&nbsp;</span> turn your speakers down low
+        <span class="sep">&nbsp;&middot;&nbsp;</span> you are not supposed to be able to read this
+        <span class="sep">&nbsp;&middot;&nbsp;</span> last updated when the candles went out
+        <span class="sep">&nbsp;&middot;&nbsp;</span>
+      </marquee>
+    </div>
+  </div>
+
+  <!-- ============ MAIN GRID ============ -->
+  <div id="grid">
+
+    <!-- ---- NAV FRAME ---- -->
+    <div id="navcol">
+      <div class="frame">
+        <div class="titlebar"><span>nav.exe</span><span class="tb-btns"><span>x</span></span></div>
+        <nav class="navlist">
+          <a class="navlink active" href="#welcome" data-tab="welcome">home</a>
+          <a class="navlink" href="#about" data-tab="about">about me</a>
+          <a class="navlink" href="#diary" data-tab="diary">diary</a>
+          <a class="navlink" href="#shrine" data-tab="shrine">shrine</a>
+          <a class="navlink" href="#dollz" data-tab="dollz">adoptables</a>
+          <a class="navlink" href="#links" data-tab="links">link hoard</a>
+          <a class="navlink" href="#guestbook" data-tab="guestbook">guestbook</a>
+          <div class="nav-sep"></div>
+          <div class="now-block">
+            <div class="lbl">status</div>
+            <div class="ghost-face" aria-hidden="true">( -.- )
+ &lt; zzz &gt;</div>
+            <div class="lbl" style="color:var(--rose);margin-top:3px">offline&nbsp;forever</div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <!-- ---- CONTENT FRAME ---- -->
+    <div id="maincol">
+      <div class="frame">
+        <div class="titlebar"><span id="winlabel">C:\dollgrave\welcome.html</span><span class="tb-btns"><span>_</span><span>□</span><span>x</span></span></div>
+
+        <!-- WELCOME -->
+        <section class="panel active" id="welcome">
+          <h2>enter quietly.</h2>
+          <p>hi. you found my corner. i built it out of table tags and insomnia sometime around 1999 and i never quite left it. everything in here still works even though i don't.</p>
+          <p>take your shoes off. look at my things. the diary auto-saves nothing, the guestbook forgets you when you close the tab, and the counter has been lying about my visitors since the beginning. nothing here is real except the feeling.</p>
+          <h3>a note on the chrome</h3>
+          <p class="dim">built for netscape navigator 4 at 800&times;600. if the page looks broken, that's correct &mdash; it was always a little broken. no cookies, no trackers, no javascript that phones home. just a room.</p>
+          <h3>what's new</h3>
+          <div class="scrollbox" style="max-height:120px">
+            <div class="entry"><span class="date">[1999.11.02]</span> added the <span class="title" style="display:inline">adoptables shelf</span>. please take one.</div>
+            <div class="entry"><span class="date">[1999.10.28]</span> fixed the webring. the crypt ring lives again.</div>
+            <div class="entry"><span class="date">[1999.10.13]</span> new diary entry. it's a bad one, sorry.</div>
+            <div class="entry"><span class="date">[1999.09.30]</span> rearranged the shrine. the moths moved in.</div>
+          </div>
+        </section>
+
+        <!-- ABOUT -->
+        <section class="panel" id="about">
+          <h2>about the webmaster</h2>
+          <p><b style="color:var(--rose)">name:</b> you can call me whatever you were going to call me anyway.<br>
+          <b style="color:var(--rose)">age:</b> same as this website.<br>
+          <b style="color:var(--rose)">location:</b> the third tab you forgot you had open.<br>
+          <b style="color:var(--rose)">disposition:</b> fond, tired, mostly here.</p>
+          <p>i make things that are too personal and put them somewhere too public, which is the only way i know how to be looked at. this is a placeholder bio and it is already more honest than it should be &mdash; <span class="dim">(swap this copy for your own, it's your grave.)</span></p>
+          <h3>i collect</h3>
+          <div class="stamp-wall" id="stampwall"><!-- stamps injected --></div>
+          <h3>do not perceive me, but</h3>
+          <div class="blinkies" id="blinkrow2"><!-- blinkies injected --></div>
+        </section>
+
+        <!-- DIARY -->
+        <section class="panel" id="diary">
+          <h2>dead diary</h2>
+          <p class="dim">newest at the top. the scrollbar is load-bearing emotionally.</p>
+          <div class="scrollbox">
+            <div class="entry">
+              <span class="date">[1999.10.13]</span> <span class="mood">&mdash; mood: dissolving</span>
+              <span class="title">the candles keep going out</span>
+              <p>woke up at 3 and the modem was still dialing something. i don't own a modem. anyway i rearranged all my little pictures again. if you move the things around enough the room stops being a room and starts being a feeling, and the feeling is easier to live in.</p>
+              <span class="tag">insomnia</span><span class="tag">html</span><span class="tag">longing</span>
+            </div>
+            <div class="entry">
+              <span class="date">[1999.10.06]</span> <span class="mood">&mdash; mood: soft static</span>
+              <span class="title">visitor #013337</span>
+              <p>someone signed the guestbook and just wrote "i was here." that's the whole internet, isn't it. we all just want to leave a mark that says i was here, i was real, the cursor was warm for a second. thank you, whoever you were.</p>
+              <span class="tag">guestbook</span><span class="tag">tender</span>
+            </div>
+            <div class="entry">
+              <span class="date">[1999.09.21]</span> <span class="mood">&mdash; mood: autumnal dread</span>
+              <span class="title">learning to make the marquee cry</span>
+              <p>spent six hours on a scrolling text banner that says one sad thing. worth it. a website is just a diary that decorates itself. replace these entries with yours &mdash; or don't, and let a stranger's ghost keep writing in your house.</p>
+              <span class="tag">code</span><span class="tag">marquee</span><span class="tag">devlog</span>
+            </div>
+            <div class="entry">
+              <span class="date">[1999.09.03]</span> <span class="mood">&mdash; mood: almost okay</span>
+              <span class="title">first entry</span>
+              <p>hello to no one. i made a website. it is mine. nobody can take a website away from you, they can only let it rot, which is different and gentler. i'll write here when the quiet gets too loud.</p>
+              <span class="tag">beginning</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- SHRINE -->
+        <section class="panel" id="shrine">
+          <h2>little shrine</h2>
+          <p>a wall for the things i light candles for. yours go here &mdash; a band, a game, a person, a feeling you can't name. <span class="dim">(edit the cards below.)</span></p>
+          <div class="doll-shelf" style="gap:14px">
+            <div class="doll"><svg width="52" height="60" viewBox="0 0 13 15" shape-rendering="crispEdges">
+              <rect width="13" height="15" fill="#0d0715"/>
+              <rect x="2" y="1" width="9" height="2" fill="#ff9de2"/><rect x="6" y="3" width="1" height="9" fill="#ff9de2"/>
+              <rect x="4" y="5" width="5" height="1" fill="#ff9de2"/><rect x="3" y="12" width="7" height="1" fill="#9dffe0"/>
+            </svg><div class="nm">a prayer</div></div>
+            <div class="doll"><svg width="52" height="60" viewBox="0 0 13 15" shape-rendering="crispEdges">
+              <rect width="13" height="15" fill="#0d0715"/>
+              <rect x="3" y="2" width="7" height="8" rx="0" fill="#b8a9ff"/><rect x="5" y="4" width="1" height="1" fill="#0d0715"/><rect x="7" y="4" width="1" height="1" fill="#0d0715"/>
+              <rect x="5" y="7" width="3" height="1" fill="#0d0715"/><rect x="2" y="10" width="9" height="3" fill="#9dffe0"/>
+            </svg><div class="nm">a song</div></div>
+            <div class="doll"><svg width="52" height="60" viewBox="0 0 13 15" shape-rendering="crispEdges">
+              <rect width="13" height="15" fill="#0d0715"/>
+              <rect x="4" y="2" width="5" height="5" fill="#f3e8fb"/><rect x="5" y="3" width="1" height="2" fill="#140b1f"/><rect x="7" y="3" width="1" height="2" fill="#140b1f"/>
+              <rect x="3" y="7" width="7" height="5" fill="#f3e8fb"/><rect x="3" y="12" width="2" height="2" fill="#f3e8fb"/><rect x="8" y="12" width="2" height="2" fill="#f3e8fb"/>
+            </svg><div class="nm">a ghost</div></div>
+          </div>
+          <h3>relics</h3>
+          <ul class="linklist">
+            <li><span class="pfx">&#9876;</span> <span>a cassette with no label</span> <span class="note">still plays</span></li>
+            <li><span class="pfx">&#9876;</span> <span>screenshot of a conversation that ended</span> <span class="note">do not open</span></li>
+            <li><span class="pfx">&#9876;</span> <span>a .mid file of a lullaby</span> <span class="note">now haunting</span></li>
+          </ul>
+        </section>
+
+        <!-- DOLLZ / ADOPTABLES -->
+        <section class="panel" id="dollz">
+          <h2>adopt a ghost</h2>
+          <p>take one home. put it on your own page. they don't eat, they don't age, they just sit in the corner of your site and keep you company. <span class="dim">(right-click &rarr; save the one you want. click them here to say hi.)</span></p>
+          <div class="doll-shelf" id="dollshelf"><!-- dollz injected --></div>
+          <h3>adoption terms</h3>
+          <p class="dim">free. forever. no returns, they get attached. link back if you feel like it, haunt me if you don't.</p>
+        </section>
+
+        <!-- LINK HOARD -->
+        <section class="panel" id="links">
+          <h2>link hoard</h2>
+          <p class="dim">the other houses on my street. click to see where they'd point &mdash; swap in your own.</p>
+          <h3>&#9733; fellow graves</h3>
+          <ul class="linklist" id="linklist-a"></ul>
+          <h3>&#9733; tools &amp; haunts</h3>
+          <ul class="linklist" id="linklist-b"></ul>
+          <div id="linkstatus" style="margin-top:8px;min-height:16px;font-family:'Courier New',monospace;color:var(--mint);font-size:11px"></div>
+        </section>
+
+        <!-- GUESTBOOK -->
+        <section class="panel" id="guestbook">
+          <h2>sign my guestbook</h2>
+          <p class="dim">leave a mark. it only lives as long as this tab stays open &mdash; like everything here. be kind to the next ghost who reads it.</p>
+          <div id="gb-list"></div>
+          <form class="gb-form" id="gb-form">
+            <label for="gb-name">your name / handle</label>
+            <input type="text" id="gb-name" maxlength="32" placeholder="anonymous visitor" autocomplete="off">
+            <label for="gb-msg">your message</label>
+            <textarea id="gb-msg" maxlength="240" placeholder="i was here..."></textarea>
+            <button class="btn" type="submit">&#10022; sign it &#10022;</button>
+          </form>
+        </section>
+
+      </div>
+    </div>
+
+    <!-- ---- WIDGET FRAME ---- -->
+    <div id="widcol">
+
+      <div class="frame">
+        <div class="wtitle">&#9679; VISITORS</div>
+        <div class="wbody">
+          <div class="odometer" id="odo"></div>
+          <div class="counter-cap">you are visitor <span id="vnum">013338</span><br>since the candles went out</div>
+        </div>
+      </div>
+
+      <div class="frame">
+        <div class="wtitle">&#9834; NOW HAUNTING</div>
+        <div class="wbody">
+          <div class="np">
+            <div class="cd spin" id="cd"></div>
+            <div class="np-info">
+              <marquee class="t" scrollamount="2">untitled lullaby (demo) &mdash; from a tape i found</marquee>
+              <div class="a">artist: unknown / deceased</div>
+              <div class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="progress"><i></i></div>
+          <div class="np-meta"><span>1:23</span><span id="cdtoggle" style="cursor:pointer;color:var(--rose)">[ pause ]</span><span>3:36</span></div>
+        </div>
+      </div>
+
+      <div class="frame">
+        <div class="wtitle">&#10022; CURRENTLY</div>
+        <div class="wbody curr">
+          <div class="row"><span class="k">feeling</span><span class="v">like a draft</span></div>
+          <div class="row"><span class="k">playing</span><span class="v">silent hill (ost)</span></div>
+          <div class="row"><span class="k">reading</span><span class="v">old guestbooks</span></div>
+          <div class="row"><span class="k">eating</span><span class="v">nothing, thanks</span></div>
+          <div class="row"><span class="k">weather</span><span class="v">dialup grey</span></div>
+        </div>
+      </div>
+
+      <div class="frame">
+        <div class="wtitle">&#9766; THE CRYPT RING</div>
+        <div class="wbody webring">
+          <div class="rt">a ring of dead girl homepages</div>
+          <div class="member" id="ringmember">&gt; voidrane.nekoweb.org</div>
+          <div class="ring-nav">
+            <button type="button" id="ring-prev">&lt; prev</button>
+            <button type="button" id="ring-rand">? rand</button>
+            <button type="button" id="ring-next">next &gt;</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="frame">
+        <div class="wtitle">&#9632; LINK ME</div>
+        <div class="wbody">
+          <div class="btnwall" id="btnwall"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============ FOOTER FRAME ============ -->
+  <div class="frame">
+    <div id="foot">
+      <div class="uc">
+        <span class="ucblink blink"><span>&#9888; UNDER CONSTRUCTION &#9888;</span></span>
+      </div>
+      <div class="best">best viewed in Netscape Navigator 4.0 at 800&times;600, in the dark, alone</div>
+      <div style="margin:4px 0">hand-coded in notepad &middot; no frameworks &middot; no future</div>
+      <div>webmaster: <span class="mail">dollgrave@deadmail.net</span></div>
+      <div style="margin-top:4px;color:var(--rose-dk)">&copy; 1999&ndash;forever &middot; this site will outlive us both</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ghost pet -->
+<div id="pet" class="drift" title="click me" role="button" tabindex="0" aria-label="ghost companion">
+  <svg width="46" height="52" viewBox="0 0 23 26" shape-rendering="crispEdges">
+    <rect x="5" y="2" width="13" height="2" fill="#f3e8fb"/>
+    <rect x="3" y="4" width="17" height="16" fill="#f3e8fb"/>
+    <rect x="2" y="6" width="19" height="12" fill="#f3e8fb"/>
+    <rect x="3" y="20" width="3" height="3" fill="#f3e8fb"/><rect x="8" y="20" width="3" height="3" fill="#f3e8fb"/>
+    <rect x="12" y="20" width="3" height="3" fill="#f3e8fb"/><rect x="17" y="20" width="3" height="3" fill="#f3e8fb"/>
+    <rect x="7" y="9" width="2" height="3" fill="#140b1f"/><rect x="14" y="9" width="2" height="3" fill="#140b1f"/>
+    <rect x="6" y="12" width="2" height="1" fill="#ff9de2"/><rect x="15" y="12" width="2" height="1" fill="#ff9de2"/>
+    <rect x="10" y="14" width="3" height="1" fill="#c25fa0"/>
+  </svg>
+</div>
+<div id="petbubble"></div>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+  function $(id){ return document.getElementById(id); }
+
+  /* ---------- tab nav (frames feel) ---------- */
+  var links = document.querySelectorAll(".navlink");
+  var labels = {
+    welcome:"C:\\dollgrave\\welcome.html", about:"C:\\dollgrave\\aboutme.html",
+    diary:"C:\\dollgrave\\diary.html", shrine:"C:\\dollgrave\\shrine.html",
+    dollz:"C:\\dollgrave\\adopt.html", links:"C:\\dollgrave\\links.html",
+    guestbook:"C:\\dollgrave\\signit.html"
+  };
+  function showTab(name){
+    var p = document.querySelectorAll(".panel"); var i;
+    for(i=0;i<p.length;i++){ p[i].classList.toggle("active", p[i].id===name); }
+    for(i=0;i<links.length;i++){ links[i].classList.toggle("active", links[i].getAttribute("data-tab")===name); }
+    if(labels[name]) $("winlabel").textContent = labels[name];
+  }
+  for(var i=0;i<links.length;i++){
+    links[i].addEventListener("click", function(e){ e.preventDefault(); showTab(this.getAttribute("data-tab")); });
+  }
+
+  /* ---------- stamps ---------- */
+  var stamps = [
+    ["insomnia","#ff9de2"],["ghosts","#b8a9ff"],["old web","#9dffe0"],["moths","#c2a0e8"],
+    ["cassettes","#ff9de2"],["rain","#9dc8ff"],["candles","#ffb060"],["being alone","#b8a9ff"]
+  ];
+  var sw = $("stampwall");
+  stamps.forEach(function(s){
+    var d=document.createElement("div"); d.className="stamp";
+    d.style.background = s[1];
+    d.style.boxShadow = "inset 0 0 0 1px rgba(255,255,255,.4), inset 0 0 0 3px "+s[1];
+    d.textContent = s[0];
+    sw.appendChild(d);
+  });
+
+  /* ---------- blinkies ---------- */
+  var blinkies = [
+    ["i miss someone i never met","#2a1640","#ff9de2"],
+    ["online: never","#0d2015","#9dffe0"],
+    ["do not perceive me","#2a0f1f","#ff6fb0"],
+    ["loading feelings... 1%","#1a1030","#b8a9ff"],
+    ["proud member of nothing","#200f12","#e24a6a"]
+  ];
+  var br = $("blinkrow2");
+  blinkies.forEach(function(b,ix){
+    var el=document.createElement("div"); el.className="blinkie"+(ix%2?" blink":"");
+    el.style.background=b[1]; el.style.color=b[2]; el.style.boxShadow="inset 0 0 0 1px "+b[2];
+    el.textContent=b[0]; br.appendChild(el);
+  });
+
+  /* ---------- adoptable dollz ---------- */
+  var dollDefs = [
+    {nm:"mothboy", svg:"<rect width='14' height='14' fill='#0d0715'/><rect x='5' y='3' width='4' height='4' fill='#c2a0e8'/><rect x='2' y='5' width='3' height='5' fill='#b8a9ff'/><rect x='9' y='5' width='3' height='5' fill='#b8a9ff'/><rect x='6' y='7' width='2' height='5' fill='#8a6ab0'/><rect x='6' y='4' width='1' height='1' fill='#0d0715'/><rect x='7' y='4' width='1' height='1' fill='#0d0715'/>"},
+    {nm:"skullbun", svg:"<rect width='14' height='14' fill='#0d0715'/><rect x='4' y='1' width='2' height='4' fill='#f3e8fb'/><rect x='8' y='1' width='2' height='4' fill='#f3e8fb'/><rect x='4' y='5' width='6' height='5' fill='#f3e8fb'/><rect x='5' y='6' width='1' height='2' fill='#140b1f'/><rect x='8' y='6' width='1' height='2' fill='#140b1f'/><rect x='6' y='9' width='2' height='1' fill='#ff9de2'/><rect x='5' y='10' width='4' height='2' fill='#f3e8fb'/>"},
+    {nm:"teardrop", svg:"<rect width='14' height='14' fill='#0d0715'/><rect x='6' y='2' width='2' height='2' fill='#9dc8ff'/><rect x='5' y='4' width='4' height='4' fill='#9dffe0'/><rect x='4' y='6' width='6' height='5' fill='#9dc8ff'/><rect x='5' y='8' width='1' height='1' fill='#0d0715'/><rect x='8' y='8' width='1' height='1' fill='#0d0715'/>"},
+    {nm:"voidcat", svg:"<rect width='14' height='14' fill='#0d0715'/><rect x='3' y='3' width='2' height='2' fill='#2a1640'/><rect x='9' y='3' width='2' height='2' fill='#2a1640'/><rect x='3' y='5' width='8' height='6' fill='#2a1640'/><rect x='4' y='6' width='2' height='2' fill='#ff9de2'/><rect x='8' y='6' width='2' height='2' fill='#ff9de2'/><rect x='6' y='8' width='2' height='1' fill='#e24a6a'/>"},
+    {nm:"little grave", svg:"<rect width='14' height='14' fill='#0d0715'/><rect x='4' y='3' width='6' height='8' fill='#b79fcf'/><rect x='4' y='3' width='6' height='2' fill='#8a6ab0'/><rect x='6' y='6' width='2' height='1' fill='#0d0715'/><rect x='5' y='7' width='4' height='1' fill='#0d0715'/><rect x='2' y='11' width='10' height='2' fill='#2a1640'/>"}
+  ];
+  var ds = $("dollshelf");
+  dollDefs.forEach(function(d){
+    var wrap=document.createElement("div"); wrap.className="doll"; wrap.setAttribute("tabindex","0");
+    wrap.innerHTML = "<svg width='48' height='48' viewBox='0 0 14 14' shape-rendering='crispEdges'>"+d.svg+"</svg><div class='nm'>"+d.nm+"</div>";
+    function greet(){ wrap.classList.remove("wobble"); void wrap.offsetWidth; wrap.classList.add("wobble"); showBubbleAt(wrap, pick(dollLines)); }
+    wrap.addEventListener("click", greet);
+    wrap.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); greet(); }});
+    ds.appendChild(wrap);
+  });
+
+  /* ---------- link hoard ---------- */
+  var linksA = [
+    ["&#9733;","voidrane","voidrane.nekoweb.org","my other place"],
+    ["&#9733;","the reliquary","example.neocities.org","a friend's grave"],
+    ["&#9733;","static garden","example.neocities.org","mostly dead links"],
+    ["&#9733;","wiretomb","example.neocities.org","updates never"]
+  ];
+  var linksB = [
+    ["//","blinkies.cafe","example.org","make your own"],
+    ["//","the counter that lies","example.org","hit counters"],
+    ["//","midi archive","example.org","for the player"],
+    ["//","88x31 button maker","example.org","link back"]
+  ];
+  function buildLinks(arr, el){
+    arr.forEach(function(l){
+      var li=document.createElement("li");
+      li.innerHTML="<span class='pfx'>"+l[0]+"</span><a href='#' data-url='"+l[2]+"'>"+l[1]+"</a><span class='note'>"+l[3]+"</span>";
+      el.appendChild(li);
+    });
+  }
+  buildLinks(linksA,$("linklist-a")); buildLinks(linksB,$("linklist-b"));
+  document.querySelectorAll("#links .linklist a").forEach(function(a){
+    a.addEventListener("click",function(e){
+      e.preventDefault(); /* TODO(buyer): replace data-url with real hrefs and remove this handler */
+      $("linkstatus").textContent = "> would open: "+this.getAttribute("data-url")+"   (placeholder — edit me)";
+    });
+  });
+
+  /* ---------- guestbook (in-memory) ---------- */
+  var gb = [
+    {who:"a passing ghost", when:"1999.11.01", msg:"your site made me feel less alone. thank you for leaving the lights on."},
+    {who:"xX_voidkitten_Xx", when:"1999.10.30", msg:"adopted the mothboy. he lives on my page now. we are both so tired."},
+    {who:"anonymous", when:"1999.10.19", msg:"i was here."}
+  ];
+  function renderGB(){
+    var box=$("gb-list"); box.innerHTML="";
+    gb.forEach(function(e){
+      var d=document.createElement("div"); d.className="gb-entry";
+      d.innerHTML="<span class='who'>"+esc(e.who)+"</span> <span class='when'>["+esc(e.when)+"]</span><div class='msg'>"+esc(e.msg)+"</div>";
+      box.appendChild(d);
+    });
+  }
+  renderGB();
+  $("gb-form").addEventListener("submit",function(e){
+    e.preventDefault();
+    var nm=$("gb-name").value.trim()||"anonymous visitor";
+    var ms=$("gb-msg").value.trim(); if(!ms) return;
+    var now=new Date();
+    var ds2=now.getFullYear()+"."+String(now.getMonth()+1).padStart(2,"0")+"."+String(now.getDate()).padStart(2,"0");
+    gb.unshift({who:nm, when:ds2, msg:ms});
+    $("gb-name").value=""; $("gb-msg").value=""; renderGB();
+    bumpCounter();
+  });
+
+  /* ---------- visitor counter (odometer) ---------- */
+  var count = 13338;
+  function drawOdo(){
+    var s=String(count).padStart(6,"0"), o=$("odo"); o.innerHTML="";
+    for(var k=0;k<s.length;k++){ var d=document.createElement("span"); d.className="dg"; d.textContent=s[k]; o.appendChild(d); }
+    $("vnum").textContent=s;
+  }
+  function bumpCounter(){ count++; drawOdo(); }
+  drawOdo();
+  if(!reduce){ setInterval(function(){ if(Math.random()<0.35) bumpCounter(); }, 5200); }
+
+  /* ---------- now playing cd pause ---------- */
+  var cd=$("cd"), tog=$("cdtoggle"), playing=true;
+  tog.addEventListener("click",function(){
+    playing=!playing; cd.classList.toggle("spin",playing); tog.textContent = playing?"[ pause ]":"[ play ]";
+  });
+  if(reduce){ cd.classList.remove("spin"); }
+
+  /* ---------- webring ---------- */
+  var ring=["voidrane.nekoweb.org","the-reliquary.neocities.org","staticgarden.neocities.org","wiretomb.neocities.org","deadmail.neocities.org","candlehour.nekoweb.org"];
+  var ri=0;
+  function setRing(){ $("ringmember").textContent="> "+ring[((ri%ring.length)+ring.length)%ring.length]; }
+  setRing();
+  $("ring-prev").addEventListener("click",function(){ ri--; setRing(); });
+  $("ring-next").addEventListener("click",function(){ ri++; setRing(); });
+  $("ring-rand").addEventListener("click",function(){ ri=Math.floor(Math.random()*ring.length); setRing(); });
+
+  /* ---------- 88x31 buttons ---------- */
+  var b88 = [
+    ["DEAD GIRLS\nCLUB","#2a0f1f","#ff9de2"],
+    ["N0 FUTURE","#0d0715","#9dffe0"],
+    ["VOID.EXE","#1a1030","#b8a9ff"],
+    ["cry &amp; code","#200f2a","#ff6fb0"],
+    ["STILL HERE","#0d2015","#9dffe0"],
+    ["haunt me","#2a1640","#ff9de2"]
+  ];
+  var bw=$("btnwall");
+  b88.forEach(function(b){
+    var a=document.createElement("a"); a.href="#"; a.className="b88"; a.setAttribute("aria-label","web badge");
+    a.style.background="linear-gradient(135deg,"+b[1]+",#000)"; a.style.color=b[2];
+    a.style.textShadow="0 0 4px "+b[2]; a.style.whiteSpace="pre-line";
+    a.innerHTML=b[0];
+    a.addEventListener("click",function(e){ e.preventDefault(); }); /* TODO(buyer): link these to your site */
+    bw.appendChild(a);
+  });
+
+  /* ---------- ghost pet + speech bubble ---------- */
+  var dollLines=["hi. don't go yet.","you have kind pixels.","take me with you?","i remember you.","it's quiet in here.","stay a little longer."];
+  var petLines=["boo. (gently)","thanks for visiting.","you can stay as long as you want.","i've been here the whole time.","sign the book?","i like your cursor.","don't close the tab yet."];
+  function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
+  var bubble=$("petbubble"), bubbleTimer=null;
+  function showBubbleAt(elem, text){
+    var r=elem.getBoundingClientRect();
+    bubble.textContent=text; bubble.style.display="block";
+    var bw2=bubble.offsetWidth;
+    var left=Math.min(Math.max(8, r.left + r.width/2 - 20), window.innerWidth - bw2 - 8);
+    var top=Math.max(8, r.top - bubble.offsetHeight - 10);
+    bubble.style.left=left+"px"; bubble.style.top=top+"px";
+    clearTimeout(bubbleTimer); bubbleTimer=setTimeout(function(){ bubble.style.display="none"; }, 2600);
+  }
+  var pet=$("pet");
+  function petSpeak(){ showBubbleAt(pet, pick(petLines)); }
+  pet.addEventListener("click", petSpeak);
+  pet.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); petSpeak(); }});
+  if(reduce){ pet.classList.remove("drift"); }
+
+  /* ---------- sparkle cursor trail ---------- */
+  if(!reduce){
+    var sparkColors=["#ff9de2","#b8a9ff","#9dffe0","#ffffff"];
+    var pool=[], POOL=14, pi=0;
+    for(var s2=0;s2<POOL;s2++){
+      var sp=document.createElement("div"); sp.className="spark";
+      sp.innerHTML="<svg width='12' height='12' viewBox='0 0 12 12'><path d='M6 0 L7 5 L12 6 L7 7 L6 12 L5 7 L0 6 L5 5 Z' fill='currentColor'/></svg>";
+      sp.style.opacity="0"; document.body.appendChild(sp); pool.push(sp);
+    }
+    var lastT=0;
+    window.addEventListener("pointermove", function(e){
+      var now=Date.now(); if(now-lastT<28) return; lastT=now;
+      var sp=pool[pi%POOL]; pi++;
+      sp.style.color=sparkColors[Math.floor(Math.random()*sparkColors.length)];
+      sp.style.left=(e.clientX-6)+"px"; sp.style.top=(e.clientY-6)+"px";
+      sp.style.transform="scale("+(0.6+Math.random()*0.8)+") rotate("+(Math.random()*90)+"deg)";
+      sp.style.transition="none"; sp.style.opacity="1";
+      void sp.offsetWidth;
+      sp.style.transition="opacity .7s ease-out, transform .7s ease-out";
+      sp.style.opacity="0"; sp.style.transform="translateY(10px) scale(0.2)";
+    }, {passive:true});
+  }
+})();
+</script>
+</body>
+</html>

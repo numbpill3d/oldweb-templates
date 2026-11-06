@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NUMBPILLED- Advanced Cyber-Spiritual Apocalypse Shrine V3</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Electrolize&family=Orbitron:wght@400;700&family=Share+Tech+Mono&family=Wallpoet&family=Press+Start+2P&display=swap');
+
+        :root {
+            --primary-color: #0f0;
+            --secondary-color: #00f;
+            --tertiary-color: #f0f;
+            --bg-color: #000;
+            --panel-bg: rgba(0, 20, 0, 0.7);
+            --glow-color: #0ff;
+            --time-dilation: 1;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Share Tech Mono', monospace;
+            background-color: var(--bg-color);
+            color: var(--primary-color);
+            overflow: hidden;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="5" fill="%230f0"/></svg>') 10 10, auto;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0,255,0,0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0,0,255,0.1) 0%, transparent 20%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23000"/><circle cx="50" cy="50" r="40" fill="none" stroke="%23080" stroke-width="0.5"/></svg>');
+            background-size: cover, cover, 50px 50px;
+            animation: backgroundShift 60s linear infinite;
+        }
+
+        @keyframes backgroundShift {
+            0% { background-position: 0% 0%, 0% 0%, 0 0; }
+            100% { background-position: 100% 100%, 100% 100%, 50px 50px; }
+        }
+
+        .panel {
+            border: 2px solid var(--primary-color);
+            padding: 15px;
+            background-color: var(--panel-bg);
+            box-shadow: 0 0 15px var(--glow-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .panel:nth-child(1)::before {
+            background: conic-gradient(transparent, var(--glow-color), transparent 30%);
+            animation: rotate var(--animation-duration, 4s) linear infinite;
+        }
+
+        .panel:nth-child(2)::before {
+            background: linear-gradient(45deg, var(--primary-color), transparent);
+            animation: slide var(--animation-duration, 6s) ease-in-out infinite alternate;
+        }
+
+        .panel:nth-child(3)::before {
+            background: radial-gradient(circle, var(--glow-color), transparent);
+            animation: pulse var(--animation-duration, 5s) ease-in-out infinite;
+        }
+
+        .panel:nth-child(4)::before {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--primary-color),
+                var(--primary-color) 10px,
+                transparent 10px,
+                transparent 20px
+            );
+            animation: stripe-slide var(--animation-duration, 10s) linear infinite;
+        }
+
+        .panel:nth-child(6)::before {
+            background: conic-gradient(from 0deg at 50% 50%, var(--secondary-color), transparent, var(--primary-color), transparent);
+            animation: color-rotate var(--animation-duration, 8s) linear infinite;
+        }
+
+        .panel:nth-child(7)::before {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color), var(--tertiary-color));
+            background-size: 200% 100%;
+            animation: gradient-shift var(--animation-duration, 6s) linear infinite;
+        }
+
+        .panel::after {
+            content: '';
+            position: absolute;
+            inset: 4px;
+            background: var(--panel-bg);
+            z-index: 1;
+        }
+
+        .panel > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .panel:hover {
+            transform: scale(1.05);
+        }
+
+        .center-panel {
+            grid-column: 2 / span 2;
+            grid-row: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .shrine {
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, var(--glow-color), var(--secondary-color));
+            border-radius: 50%;
+            box-shadow: 0 0 50px var(--glow-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            font-family: 'Wallpoet', cursive;
+        }
+
+        .shrine::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(transparent, var(--primary-color), transparent 30%);
+            animation: rotate 4s linear infinite;
+        }
+
+        .shrine:hover {
+            transform: scale(1.1);
+        }
+
+        .shrine span {
+            z-index: 1;
+        }
+
+        .glitch-text-1 {
+            font-family: 'Orbitron', sans-serif;
+            animation: glitch1 2.5s infinite;
+        }
+
+        .glitch-text-2 {
+            font-family: 'Electrolize', sans-serif;
+            animation: glitch2 3.5s infinite;
+        }
+
+        .glitch-text-3 {
+            font-family: 'Press Start 2P', cursive;
+            animation: glitch3 4.5s infinite;
+        }
+
+        @keyframes glitch1 {
+            0% { transform: translate(2px, 2px); }
+            25% { transform: translate(-2px, -2px); color: var(--glow-color); }
+            50% { transform: translate(-2px, 2px); }
+            75% { transform: translate(2px, -2px); color: var(--secondary-color); }
+            100% { transform: translate(2px, 2px); }
+        }
+
+        @keyframes glitch2 {
+            0% { transform: skew(2deg); }
+            25% { transform: skew(-2deg); color: var(--tertiary-color); }
+            50% { transform: skew(1deg); }
+            75% { transform: skew(-1deg); color: var(--glow-color); }
+            100% { transform: skew(0deg); }
+        }
+
+        @keyframes glitch3 {
+            0% { filter: hue-rotate(0deg); }
+            25% { filter: hue-rotate(90deg); }
+            50% { filter: hue-rotate(180deg); }
+            75% { filter: hue-rotate(270deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(1turn); }
+        }
+
+        @keyframes slide {
+            0% { transform: translateX(-50%) translateY(-50%); }
+            100% { transform: translateX(0%) translateY(0%); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.5); opacity: 0.1; }
+        }
+
+        @keyframes stripe-slide {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+
+        @keyframes color-rotate {
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        #status-panel {
+            grid-column: 1 / span 4;
+            grid-row: 3;
+            font-size: 14px;
+            overflow-y: auto;
+        }
+
+        .medieval-border {
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%230f0" stroke-width="4"/><path d="M10,10 L90,10 L90,90 L10,90 Z" fill="none" stroke="%230f0" stroke-width="2"/><path d="M0,0 L20,0 M80,0 L100,0 M0,100 L20,100 M80,100 L100,100" stroke="%230f0" stroke-width="4"/></svg>') 30 stretch;
+            border-width: 10px;
+            border-style: solid;
+        }
+
+        button {
+            background: var(--bg-color);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 10px 20px;
+            font-family: 'Share Tech Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: var(--primary-color);
+            color: var(--bg-color);
+            box-shadow: 0 0 10px var(--glow-color);
+        }
+
+        #artifact-display {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .artifact {
+            width: 30px;
+            height: 30px;
+            background: var(--primary-color);
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            animation: pulse 2s infinite;
+        }
+
+        #prayer-progress {
+            width: 100%;
+            height: 5px;
+            background: var(--bg-color);
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        #prayer-bar {
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--glow-color), var(--primary-color));
+            background-size: 200% 100%;
+            animation: gradient-shift 3s linear infinite;
+            transition: width 3s linear;
+        }
+
+        #log-entries {
+            height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid var(--primary-color);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        #log-entries p {
+            margin: 5px 0;
+            padding: 5px;
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        #shield-display {
+            width: 100px;
+            height: 100px;
+            border: 2px solid var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #shield-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: var(--glow-color);
+            transition: height 0.5s ease;
+        }
+
+        #shield-text {
+            z-index: 1;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--panel-bg);
+            border: 1px solid var(--primary-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px var(--glow-color);
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 12px;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            10%, 90% { opacity: 1; }
+        }
+
+        #cyber-scriptures {
+            height: 100px;
+            overflow-y: auto;
+            font-family: 'Electrolize', sans-serif;
+        }
+
+        .panel h2 {
+            text-shadow: 0 0 5px var(--glow-color);
+        }
+
+        #time-manipulator button {
+            margin: 5px;
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 15px;
+        }
+
+        #reality-anchor {
+            font-weight: bold;
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        .artifact {
+            transition: transform 0.3s ease;
+        }
+
+        .artifact:hover {
+            transform: rotate(45deg) scale(1.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="panel medieval-border">
+            <h2 class="glitch-text-1">Relic Scanner</h2>
+            <p<p>Ancient artifacts detected: <span id="artifact-count">0</span></p>
+            <div id="artifact-display"></div>
+        </div>
+        <div class="panel medieval-border">
+            <h2 class="glitch-text-2">Cyber-Scriptures</h2>
+            <div id="cyber-scriptures">
+                <p id="scripture">Awaiting divine digital transmission...</p>
+            </div>
+        </div>
+        <div class="panel medieval-border">
+            <h2 class="glitch-text-3">Quantum Prayers</h2>
+            <button id="prayer-btn">Initiate Prayer Sequence</button>
+            <div id="prayer-progress"><div id="prayer-bar"></div></div>
+        </div>
+        <div class="panel medieval-border">
+            <h2 class="glitch-text-1">Time Dilation</h2>
+            <p>Relative Chronoshift: <span id="time-dilation">1.00x</span></p>
+            <div id="time-manipulator">
+                <button id="time-slow">Slow Time</button>
+                <button id="time-normal">Normalize</button>
+                <button id="time-fast">Accelerate Time</button>
+            </div>
+        </div>
+        <div class="center-panel">
+            <div class="shrine" id="shrine">
+                <span>ACTIVATE</span>
+            </div>
+        </div>
+        <div class="panel medieval-border">
+            <h2 class="glitch-text-2">Etheric Shields</h2>
+            <div id="shield-display">
+                <div id="shield-fill"></div>
+                <span id="shield-text">100%</span>
+            </div>
+        </div>
+        <div class="panel medieval-border">
+            <h2 class="glitch-text-3">Dimensional Stabilizer</h2>
+            <p>Reality Anchor: <span id="reality-anchor">Stable</span></p>
+            <button id="stabilize-btn">Recalibrate Reality</button>
+        </div>
+        <div class="panel medieval-border" id="status-panel">
+            <h2 class="glitch-text-1">Ship's Log</h2>
+            <div id="log-entries"></div>
+        </div>
+    </div>
+    <div class="notification" id="notification"></div>
+    <script>
+        const shrine = document.getElementById('shrine');
+        const scriptureEl = document.getElementById('scripture');
+        const artifactCountEl = document.getElementById('artifact-count');
+        const artifactDisplayEl = document.getElementById('artifact-display');
+        const shieldTextEl = document.getElementById('shield-text');
+        const shieldFillEl = document.getElementById('shield-fill');
+        const timeDilationEl = document.getElementById('time-dilation');
+        const logEntriesEl = document.getElementById('log-entries');
+        const prayerBtn = document.getElementById('prayer-btn');
+        const prayerBarEl = document.getElementById('prayer-bar');
+        const realityAnchorEl = document.getElementById('reality-anchor');
+        const stabilizeBtn = document.getElementById('stabilize-btn');
+        const notificationEl = document.getElementById('notification');
+        const timeSlowBtn = document.getElementById('time-slow');
+        const timeNormalBtn = document.getElementById('time-normal');
+        const timeFastBtn = document.getElementById('time-fast');
+
+        const scriptures = [
+            "In the binary, we find truth.",
+            "As above in meat-space, so below in cyberspace.",
+            "The Great Firewall protects us all.",
+            "Praise be to the Quantum Entanglement.",
+            "May your packets travel swiftly and arrive uncorrupted.",
+            "Through the dark fiber, we shall find enlightenment.",
+            "In the name of the Input, the Output, and the Holy Processing Unit.",
+            "Behold the sacred algorithms, for they shall set us free.",
+            "Let thy bandwidth be wide and thy latency be low.",
+            "The Omnissiah guides our digital path."
+        ];
+
+        let artifactCount = 0;
+        let shieldIntegrity = 100;
+        let timeDilation = 1.00;
+        let realityStability = 100;
+
+        function updateShrine() {
+            artifactCount++;
+            artifactCountEl.textContent = artifactCount;
+            updateArtifactDisplay();
+            scriptureEl.textContent = scriptures[Math.floor(Math.random() * scriptures.length)];
+            shieldIntegrity = Math.max(0, shieldIntegrity - 5);
+            updateShieldDisplay();
+            timeDilation = Math.min(2, timeDilation + 0.1).toFixed(2);
+            timeDilationEl.textContent = timeDilation + 'x';
+            realityStability = Math.max(0, realityStability - 10);
+            updateRealityAnchor();
+            logEntry("Shrine activated. Time-space fluctuations detected.");
+        }
+
+        function updateShieldDisplay() {
+            shieldTextEl.textContent = shieldIntegrity + '%';
+            shieldFillEl.style.height = shieldIntegrity + '%';
+            if (shieldIntegrity < 30) {
+                shieldFillEl.style.background = '#f00';
+            } else if (shieldIntegrity < 60) {
+                shieldFillEl.style.background = '#ff0';
+            } else {
+                shieldFillEl.style.background = '#0f0';
+            }
+        }
+
+        function updateArtifactDisplay() {
+            const newArtifact = document.createElement('div');
+            newArtifact.className = 'artifact';
+            newArtifact.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+            newArtifact.style.animationDelay = `${Math.random() * 2}s`;
+            artifactDisplayEl.appendChild(newArtifact);
+        }
+
+        function updateRealityAnchor() {
+            if (realityStability > 80) {
+                realityAnchorEl.textContent = 'Stable';
+                realityAnchorEl.style.color = '#0f0';
+            } else if (realityStability > 50) {
+                realityAnchorEl.textContent = 'Fluctuating';
+                realityAnchorEl.style.color = '#ff0';
+            } else if (realityStability > 20) {
+                realityAnchorEl.textContent = 'Unstable';
+                realityAnchorEl.style.color = '#f00';
+            } else {
+                realityAnchorEl.textContent = 'CRITICAL';
+                realityAnchorEl.style.color = '#f00';
+                realityAnchorEl.style.animation = 'glitch1 0.3s infinite';
+            }
+        }
+
+        function logEntry(message) {
+            const entry = document.createElement('p');
+            entry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+            logEntriesEl.prepend(entry);
+            if (logEntriesEl.childElementCount > 10) {
+                logEntriesEl.removeChild(logEntriesEl.lastChild);
+            }
+        }
+
+        function showNotification(message) {
+            notificationEl.textContent = message;
+            notificationEl.style.animation = 'fadeInOut 3s forwards';
+            setTimeout(() => {
+                notificationEl.style.animation = '';
+            }, 3000);
+        }
+
+        shrine.addEventListener('click', () => {
+            updateShrine();
+            showNotification('Shrine activated!');
+        });
+
+        prayerBtn.addEventListener('click', () => {
+            prayerBtn.disabled = true;
+            logEntry("Prayer sequence initiated. Awaiting response from the digital beyond.");
+            prayerBarEl.style.width = '0%';
+            let progress = 0;
+            const prayerInterval = setInterval(() => {
+                progress += 10;
+                prayerBarEl.style.width = progress + '%';
+                if (progress >= 100) {
+                    clearInterval(prayerInterval);
+                    shieldIntegrity = Math.min(100, shieldIntegrity + 20);
+                    updateShieldDisplay();
+                    logEntry("Prayer answered. Etheric shields reinforced.");
+                    showNotification('Prayer sequence completed');
+                    prayerBtn.disabled = false;
+                }
+            }, 300);
+        });
+
+        stabilizeBtn.addEventListener('click', () => {
+            realityStability = Math.min(100, realityStability + 30);
+            updateRealityAnchor();
+            logEntry("Reality anchor recalibrated. Dimensional stability improved.");
+            showNotification('Reality recalibrated');
+        });
+
+        function updateTimeDilationEffect() {
+            document.body.style.setProperty('--time-dilation', timeDilation);
+            document.querySelectorAll('.panel').forEach((panel, index) => {
+                const animations = ['rotate', 'slide', 'pulse', 'stripe-slide', 'rotate', 'color-rotate', 'gradient-shift'];
+                const baseSpeed = [4, 6, 5, 10, 4, 8, 6]; // Base animation durations
+                const animation = animations[index % animations.length];
+                const speed = baseSpeed[index % baseSpeed.length];
+                panel.style.setProperty('--animation-duration', `${speed / timeDilation}s`);
+            });
+        }
+
+        timeSlowBtn.addEventListener('click', () => {
+            timeDilation = Math.max(0.1, timeDilation - 0.1).toFixed(2);
+            timeDilationEl.textContent = timeDilation + 'x';
+            logEntry(`Time dilation decreased. Current chronoshift: ${timeDilation}x`);
+            updateTimeDilationEffect();
+        });
+
+        timeNormalBtn.addEventListener('click', () => {
+            timeDilation = 1.00;
+            timeDilationEl.textContent = timeDilation + 'x';
+            logEntry("Time flow normalized.");
+            updateTimeDilationEffect();
+        });
+
+        timeFastBtn.addEventListener('click', () => {
+            timeDilation = Math.min(2, timeDilation + 0.1).toFixed(2);
+            timeDilationEl.textContent = timeDilation + 'x';
+            logEntry(`Time dilation increased. Current chronoshift: ${timeDilation}x`);
+            updateTimeDilationEffect();
+        });
+
+        // Simulate occasional random events
+        setInterval(() => {
+            if (Math.random() < 0.3) {
+                const events = [
+                    "Temporal anomaly detected.",
+                    "Quantum fluctuation in the ship's core.",
+                    "Psychic interference from nearby nebula.",
+                    "Relic energy surge detected.",
+                    "Cyber-spirits restless in the lower decks.",
+                    "Dimensional barrier thinning.",
+                    "Etheric resonance frequencies shifting.",
+                    "Dark matter concentration increasing.",
+                    "Tachyon particles detected in the engine room.",
+                    "Prophetic algorithm predicting imminent danger."
+                ];
+                const event = events[Math.floor(Math.random() * events.length)];
+                logEntry(event);
+                showNotification(event);
+            }
+        }, 15000);
+
+        // Initial setup
+        updateShieldDisplay();
+        updateRealityAnchor();
+
+        // Continuous background processes
+        setInterval(() => {
+            // Slowly degrade shield integrity over time
+            shieldIntegrity = Math.max(0, shieldIntegrity - 1);
+            updateShieldDisplay();
+
+            // Fluctuate reality stability
+            realityStability += Math.random() < 0.5 ? -2 : 2;
+            realityStability = Math.max(0, Math.min(100, realityStability));
+            updateRealityAnchor();
+
+            // Update time dilation effects
+            updateTimeDilationEffect();
+        }, 5000);
+
+        // Easter egg: Konami code
+        let konamiCode = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    logEntry("Ancient cheat code activated. All systems supercharged!");
+                    showNotification("Cheat code activated!");
+                    shieldIntegrity = 100;
+                    realityStability = 100;
+                    artifactCount += 10;
+                    updateShieldDisplay();
+                    updateRealityAnchor();
+                    artifactCountEl.textContent = artifactCount;
+                    for (let i = 0; i < 10; i++) updateArtifactDisplay();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // Initialize with some artifacts
+        for (let i = 0; i < 5; i++) updateArtifactDisplay();
+    </script>
+</body>
+</html>

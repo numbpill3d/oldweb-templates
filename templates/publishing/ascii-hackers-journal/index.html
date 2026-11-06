@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASCII Hacker's Journal</title>
+    <style>
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body {
+            background-color: black;
+            color: #ffff00;
+            font-family: "Courier New", Courier, monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        #loading-text {
+            color: #ffff00;
+            font-size: 24px;
+            white-space: pre;
+            animation: glitch 0.5s infinite, blink 1s infinite;
+            margin-bottom: 20px;
+        }
+
+        #progress-bar-container {
+            width: 300px;
+            height: 20px;
+            border: 2px solid #ffff00;
+            position: relative;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background-color: #ffff00;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            border: 2px solid #ffff00;
+            padding: 20px;
+            box-shadow: 0 0 15px #ffff00;
+            text-align: left;
+            height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            opacity: 0;
+        }
+
+        .container.loaded {
+            animation: fadeIn 1s forwards;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #ffff00;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            cursor: pointer;
+            padding: 10px 20px;
+            border: 1px solid transparent;
+            text-align: center;
+        }
+
+        .tab:hover, .tab.active {
+            border: 1px solid #ffff00;
+            border-bottom: none;
+        }
+
+        .tab-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ascii-title {
+            text-align: center;
+            font-size: 16px;
+            white-space: pre-wrap;
+            margin-bottom: 20px;
+        }
+
+        .content-columns {
+            display: flex;
+            gap: 20px;
+            flex: 1;
+        }
+
+        .column {
+            flex: 1;
+            border: 1px dashed #ffff00;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .entry {
+            border-top: 1px dashed #ffff00;
+            margin-top: 15px;
+            padding-top: 10px;
+        }
+
+        .entry-title {
+            font-weight: bold;
+        }
+
+        .entry-content {
+            margin-top: 5px;
+        }
+
+        .placeholder-image {
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            margin: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ffff00;
+        }
+
+        .profile {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .profile img {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #ffff00;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 12px;
+        }
+
+        .input-area {
+            margin-top: 20px;
+            padding: 10px;
+            border-top: 1px dashed #ffff00;
+        }
+
+        .input-area textarea {
+            width: 100%;
+            height: 80px;
+            background-color: black;
+            color: #ffff00;
+            font-family: "Courier New", Courier, monospace;
+            border: 1px dashed #ffff00;
+            padding: 10px;
+            resize: none;
+        }
+
+        .input-area button {
+            background-color: black;
+            color: #ffff00;
+            font-family: "Courier New", Courier, monospace;
+            border: 1px solid #ffff00;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .input-area button:hover {
+            background-color: #ffff00;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading-screen">
+        <pre id="loading-text">
+ ▄▀▀▀▄ ▄▀▀▄ ▄▀▀▄ ▄▀▀▄    ▄▀▀▀▄ ▄▀▀▄ ▄▀▀▀▄
+█    █ █  █ █▄▄▀ █▄▄▀    █    █ █  █ █    
+█    █ █  █ █  █ █  █    █    █ █  █ █  ▀█
+ ▀▄▄▀  ▀▄▄▀ ▀  ▀ ▀  ▀     ▀▄▄▀  ▀▄▄▀  ▀▄▄▀
+        </pre>
+        <div id="progress-bar-container">
+            <div id="progress-bar"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-tab="journal">Journal</div>
+            <div class="tab" data-tab="about">About</div>
+            <div class="tab" data-tab="profile">Profile</div>
+        </div>
+
+        <div id="journal" class="tab-content active">
+            <div class="ascii-title">
+ ▄▀▀▀▀▄    ▄▀▀▀▀▄   ▄▀▀▄▀▀▀▄  ▄▀▀█▄▄▄▄      ▄▀▀▀▀▄    ▄▀▀▀▀▄   ▄▀▀▀▀▄   
+█    █    █      █ █   █   █ ▐  ▄▀   ▐     █    █    █      █ █         
+▐    █    █      █ ▐  █▀▀█▀    █▄▄▄▄▄      ▐    █    █      █ █    ▀▄▄  
+    █     ▀▄    ▄▀  ▄▀    █    █    ▌          █     ▀▄    ▄▀ █     █ █ 
+  ▄▀▄▄▄▄▄▄▀ ▀▀▀▀   █     █    ▄▀▄▄▄▄         ▄▀▄▄▄▄▄▄▀ ▀▀▀▀   ▐▀▄▄▄▄▀ ▐ 
+  █                ▐     ▐    █    ▐         █                ▐         
+  ▐                           ▐              ▐                          
+            </div>
+            <div class="content-columns">
+                <div class="column">
+                    <h3>Recent Entries</h3>
+                    <div class="placeholder-image">Placeholder Image 1</div>
+                    <div id="journal-entries"></div>
+                </div>
+                <div class="column">
+                    <h3>Featured Content</h3>
+                    <div class="placeholder-image">Placeholder Image 2</div>
+                    <p>Featured content and highlights go here...</p>
+                </div>
+            </div>
+            <div class="input-area">
+                <textarea id="entry-content" placeholder="Write your entry here..."></textarea>
+                <button id="add-entry">Add Entry</button>
+            </div>
+        </div>
+
+        <div id="about" class="tab-content">
+            <div class="content-columns">
+                <div class="column">
+                    <h3>About Us</h3>
+                    <div class="placeholder-image">About Image 1</div>
+                    <p>Welcome to the Hacker's Journal! This is your personal space to document your thoughts, discoveries, and experiments in true ASCII style.</p>
+                    <p>Use the "Journal" tab to add new entries and view your notes. Customize the look and feel with your personal touch.</p>
+                </div>
+                <div class="column">
+                    <h3>Our Mission</h3>
+                    <div class="placeholder-image">About Image 2</div>
+                    <p>Tap into the old-school hacker vibe and embrace the chaos of creativity!</p>
+                    <p>Breaking barriers and pushing boundaries since the digital dawn.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="profile" class="tab-content">
+            <div class="content-columns">
+                <div class="column">
+                    <div class="profile">
+                        <img src="/api/placeholder/80/80" alt="Profile Picture">
+                        <div>
+                            <h2>Username: Xenotrek</h2>
+                            <p>Status: Breaking Barriers...</p>
+                        </div>
+                    </div>
+                    <h3>Tools of the Trade:</h3>
+                    <ul>
+                        <li>Lockpicks</li>
+                        <li>Homebrew OBD2 Transponder</li>
+                        <li>Dewalt/Craftsman Power Tools</li>
+                    </ul>
+                </div>
+                <div class="column">
+                    <h3>Recent Activity</h3>
+                    <div class="placeholder-image">Activity Graph</div>
+                    <p>Activity log and statistics go here...</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            ~ NUMBPILLED ~ ASCII-Style ~ Created for Glitching Out ~
+        </div>
+    </div>
+
+    <script>
+        // Loading screen logic
+        function simulateLoading() {
+            const progressBar = document.getElementById('progress-bar');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.querySelector('.container').classList.add('loaded');
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 200);
+        }
+
+        // Initialize loading screen
+        window.addEventListener('load', simulateLoading);
+
+        // Tab switching logic
+        const tabs = document.querySelectorAll('.tab');
+        const contents = document.querySelectorAll('.tab-content');
+        const addButton = document.getElementById('add-entry');
+        const journalEntries = document.getElementById('journal-entries');
+        const entryContent = document.getElementById('entry-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(c => c.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Journal entry logic
+        addButton.addEventListener('click', () => {
+            const content = entryContent.value.trim();
+            if (content === "") {
+                alert("You can't add an empty journal entry.");
+                return;
+            }
+            const entry = document.createElement('div');
+            entry.className = 'entry';
+            const title = document.createElement('div');
+            title.className = 'entry-title';
+            title.textContent = `Entry #${journalEntries.children.length + 1}`;
+            const text = document.createElement('div');
+            text.className = 'entry-content';
+            text.textContent = content;
+            entry.appendChild(title);
+            entry.appendChild(text);
+            journalEntries.prepend(entry);
+            entryContent.value = "";
+        });
+    </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 {
-  "html_files": 28,
+  "html_files": 41,
   "unresolved_local_references": [
     {
       "file": "templates/desktops/win98-homepage/index.html",
@@ -99,12 +99,13 @@
     }
   ],
   "unresolved_count": 16,
-  "preview_templates": 28,
-  "preview_captures": 56,
-  "preview_captures_ok": 56,
+  "preview_templates": 41,
+  "preview_captures": 82,
+  "preview_captures_ok": 80,
   "notes": [
     "Source files are preserved byte-for-byte from migration clones.",
-    "Preview-only fallbacks may hide loading overlays or remove scripts when automated capture is otherwise blocked."
+    "Preview-only fallbacks may hide loading overlays or remove scripts when automated capture is otherwise blocked.",
+    "The new standalone batch was added as faithful snapshots on 2026-11-06. Swampwitch did not produce a reliable automated preview; its source repository is linked from the catalog README."
   ],
   "unique_unresolved_count": 12
 }

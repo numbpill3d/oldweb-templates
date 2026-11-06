@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>DISCROT.PSX</title>
+<!--
+  DISCROT — a dead-console personal-site / portfolio shell.
+  PS1-era 3D + CRT grit. Single file. Fully offline. No CDN, no webfonts, no external images.
+  The centerpiece relic is rendered by a tiny software 3D rasterizer written from scratch
+  (flat-shaded, painter-sorted, with authentic PS1 vertex snapping + affine wobble).
+  Store-agnostic: no checkout, no hardcoded shop links. Swap the placeholder copy and ship.
+-->
+<style>
+/* ============================================================= *
+ *  DISCROT.PSX  —  palette + base chrome
+ * ============================================================= */
+:root{
+  --bg:#0a0b11;
+  --bg-panel:#13151f;
+  --bg-deep:#06070d;
+  --steel:#242a39;
+  --steel-lite:#39415a;
+  --steel-hi:#5a6480;
+  --ink:#c9cedb;
+  --ink-dim:#808798;
+  --ink-faint:#555c70;
+  --ps:#5b82c4;                      /* ps1-ui cold blue */
+  --ps-dim:#2f4572;
+  --rot:#c01430;                     /* disc-rot blood red */
+  --rot-dim:#5e0f1d;
+  --rot-glow:#ff2d48;
+  --bevel-hi:rgba(120,134,170,.55);
+  --bevel-lo:rgba(0,0,0,.72);
+  --mono:"Courier New",Courier,monospace;
+  --ui:Tahoma,"MS Sans Serif",Geneva,Verdana,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(ellipse 120% 90% at 50% 10%, #121626 0%, var(--bg) 55%, var(--bg-deep) 100%);
+  color:var(--ink);
+  font-family:var(--ui);
+  font-size:13px;
+  line-height:1.55;
+  overflow-x:hidden;
+  -webkit-font-smoothing:none;
+  text-rendering:optimizeSpeed;
+}
+a{color:var(--ps);text-decoration:none}
+a:hover{color:#9db6e8;text-decoration:underline}
+img{display:block}
+::selection{background:var(--rot);color:#fff}
+
+/* bevel helpers — win9x / PS1 memory-card chrome, hard corners only */
+.bevel-out{
+  border:2px solid;
+  border-color:var(--bevel-hi) var(--bevel-lo) var(--bevel-lo) var(--bevel-hi);
+}
+.bevel-in{
+  border:2px solid;
+  border-color:var(--bevel-lo) var(--bevel-hi) var(--bevel-hi) var(--bevel-lo);
+}
+
+/* ============================================================= *
+ *  CRT chrome overlays (fixed, pointer-through)
+ * ============================================================= */
+#crt-scan,#crt-vig,#crt-roll,#crt-rgb{position:fixed;inset:0;pointer-events:none;z-index:9000}
+#crt-scan{
+  z-index:9001;
+  background:repeating-linear-gradient(0deg,
+     rgba(0,0,0,0) 0px, rgba(0,0,0,0) 1px,
+     rgba(0,0,0,.20) 2px, rgba(0,0,0,.20) 3px);
+  mix-blend-mode:multiply;
+  opacity:.8;
+}
+#crt-vig{
+  z-index:9002;
+  background:
+    radial-gradient(ellipse 88% 78% at 50% 48%, transparent 55%, rgba(0,0,0,.42) 86%, rgba(0,0,0,.78) 100%);
+}
+/* phosphor dot grid */
+#crt-vig::before{
+  content:"";position:absolute;inset:0;
+  background-image:repeating-linear-gradient(90deg,
+     rgba(255,0,60,.030) 0px, rgba(0,180,255,.030) 1px, rgba(0,0,0,0) 2px, rgba(0,0,0,0) 3px);
+  mix-blend-mode:screen;opacity:.6;
+}
+#crt-roll{
+  z-index:9003;
+  background:linear-gradient(180deg,transparent 0%,rgba(190,205,255,.045) 48%,rgba(190,205,255,.08) 50%,transparent 52%,transparent 100%);
+  background-size:100% 100%;
+  animation:roll 7.5s linear infinite;
+  opacity:.7;
+}
+@keyframes roll{0%{transform:translateY(-100%)}100%{transform:translateY(100%)}}
+#crt-rgb{z-index:9004;opacity:0;mix-blend-mode:screen;transition:opacity .08s}
+body.glitch #crt-rgb{
+  opacity:.5;
+  background:
+    linear-gradient(90deg, rgba(255,0,40,.35), transparent 6px),
+    linear-gradient(270deg, rgba(0,120,255,.35), transparent 6px);
+}
+body.glitch #app{animation:shake .18s steps(2) 2}
+@keyframes shake{0%{transform:translate(0,0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(-1px,-1px)}100%{transform:translate(0,0)}}
+/* power-on flash */
+#poweron{position:fixed;inset:0;background:#dfe6ff;z-index:9500;pointer-events:none;animation:poweron 1.1s ease-out forwards}
+@keyframes poweron{
+  0%{opacity:0;transform:scaleY(.002)}
+  6%{opacity:.9;transform:scaleY(.004)}
+  14%{opacity:.85;transform:scaleY(1)}
+  40%{opacity:.25}
+  100%{opacity:0}
+}
+
+/* ============================================================= *
+ *  BOOT sequence
+ * ============================================================= */
+#boot{
+  position:fixed;inset:0;z-index:8000;background:#04050a;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:26px;text-align:center;
+  transition:opacity .5s ease;
+}
+#boot.gone{opacity:0;pointer-events:none}
+.boot-mark{
+  font-family:var(--mono);font-size:10px;letter-spacing:.42em;color:var(--ink-faint);
+  text-transform:uppercase;
+}
+.disc-wrap{position:relative;width:132px;height:132px}
+.disc{
+  position:absolute;inset:0;border-radius:50%;
+  background:
+    conic-gradient(from 0deg,#1a1f30,#394867,#1a1f30,#2a3450,#141a2a,#1a1f30),
+    radial-gradient(circle at 38% 34%,rgba(255,255,255,.22),transparent 40%);
+  box-shadow:0 0 0 2px #05060c inset,0 0 26px rgba(90,120,200,.35);
+  animation:spin 1.4s linear infinite;
+}
+.disc::after{
+  content:"";position:absolute;inset:40% 40%;border-radius:50%;
+  background:#06070d;box-shadow:0 0 0 7px #0e1320 inset,0 0 0 9px #05060c;
+}
+.disc.rot{animation:spin 1.4s linear infinite, discrot 2.1s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes discrot{0%,100%{filter:none}46%{filter:hue-rotate(-25deg) saturate(2) brightness(1.1)}48%{filter:invert(.3) saturate(3)}50%{filter:none}}
+.boot-read{font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.1em;min-height:1.4em}
+.boot-read .err{color:var(--rot-glow);text-shadow:0 0 8px rgba(255,45,72,.7)}
+.loadbar{width:270px;max-width:72vw;height:16px;background:#070810;padding:2px;position:relative}
+.loadbar .fill{height:100%;width:0;background:
+   repeating-linear-gradient(90deg,var(--ps) 0 8px,#07080f 8px 11px);
+   transition:width .18s steps(4)}
+.boot-start{
+  font-family:var(--mono);font-size:15px;letter-spacing:.3em;color:var(--ps);
+  text-transform:uppercase;opacity:0;cursor:pointer;
+  text-shadow:0 0 10px rgba(91,130,196,.6);
+}
+.boot-start.show{opacity:1;animation:blink 1.05s steps(1) infinite}
+.boot-skip{position:fixed;bottom:14px;right:16px;font-family:var(--mono);font-size:10px;color:var(--ink-faint);cursor:pointer;letter-spacing:.12em}
+.boot-skip:hover{color:var(--ink)}
+@keyframes blink{50%{opacity:.18}}
+
+/* ============================================================= *
+ *  APP shell / layout
+ * ============================================================= */
+#app{opacity:0;transition:opacity .6s ease .1s}
+#app.live{opacity:1}
+.wrap{max-width:1040px;margin:0 auto;padding:16px 14px 70px}
+
+/* title bar */
+.titlebar{
+  background:linear-gradient(180deg,#2e3858,#1a2238);
+  display:flex;align-items:center;gap:10px;padding:7px 10px;margin-bottom:10px;
+}
+.tb-logo{
+  font-family:var(--mono);font-weight:bold;font-size:20px;letter-spacing:.16em;
+  color:#e6ecff;
+  text-shadow:1px 1px 0 #05060c, -1px -1px 0 rgba(120,150,220,.4), 0 0 14px rgba(91,130,196,.45);
+  white-space:nowrap;
+}
+.tb-logo b{color:var(--rot-glow);text-shadow:1px 1px 0 #05060c,0 0 12px rgba(255,45,72,.6)}
+.tb-sub{font-family:var(--mono);font-size:10px;color:var(--ps);letter-spacing:.22em;opacity:.8;flex:1;text-transform:uppercase}
+.tb-clock{font-family:var(--mono);font-size:11px;color:var(--ink-dim);letter-spacing:.08em;white-space:nowrap}
+.tb-dot{width:9px;height:9px;background:var(--rot);box-shadow:0 0 8px var(--rot-glow);animation:pulse 1.2s steps(2) infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+/* main grid: nav | content */
+.main{display:grid;grid-template-columns:186px 1fr;gap:12px;align-items:start}
+
+/* memory-card nav */
+.cards{background:var(--bg-panel);padding:8px}
+.cards-h{font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:.18em;padding:3px 4px 7px;text-transform:uppercase;border-bottom:1px dashed var(--steel)}
+.card{
+  display:flex;align-items:center;gap:9px;padding:7px 7px;margin-top:7px;cursor:pointer;
+  background:linear-gradient(180deg,#171c2b,#10131d);
+  position:relative;transition:background .09s,transform .09s;
+}
+.card:hover{background:linear-gradient(180deg,#20273d,#161b2b)}
+.card.active{background:linear-gradient(180deg,#2a3c64,#1b2742)}
+.card.active::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--rot);box-shadow:0 0 8px var(--rot-glow)}
+.card .ic{width:34px;height:34px;flex:none;background:#05060c;image-rendering:pixelated}
+.card .ic svg{width:100%;height:100%;display:block}
+.card .meta{min-width:0}
+.card .nm{font-family:var(--mono);font-size:12px;color:var(--ink);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .bk{font-family:var(--mono);font-size:9px;color:var(--ink-faint);letter-spacing:.1em}
+.card.active .nm{color:#fff;text-shadow:0 0 8px rgba(120,150,220,.6)}
+.cards-free{margin-top:10px;padding:5px 4px;border-top:1px dashed var(--steel);font-family:var(--mono);font-size:9px;color:var(--ink-faint);letter-spacing:.08em}
+
+/* content column */
+.content{min-width:0}
+.panel{display:none;background:var(--bg-panel);padding:0}
+.panel.active{display:block;animation:cut .12s steps(2)}
+@keyframes cut{from{opacity:.4}to{opacity:1}}
+.panel-h{
+  background:linear-gradient(180deg,#232c46,#161d30);
+  padding:6px 11px;font-family:var(--mono);font-size:12px;letter-spacing:.2em;
+  color:var(--ps);text-transform:uppercase;display:flex;justify-content:space-between;align-items:center;
+}
+.panel-h .tag{color:var(--ink-faint);font-size:9px}
+.panel-b{padding:14px 15px}
+h2.sec{font-family:var(--mono);font-size:15px;color:var(--ink);letter-spacing:.1em;text-transform:uppercase;margin:4px 0 10px;border-left:3px solid var(--rot);padding-left:8px}
+p{margin:0 0 11px}
+p.lead{color:var(--ink-dim)}
+.hr{height:0;border-top:1px dashed var(--steel);margin:14px 0}
+.mono{font-family:var(--mono)}
+.dim{color:var(--ink-dim)}
+.red{color:var(--rot-glow)}
+
+/* ===== HOME viewport ===== */
+.viewport-row{display:grid;grid-template-columns:1fr 240px;gap:14px;align-items:start}
+.vp-frame{position:relative;background:#04050a;padding:0;aspect-ratio:1/1}
+.vp-frame canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rendering:crisp-edges;background:#04050a}
+.vp-readout{
+  position:absolute;left:6px;top:6px;font-family:var(--mono);font-size:9px;line-height:1.5;
+  color:#8fd6a0;text-shadow:0 0 6px rgba(70,200,110,.4);letter-spacing:.06em;pointer-events:none;
+}
+.vp-readout .k{color:var(--ink-faint)}
+.vp-cap{position:absolute;left:6px;bottom:5px;font-family:var(--mono);font-size:9px;color:var(--ps);letter-spacing:.1em;pointer-events:none}
+.vp-cap b{color:var(--rot-glow)}
+.vp-hint{position:absolute;right:6px;bottom:5px;font-family:var(--mono);font-size:9px;color:var(--ink-faint);letter-spacing:.08em;pointer-events:none}
+.vp-side{font-family:var(--mono);font-size:11px;color:var(--ink-dim);line-height:1.7}
+.vp-side .big{font-size:13px;color:var(--ink);letter-spacing:.06em;display:block;margin-bottom:6px;text-transform:uppercase}
+.selbtns{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.selbtn{
+  flex:1;min-width:64px;text-align:center;padding:6px 4px;cursor:pointer;
+  background:linear-gradient(180deg,#1c2338,#12161f);font-family:var(--mono);font-size:10px;
+  color:var(--ink);letter-spacing:.1em;text-transform:uppercase;transition:background .09s;
+}
+.selbtn:hover{background:linear-gradient(180deg,#273354,#19223a)}
+.selbtn.on{background:linear-gradient(180deg,#2a3c64,#1b2742);color:#fff;box-shadow:0 0 0 1px var(--ps) inset}
+
+/* ===== WORKS: disc shelf ===== */
+.disc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:12px}
+.jewel{background:#0c0e16;padding:9px;cursor:pointer;transition:transform .1s}
+.jewel:hover{transform:translateY(-2px)}
+.jewel:hover .cd{animation:spin 1.1s linear infinite}
+.cd{
+  width:100%;aspect-ratio:1/1;border-radius:50%;margin-bottom:8px;
+  background:
+    conic-gradient(from 0deg,#2a3450,#5b82c4,#2a3450,#8a3550,#2a3450,#3a4668,#2a3450),
+    radial-gradient(circle at 36% 32%,rgba(255,255,255,.3),transparent 42%);
+  box-shadow:0 0 0 2px #05060c inset;position:relative;
+}
+.cd::after{content:"";position:absolute;inset:40%;border-radius:50%;background:#070810;box-shadow:0 0 0 5px #0e1320 inset}
+.jewel .t{font-family:var(--mono);font-size:11px;color:var(--ink);letter-spacing:.04em;text-transform:uppercase}
+.jewel .d{font-family:var(--mono);font-size:9px;color:var(--ink-faint);letter-spacing:.06em;margin-top:2px}
+.jewel .bar{height:4px;background:#07080f;margin-top:6px}
+.jewel .bar i{display:block;height:100%;background:var(--ps)}
+
+/* ===== LOG ===== */
+.logentry{border-left:2px solid var(--steel);padding:2px 0 2px 12px;margin-bottom:16px}
+.logentry .dt{font-family:var(--mono);font-size:10px;color:var(--rot-glow);letter-spacing:.1em}
+.logentry .ti{font-family:var(--mono);font-size:13px;color:var(--ink);letter-spacing:.05em;margin:2px 0 5px;text-transform:uppercase}
+
+/* ===== LINKS / buttons / webring ===== */
+.linklist{list-style:none;font-family:var(--mono);font-size:12px;line-height:2}
+.linklist li::before{content:"> ";color:var(--rot)}
+.btn88wrap{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.b88{width:88px;height:31px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--mono);font-size:8px;line-height:1.05;letter-spacing:.02em;color:#fff;
+  box-shadow:0 0 0 1px #05060c;text-transform:uppercase;cursor:pointer;overflow:hidden}
+.webring{background:#0c0e16;padding:10px;margin-top:14px;text-align:center;font-family:var(--mono);font-size:11px}
+.webring .r{display:flex;justify-content:center;align-items:center;gap:14px;margin-top:6px}
+.webring a{color:var(--ps)}
+.webring .nm{color:var(--rot-glow);letter-spacing:.16em}
+
+/* ===== GUESTBOOK save-blocks ===== */
+.gb-form{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;background:#0c0e16;padding:11px}
+.gb-form label{font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:.1em;text-transform:uppercase}
+.gb-form input,.gb-form textarea{
+  background:#05060c;border:none;color:var(--ink);font-family:var(--mono);font-size:12px;
+  padding:7px 8px;width:100%;resize:vertical;
+}
+.gb-form input:focus,.gb-form textarea:focus{outline:1px solid var(--ps)}
+.gb-save{align-self:flex-start;padding:7px 18px;background:linear-gradient(180deg,#2a3c64,#17223c);
+  color:#fff;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}
+.gb-save:hover{background:linear-gradient(180deg,#36508a,#1d2b4b)}
+.gb-save:active{background:#17223c}
+.gb-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.saveblock{background:linear-gradient(180deg,#151a28,#0d1018);padding:9px;position:relative}
+.saveblock .ic{width:26px;height:26px;background:#05060c;margin-bottom:6px}
+.saveblock .ic svg{width:100%;height:100%}
+.saveblock .who{font-family:var(--mono);font-size:11px;color:var(--ps);letter-spacing:.05em;text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.saveblock .msg{font-family:var(--mono);font-size:11px;color:var(--ink);line-height:1.45;margin-top:3px;word-wrap:break-word}
+.saveblock .bk{position:absolute;right:7px;top:7px;font-family:var(--mono);font-size:8px;color:var(--ink-faint);letter-spacing:.1em}
+
+/* ===== ABOUT specs table ===== */
+.specs{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+.specs td{padding:5px 8px;border-bottom:1px dashed var(--steel);vertical-align:top}
+.specs td:first-child{color:var(--ink-faint);width:38%;letter-spacing:.08em;text-transform:uppercase;font-size:10px;white-space:nowrap}
+.specs td:last-child{color:var(--ink)}
+.meter{height:9px;background:#07080f;margin-top:3px;position:relative}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--ps),var(--rot))}
+
+/* ===== footer status bar ===== */
+.statusbar{
+  margin-top:12px;background:#0c0e16;padding:7px 11px;display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
+  font-family:var(--mono);font-size:10px;color:var(--ink-dim);letter-spacing:.08em;
+}
+.statusbar b{color:var(--rot-glow);letter-spacing:.14em}
+.statusbar .ps{color:var(--ps)}
+.statusbar .spacer{flex:1}
+
+/* ============================================================= *
+ *  Responsive — collapses cleanly to phone width (390px target)
+ * ============================================================= */
+@media(max-width:720px){
+  .main{grid-template-columns:1fr}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:7px}
+  .cards-h{grid-column:1/-1}
+  .cards-free{grid-column:1/-1}
+  .card{margin-top:0}
+  .viewport-row{grid-template-columns:1fr}
+}
+@media(max-width:440px){
+  .wrap{padding:10px 8px 60px}
+  .tb-logo{font-size:16px}
+  .tb-sub{display:none}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .panel-b{padding:11px 10px}
+}
+@media(prefers-reduced-motion:reduce){
+  #crt-roll,.tb-dot,.disc{animation:none}
+  .disc{animation:none}
+  body.glitch #app{animation:none}
+  body.glitch #crt-rgb{opacity:0}
+}
+</style>
+</head>
+<body>
+
+<!-- CRT chrome -->
+<div id="crt-scan"></div>
+<div id="crt-vig"></div>
+<div id="crt-roll"></div>
+<div id="crt-rgb"></div>
+<div id="poweron"></div>
+
+<!-- ============================ BOOT ============================ -->
+<div id="boot">
+  <div class="boot-mark">no region &middot; no license &middot; disc unverified</div>
+  <div class="disc-wrap"><div class="disc" id="bootdisc"></div></div>
+  <div class="boot-read" id="bootread">&nbsp;</div>
+  <div class="loadbar"><div class="fill" id="bootfill"></div></div>
+  <div class="boot-start" id="bootstart">&raquo; press start &laquo;</div>
+  <div class="boot-skip" id="bootskip">[ skip ]</div>
+</div>
+
+<!-- ============================ APP ============================ -->
+<div id="app">
+<div class="wrap">
+
+  <!-- title bar -->
+  <div class="titlebar bevel-out">
+    <div class="tb-logo">DISC<b>ROT</b>.PSX</div>
+    <div class="tb-sub">memory unit // slot 1 // reading</div>
+    <div class="tb-dot"></div>
+    <div class="tb-clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="main">
+
+    <!-- memory-card nav -->
+    <nav class="cards bevel-in" id="nav">
+      <div class="cards-h">&#9632; memory card</div>
+      <!-- cards injected here -->
+      <div class="cards-free" id="freeblocks">free blocks: 00</div>
+    </nav>
+
+    <!-- content -->
+    <div class="content">
+
+      <!-- HOME -->
+      <section class="panel active bevel-out" id="p-home" data-sec="home">
+        <div class="panel-h"><span>home.dat</span><span class="tag">loaded 1/1 blocks</span></div>
+        <div class="panel-b">
+          <div class="viewport-row">
+            <div class="vp-frame bevel-in">
+              <canvas id="relic" width="256" height="256"></canvas>
+              <div class="vp-readout" id="vpread">
+                <div><span class="k">MODE</span> NTSC/240p</div>
+                <div><span class="k">POLY</span> <span id="r-poly">--</span></div>
+                <div><span class="k">VRAM</span> <span id="r-vram">--</span>k</div>
+                <div><span class="k">FPS </span> <span id="r-fps">--</span></div>
+              </div>
+              <div class="vp-cap">RELIC_00.PSX &mdash; <b>disc rot detected</b></div>
+              <div class="vp-hint">[ drag to rotate ]</div>
+            </div>
+            <div class="vp-side">
+              <span class="big">// welcome, stranger</span>
+              this unit holds what is left of someone's homepage.
+              the data is corrupting one block at a time. you are
+              early &mdash; most of it still reads.
+              <div class="hr"></div>
+              rotate the relic. pick a save block from the card on the
+              left. do not trust the counter.
+              <div class="selbtns" id="relicsel">
+                <span class="selbtn on" data-m="0">relic</span>
+                <span class="selbtn" data-m="1">shard</span>
+                <span class="selbtn" data-m="2">idol</span>
+              </div>
+            </div>
+          </div>
+          <div class="hr"></div>
+          <p class="lead">DISCROT is a dead-console shell for a personal site, link page, or
+          portfolio. everything here renders from a single HTML file &mdash; the spinning relic above
+          is drawn by a hand-written software 3D rasterizer, not a library, so it works with the
+          network unplugged.</p>
+          <p class="mono dim">&gt; last read: an hour ago &nbsp; &gt; integrity: 71% &nbsp; &gt; status: <span class="red">degrading</span></p>
+        </div>
+      </section>
+
+      <!-- WORKS -->
+      <section class="panel bevel-out" id="p-works" data-sec="works">
+        <div class="panel-h"><span>works.dir</span><span class="tag">6 discs</span></div>
+        <div class="panel-b">
+          <h2 class="sec">pressed discs</h2>
+          <p class="lead">things committed to the archive. hover a disc to spin it.</p>
+          <div class="disc-grid" id="discgrid"></div>
+        </div>
+      </section>
+
+      <!-- LOG -->
+      <section class="panel bevel-out" id="p-log" data-sec="log">
+        <div class="panel-h"><span>log.txt</span><span class="tag">append-only</span></div>
+        <div class="panel-b" id="logbody"></div>
+      </section>
+
+      <!-- LINKS -->
+      <section class="panel bevel-out" id="p-links" data-sec="links">
+        <div class="panel-h"><span>links.cfg</span><span class="tag">outbound</span></div>
+        <div class="panel-b">
+          <h2 class="sec">nodes</h2>
+          <ul class="linklist">
+            <li><a href="#" onclick="return false">the index &mdash; a directory of the half-dead</a></li>
+            <li><a href="#" onclick="return false">static garden &mdash; sister site</a></li>
+            <li><a href="#" onclick="return false">signal/noise bbs</a></li>
+            <li><a href="#" onclick="return false">the long tape (archive)</a></li>
+          </ul>
+          <div class="hr"></div>
+          <h2 class="sec">take a button</h2>
+          <div class="btn88wrap" id="btn88"></div>
+          <div class="webring">
+            <div class="nm">[ ROT RING ]</div>
+            <div class="r">
+              <a href="#" onclick="webnav(-1);return false">&laquo; prev</a>
+              <a href="#" onclick="webnav(0);return false">? random</a>
+              <a href="#" onclick="webnav(1);return false">next &raquo;</a>
+            </div>
+            <div class="dim" style="margin-top:6px;font-size:9px" id="ringnote">node 004 of 019 &mdash; you are here</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- GUESTBOOK -->
+      <section class="panel bevel-out" id="p-gb" data-sec="gb">
+        <div class="panel-h"><span>guestbook.sav</span><span class="tag" id="gbcount">0 blocks</span></div>
+        <div class="panel-b">
+          <h2 class="sec">leave a save block</h2>
+          <p class="lead">write to the card. blocks live in memory for this visit only &mdash; wire them
+          to your own backend when you ship.</p>
+          <form class="gb-form" id="gbform" autocomplete="off">
+            <label for="gbname">handle</label>
+            <input id="gbname" maxlength="20" placeholder="who goes there">
+            <label for="gbmsg">message</label>
+            <textarea id="gbmsg" maxlength="140" rows="2" placeholder="say something before it rots"></textarea>
+            <button type="submit" class="gb-save">&#9632; save</button>
+          </form>
+          <div class="gb-grid" id="gbgrid"></div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section class="panel bevel-out" id="p-about" data-sec="about">
+        <div class="panel-h"><span>sys.nfo</span><span class="tag">read only</span></div>
+        <div class="panel-b">
+          <h2 class="sec">unit specs</h2>
+          <table class="specs">
+            <tr><td>handle</td><td>[ your name here ]</td></tr>
+            <tr><td>region</td><td>none / free</td></tr>
+            <tr><td>disc id</td><td class="mono">SLUS-00000</td></tr>
+            <tr><td>built with</td><td>raw html, hand-rolled software 3D, zero dependencies</td></tr>
+            <tr><td>integrity</td><td>71%<div class="meter"><i style="width:71%"></i></div></td></tr>
+            <tr><td>mood</td><td>numb / degrading<div class="meter"><i style="width:34%"></i></div></td></tr>
+            <tr><td>uptime</td><td class="mono" id="uptime">00:00:00</td></tr>
+          </table>
+          <div class="hr"></div>
+          <p class="lead">swap this text for your own. the chrome, the relic, the counter, the
+          save-block guestbook and the webring all stay. nothing phones home.</p>
+          <p class="mono dim">&gt; best viewed on a dying crt at 640&times;480 &nbsp; &gt; press START to re-read disc</p>
+        </div>
+      </section>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+
+  <!-- status bar -->
+  <div class="statusbar bevel-in">
+    <span>DISC READS <b id="hits">000000</b></span>
+    <span class="ps">BAUD 00_STREAM</span>
+    <span>SECTOR <span id="sector">0x0000</span></span>
+    <span class="spacer"></span>
+    <span class="dim">DISCROT.PSX &mdash; a numbpilled template &mdash; v1.0</span>
+  </div>
+
+</div><!-- /wrap -->
+</div><!-- /app -->
+
+<script>
+"use strict";
+/* ================================================================
+ *  0. prefs / helpers
+ * ================================================================ */
+var $ = function(s,r){return (r||document).querySelector(s);};
+var $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s));};
+var REDUCED = window.matchMedia && matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+/* pixel-glyph save-icon generator -> inline SVG (crisp, offline) */
+function glyph(cells, fg, bg){
+  // cells: array of 8 strings length 8, '1' = fg
+  var r = '<svg viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">';
+  r += '<rect width="8" height="8" fill="'+(bg||'#070810')+'"/>';
+  for(var y=0;y<8;y++){ for(var x=0;x<8;x++){ if(cells[y][x]==='1'){ r+='<rect x="'+x+'" y="'+y+'" width="1" height="1" fill="'+fg+'"/>'; } } }
+  return r+'</svg>';
+}
+var G = {
+  home:  ['00000000','00111100','01000010','01000010','01111110','01011010','01011010','00000000'],
+  works: ['00000000','00111100','00100100','00111100','00100100','00111100','00000000','00000000'],
+  log:   ['00000000','01111110','00000000','01111110','00000000','01111100','00000000','00000000'],
+  links: ['00011000','00100100','01000010','00011000','00011000','01000010','00100100','00011000'],
+  gb:    ['00000000','01111110','01000010','01011010','01000010','01111110','00011000','00000000'],
+  about: ['00011000','00011000','00000000','00011000','00011000','00011000','00011000','00000000'],
+  skull: ['00111100','01111110','11011011','11111111','01111110','01011010','00100100','00000000']
+};
+
+/* ================================================================
+ *  1. nav / memory-card menu
+ * ================================================================ */
+var SECTIONS = [
+  {id:'home', nm:'home',       bk:'1 block',  g:G.home},
+  {id:'works',nm:'works',      bk:'6 blocks', g:G.works},
+  {id:'log',  nm:'log',        bk:'3 blocks', g:G.log},
+  {id:'links',nm:'links',      bk:'1 block',  g:G.links},
+  {id:'gb',   nm:'guestbook',  bk:'? blocks', g:G.gb},
+  {id:'about',nm:'sys.nfo',    bk:'1 block',  g:G.about}
+];
+(function buildNav(){
+  var nav = $('#nav'), free = $('#freeblocks');
+  SECTIONS.forEach(function(s){
+    var el = document.createElement('div');
+    el.className = 'card'+(s.id==='home'?' active':'');
+    el.setAttribute('data-go', s.id);
+    el.innerHTML = '<div class="ic">'+glyph(s.g, s.id==='gb'?'#c01430':'#5b82c4')+'</div>'+
+      '<div class="meta"><div class="nm">'+s.nm+'</div><div class="bk">'+s.bk+'</div></div>';
+    nav.insertBefore(el, free);
+    el.addEventListener('click', function(){ go(s.id); });
+  });
+})();
+function go(id){
+  $$('.card').forEach(function(c){ c.classList.toggle('active', c.getAttribute('data-go')===id); });
+  $$('.panel').forEach(function(p){ p.classList.toggle('active', p.getAttribute('data-sec')===id); });
+  ENGINE.running = (id==='home');
+  if(id==='home' && !REDUCED) ENGINE.kick();
+  // blip on select
+  $('#sector').textContent = '0x'+(Math.floor(Math.random()*65535)).toString(16).toUpperCase().padStart(4,'0');
+}
+
+/* ================================================================
+ *  2. SOFTWARE 3D RASTERIZER  (from scratch — PS1 flavour)
+ *     flat-shaded, painter-sorted, vertex-snapped, affine wobble
+ * ================================================================ */
+var ENGINE = (function(){
+  var cv = $('#relic'), g = cv.getContext('2d');
+  var W = cv.width, H = cv.height;
+  var running = true, started = false;
+
+  // ---- geometry: icosahedron, subdivided once, then displaced ----
+  function buildIco(){
+    var t=(1+Math.sqrt(5))/2;
+    var v=[[-1,t,0],[1,t,0],[-1,-t,0],[1,-t,0],[0,-1,t],[0,1,t],
+           [0,-1,-t],[0,1,-t],[t,0,-1],[t,0,1],[-t,0,-1],[-t,0,1]];
+    var f=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],
+           [11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],
+           [3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
+    return {v:v.map(norm), f:f};
+  }
+  function norm(p){var l=Math.hypot(p[0],p[1],p[2])||1;return [p[0]/l,p[1]/l,p[2]/l];}
+  function subdiv(m){
+    var cache={}, nv=m.v.slice(), nf=[];
+    function mid(a,b){
+      var k=a<b?a+'_'+b:b+'_'+a;
+      if(cache[k]!=null)return cache[k];
+      var pa=nv[a],pb=nv[b];
+      var p=norm([(pa[0]+pb[0])/2,(pa[1]+pb[1])/2,(pa[2]+pb[2])/2]);
+      nv.push(p); return cache[k]=nv.length-1;
+    }
+    m.f.forEach(function(t){
+      var a=mid(t[0],t[1]),b=mid(t[1],t[2]),c=mid(t[2],t[0]);
+      nf.push([t[0],a,c],[t[1],b,a],[t[2],c,b],[a,b,c]);
+    });
+    return {v:nv,f:nf};
+  }
+  // deterministic hash noise so the relic is stable each load
+  function hash3(x,y,z){
+    var n=Math.sin(x*127.1+y*311.7+z*74.7)*43758.5453; return n-Math.floor(n);
+  }
+  // three displacement "models" sharing one topology
+  function makeModel(kind){
+    var m = subdiv(buildIco());               // 42 verts / 80 faces
+    var V = m.v.map(function(p,i){
+      var h = hash3(p[0]*2.3+kind*9, p[1]*2.3-kind*4, p[2]*2.3+kind*2);
+      var r;
+      if(kind===0){ r = 0.78 + h*0.34; }                       // relic: rough stone
+      else if(kind===1){ r = 0.6 + Math.pow(h,0.5)*0.9 + Math.abs(p[1])*0.5; } // shard: spiky/elongated
+      else { r = 0.82 + h*0.2 + (p[1]>0.2?0.35:0) - (Math.abs(p[0])>0.6?0.2:0);} // idol: topheavy lump
+      var s = (kind===1)?[1,1.55,1]:[1,1,1];
+      return [p[0]*r*s[0], p[1]*r*s[1], p[2]*r*s[2]];
+    });
+    // normalise to unit max-radius so every model frames identically
+    var mx=0; V.forEach(function(p){var d=Math.hypot(p[0],p[1],p[2]); if(d>mx)mx=d;});
+    mx=mx||1; V=V.map(function(p){return [p[0]/mx,p[1]/mx,p[2]/mx];});
+    return {v:V, f:m.f};
+  }
+  var MODELS=[makeModel(0),makeModel(1),makeModel(2)];
+  var model=MODELS[0], polyN=model.f.length;
+
+  // ---- shading ramp: cold bone with red rot in the recesses ----
+  // five bands, index 0 = darkest
+  var RAMP = ['#15131a','#33303e','#5a5566','#8a8496','#c6c2d2'];
+  var ROT  = ['#2a0a12','#5e0f1d','#8a1326','#c01430','#ff2d48'];
+
+  var rotX=-0.35, rotY=0.6, velY=0.012, velX=0, dragging=false, lx=0, ly=0;
+  var light=norm([0.45,0.72,0.55]);
+  var SNAP = 1;        // vertex snap step (px) — PS1 wobble
+  var rotAmt = 0;      // disc-rot corruption 0..1 (spikes during glitch)
+
+  function setModel(i){ model=MODELS[i]; polyN=model.f.length; $('#r-poly').textContent=polyN; }
+
+  // rotate helper
+  function rot(p){
+    var cy=Math.cos(rotY),sy=Math.sin(rotY),cx=Math.cos(rotX),sx=Math.sin(rotX);
+    var x=p[0]*cy - p[2]*sy, z=p[0]*sy + p[2]*cy, y=p[1];
+    var y2=y*cx - z*sx, z2=y*sx + z*cx;
+    return [x,y2,z2];
+  }
+
+  // frame counters
+  var fcount=0, flast=performance.now(), fps=0;
+
+  function draw(){
+    // clear to deep console black w/ faint grid floor
+    g.fillStyle='#04050a'; g.fillRect(0,0,W,H);
+    // faint ground reflection band
+    var grd=g.createLinearGradient(0,H*0.62,0,H);
+    grd.addColorStop(0,'rgba(60,80,140,0)'); grd.addColorStop(1,'rgba(40,55,100,0.10)');
+    g.fillStyle=grd; g.fillRect(0,H*0.62,W,H*0.38);
+
+    var cx=W/2, cy=H/2, focal=W*1.30, zcam=3.25;
+    var V=model.v, F=model.f;
+    // transform verts
+    var tv=new Array(V.length), sv=new Array(V.length);
+    for(var i=0;i<V.length;i++){
+      var r=rot(V[i]);
+      // disc-rot: random per-vertex displacement spike
+      if(rotAmt>0){
+        var h=hash3(r[0]*50+fcount, r[1]*50, r[2]*50+fcount);
+        var d=(h-0.5)*rotAmt*1.1;
+        r=[r[0]+d, r[1]+d*0.7, r[2]+d];
+      }
+      tv[i]=r;
+      var z=r[2]+zcam;
+      var s=focal/(z<0.2?0.2:z);
+      var sx=cx+r[0]*s, sy=cy-r[1]*s;
+      // PS1 vertex snap -> integer-ish grid (affine wobble origin)
+      sx=Math.round(sx/SNAP)*SNAP; sy=Math.round(sy/SNAP)*SNAP;
+      sv[i]=[sx,sy,z];
+    }
+    // build face list with depth + lighting
+    var list=[];
+    for(var fi=0;fi<F.length;fi++){
+      var a=tv[F[fi][0]], b=tv[F[fi][1]], c=tv[F[fi][2]];
+      // face normal (view space)
+      var ux=b[0]-a[0],uy=b[1]-a[1],uz=b[2]-a[2];
+      var vx=c[0]-a[0],vy=c[1]-a[1],vz=c[2]-a[2];
+      var nx=uy*vz-uz*vy, ny=uz*vx-ux*vz, nz=ux*vy-uy*vx;
+      var nl=Math.hypot(nx,ny,nz)||1; nx/=nl;ny/=nl;nz/=nl;
+      // backface cull (normal facing +z toward camera after our projection sign)
+      var zc=(a[2]+b[2]+c[2])/3;
+      // view dir ~ (0,0,-1) toward screen; keep faces whose normal.z<0 (facing us)
+      if(nz>0.02) continue;
+      var lint=nx*light[0]+ny*light[1]+nz*light[2];
+      lint=(lint*0.5+0.5);                    // 0..1
+      list.push({i:fi, z:zc, l:lint, nz:nz});
+    }
+    // painter: far first (larger z = farther because +zcam)
+    list.sort(function(p,q){return q.z-p.z;});
+
+    for(var li=0;li<list.length;li++){
+      var it=list[li], ff=F[it.i];
+      var p0=sv[ff[0]],p1=sv[ff[1]],p2=sv[ff[2]];
+      // banded light index
+      var bi=Math.max(0,Math.min(4,Math.floor(it.l*5)));
+      // rim recesses & rot get red; faces near grazing or during glitch
+      var useRot = (it.l<0.34) || (rotAmt>0 && hash3(it.i,fcount,0)<rotAmt*0.9);
+      var col = useRot ? ROT[Math.max(0,Math.min(4,bi+ (rotAmt>0?1:0)))] : RAMP[bi];
+      g.fillStyle=col;
+      g.beginPath();
+      g.moveTo(p0[0],p0[1]); g.lineTo(p1[0],p1[1]); g.lineTo(p2[0],p2[1]); g.closePath();
+      g.fill();
+      // 1px facet seam, same colour darkened — keeps the low-poly read crisp
+      g.strokeStyle='rgba(0,0,0,0.35)'; g.lineWidth=1; g.stroke();
+    }
+
+    // affine-ish dither: ordered 2x2 darkening on alternating rows (cheap, static)
+    // drawn as a sparse overlay so it reads as texture warp without per-pixel cost
+    g.globalAlpha=0.08; g.fillStyle='#000';
+    for(var yy=0;yy<H;yy+=3){ g.fillRect(0,yy,W,1); }
+    g.globalAlpha=1;
+
+    // vram readout drifts with poly + a little rot
+    $('#r-vram').textContent = (polyN*7 + Math.floor(Math.sin(fcount*0.05)*40+512)).toString();
+
+    fcount++;
+  }
+
+  function loop(now){
+    if(!running){ return; }
+    // physics
+    if(!dragging){ rotY+=velY; rotX+=velX*0.3; velX*=0.94; }
+    // ease rot corruption back down
+    if(rotAmt>0){ rotAmt*=0.86; if(rotAmt<0.01)rotAmt=0; }
+    draw();
+    // fps (sampled)
+    if(now-flast>=500){ fps=Math.round(fcount*1000/(now-flast)); $('#r-fps').textContent=fps; fcount=0; flast=now; }
+    raf=requestAnimationFrame(loop);
+  }
+  var raf=null;
+  function kick(){ if(REDUCED){ draw(); $('#r-fps').textContent='00'; return; } cancelAnimationFrame(raf); flast=performance.now(); fcount=0; raf=requestAnimationFrame(loop); }
+
+  // ---- pointer drag to rotate ----
+  function down(e){ dragging=true; var p=pt(e); lx=p.x; ly=p.y; e.preventDefault(); }
+  function move(e){ if(!dragging)return; var p=pt(e); velY=(p.x-lx)*0.01; velX=(p.y-ly)*0.01; rotY+=(p.x-lx)*0.01; rotX+=(p.y-ly)*0.01; rotX=Math.max(-1.3,Math.min(1.3,rotX)); lx=p.x; ly=p.y; if(REDUCED)draw(); }
+  function up(){ dragging=false; }
+  function pt(e){ var r=cv.getBoundingClientRect(); var t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left,y:t.clientY-r.top}; }
+  cv.addEventListener('mousedown',down); window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+  cv.addEventListener('touchstart',down,{passive:false}); window.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',up);
+
+  // pause when tab hidden to save battery
+  document.addEventListener('visibilitychange',function(){ if(document.hidden){ cancelAnimationFrame(raf);} else if(running){ kick(); } });
+
+  return {
+    start:function(){ started=true; setModel(0); kick(); },
+    kick:kick,
+    setModel:setModel,
+    corrupt:function(amt){ rotAmt=Math.max(rotAmt,amt); },
+    get running(){return running;}, set running(v){ running=v; if(v)kick(); else cancelAnimationFrame(raf); }
+  };
+})();
+
+/* relic model selector */
+$$('#relicsel .selbtn').forEach(function(b){
+  b.addEventListener('click',function(){
+    $$('#relicsel .selbtn').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    ENGINE.setModel(parseInt(b.getAttribute('data-m'),10));
+    ENGINE.corrupt(0.25);
+  });
+});
+
+/* ================================================================
+ *  3. disc-rot GLITCH scheduler (screen RGB split + relic corrupt)
+ * ================================================================ */
+function glitch(){
+  if(REDUCED) return;
+  document.body.classList.add('glitch');
+  ENGINE.corrupt(0.6);
+  // scramble the hit counter briefly
+  var hits=$('#hits'), real=hits.textContent;
+  hits.textContent=String(Math.floor(Math.random()*1e6)).padStart(6,'0');
+  setTimeout(function(){ document.body.classList.remove('glitch'); hits.textContent=real; }, 260);
+}
+function scheduleGlitch(){
+  var t = 5200 + Math.random()*8000;
+  setTimeout(function(){ glitch(); scheduleGlitch(); }, t);
+}
+
+/* ================================================================
+ *  4. content injection: works / log / buttons
+ * ================================================================ */
+var WORKS=[
+  {t:'HOLLOW.EXE',d:'1998 / ambient sim'},
+  {t:'VEIN GARDEN',d:'2001 / net.art'},
+  {t:'LOW TIDE',d:'1999 / demo'},
+  {t:'ROT FIELD',d:'2000 / toy'},
+  {t:'NUMB 01',d:'2002 / mix'},
+  {t:'LAST READ',d:'???? / corrupt'}
+];
+(function(){
+  var g=$('#discgrid');
+  WORKS.forEach(function(w){
+    var pct=20+Math.floor(Math.random()*80);
+    var el=document.createElement('div'); el.className='jewel';
+    el.innerHTML='<div class="cd"></div><div class="t">'+w.t+'</div><div class="d">'+w.d+'</div>'+
+      '<div class="bar"><i style="width:'+pct+'%"></i></div>';
+    el.addEventListener('click',function(){ ENGINE.corrupt(0.3); });
+    g.appendChild(el);
+  });
+})();
+
+var LOGS=[
+  {dt:'2002.11.04',ti:'the counter lies',b:'noticed the disc-read counter resets when you are not looking. left it in. it is more honest about memory than a real number would be.'},
+  {dt:'2002.10.19',ti:'relic rebuilt',b:'rewrote the viewer. it is a full software rasteriser now — no library. snaps every vertex to the pixel grid so it wobbles the way the old hardware did. runs offline forever.'},
+  {dt:'2002.09.30',ti:'first press',b:'put the shell online. six discs in the archive, most of them half-gone. that is the point.'}
+];
+(function(){
+  var b=$('#logbody');
+  LOGS.forEach(function(l){
+    var e=document.createElement('div'); e.className='logentry';
+    e.innerHTML='<div class="dt">'+l.dt+'</div><div class="ti">'+l.ti+'</div><p>'+l.b+'</p>';
+    b.appendChild(e);
+  });
+})();
+
+(function(){
+  var wrap=$('#btn88');
+  var bs=[
+    {t:'DISCROT',a:'#c01430',b:'#1a0208'},
+    {t:'ROT RING',a:'#5b82c4',b:'#0a1020'},
+    {t:'NO SIGNAL',a:'#c6c2d2',b:'#111'},
+    {t:'MEM CARD OK',a:'#8fd6a0',b:'#06160c'},
+    {t:'640x480',a:'#ffb000',b:'#140d00'},
+    {t:'NUMBPILLED',a:'#ff2d48',b:'#120208'}
+  ];
+  bs.forEach(function(x){
+    var e=document.createElement('div'); e.className='b88';
+    e.style.background='linear-gradient(135deg,'+x.b+','+x.a+'22)';
+    e.style.color=x.a; e.style.boxShadow='0 0 0 1px #05060c, inset 0 0 0 1px '+x.a+'55';
+    e.textContent=x.t;
+    e.addEventListener('click',function(){ENGINE.corrupt(0.25);});
+    wrap.appendChild(e);
+  });
+})();
+
+/* webring */
+var RINGNODE=4;
+function webnav(dir){
+  if(dir===0){ RINGNODE=1+Math.floor(Math.random()*19); }
+  else { RINGNODE+=dir; if(RINGNODE<1)RINGNODE=19; if(RINGNODE>19)RINGNODE=1; }
+  $('#ringnote').textContent='node '+String(RINGNODE).padStart(3,'0')+' of 019 — you are here';
+  ENGINE.corrupt(0.3);
+}
+
+/* ================================================================
+ *  5. guestbook (in-memory save blocks)
+ * ================================================================ */
+var GB=[
+  {who:'anon',msg:'found this through the ring. the relic made my fan spin. worth it.'},
+  {who:'static_ghost',msg:'block 3 is corrupting. do not fix it.'},
+  {who:'m',msg:'i was here before it rotted.'}
+];
+function renderGB(){
+  var grid=$('#gbgrid'); grid.innerHTML='';
+  GB.forEach(function(e,i){
+    var el=document.createElement('div'); el.className='saveblock';
+    el.innerHTML='<div class="ic">'+glyph(G.skull,'#c01430')+'</div>'+
+      '<div class="who">'+esc(e.who)+'</div><div class="msg">'+esc(e.msg)+'</div>'+
+      '<div class="bk">'+String(i+1).padStart(2,'0')+'/15</div>';
+    grid.appendChild(el);
+  });
+  $('#gbcount').textContent=GB.length+' blocks';
+}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+$('#gbform').addEventListener('submit',function(e){
+  e.preventDefault();
+  var n=$('#gbname').value.trim()||'anon', m=$('#gbmsg').value.trim();
+  if(!m)return;
+  GB.unshift({who:n,msg:m}); renderGB();
+  $('#gbname').value=''; $('#gbmsg').value='';
+  ENGINE.corrupt(0.4);
+});
+renderGB();
+
+/* ================================================================
+ *  6. clock / uptime / hit counter / sector
+ * ================================================================ */
+var START=Date.now(), HITS=142;
+function two(n){return String(n).padStart(2,'0');}
+function tick(){
+  var d=new Date();
+  $('#clock').textContent=two(d.getHours())+':'+two(d.getMinutes())+':'+two(d.getSeconds());
+  var up=Math.floor((Date.now()-START)/1000);
+  $('#uptime').textContent=two(Math.floor(up/3600))+':'+two(Math.floor(up/60)%60)+':'+two(up%60);
+}
+setInterval(tick,1000); tick();
+// hit counter creeps up
+$('#hits').textContent=String(HITS).padStart(6,'0');
+setInterval(function(){ HITS+=Math.floor(Math.random()*2); $('#hits').textContent=String(HITS).padStart(6,'0'); if(Math.random()<0.15)ENGINE.corrupt(0.2); }, 4200);
+
+/* ================================================================
+ *  7. BOOT sequence controller
+ * ================================================================ */
+(function boot(){
+  var read=$('#bootread'), fill=$('#bootfill'), start=$('#bootstart'), disc=$('#bootdisc');
+  var lines=[
+    {t:'detecting optical unit ....',p:8},
+    {t:'spinning up disc ...',p:20},
+    {t:'reading TOC ....',p:38},
+    {t:'MEMORY CARD (slot 1): OK',p:55},
+    {t:'verifying data blocks ...',p:74},
+    {t:'<span class="err">! disc rot detected in sector 0x3A</span>',p:88},
+    {t:'mounting anyway ...',p:100}
+  ];
+  var i=0, done=false;
+  function step(){
+    if(done)return;
+    if(i>=lines.length){ finishLoad(); return; }
+    read.innerHTML=lines[i].t;
+    fill.style.width=lines[i].p+'%';
+    if(i===5){ disc.classList.add('rot'); }
+    i++;
+    setTimeout(step, 480+Math.random()*260);
+  }
+  function finishLoad(){
+    read.innerHTML='<span class="err">press start to read disc</span>';
+    start.classList.add('show');
+    // fallback auto-enter so an unattended preview is never stuck
+    autoTimer=setTimeout(enter, 7000);
+  }
+  var autoTimer=null, entered=false;
+  function enter(){
+    if(entered)return; entered=true; clearTimeout(autoTimer);
+    $('#boot').classList.add('gone');
+    var app=$('#app'); app.classList.add('live');
+    ENGINE.start();
+    if(!REDUCED) scheduleGlitch();
+    setTimeout(function(){ var b=$('#boot'); if(b&&b.parentNode)b.parentNode.removeChild(b); },600);
+  }
+  // start sequence after power-on flash
+  if(REDUCED){
+    // skip the slow crawl for reduced-motion, show start immediately
+    fill.style.width='100%'; read.innerHTML='<span class="err">press start to read disc</span>'; start.classList.add('show');
+    autoTimer=setTimeout(enter,1200);
+  } else {
+    setTimeout(step, 900);
+  }
+  start.addEventListener('click',enter);
+  $('#bootskip').addEventListener('click',enter);
+  document.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ if(!entered) enter(); } });
+})();
+
+/* init readouts */
+$('#r-poly').textContent='80';
+</script>
+</body>
+</html>
