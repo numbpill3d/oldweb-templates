@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numbpilled Neocities</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background-color: #000;
+            color: #0f0;
+            height: 100%;
+        }
+        #container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: 3em;
+            font-family: 'Times New Roman', serif;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin: 0;
+            text-shadow: 0 0 10px #0f0;
+        }
+        #content {
+            flex-grow: 1;
+            border: 2px solid #0f0;
+            padding: 20px;
+            background-color: rgba(0, 20, 0, 0.8);
+            overflow-y: auto;
+        }
+        #terminal {
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        #interactive-area {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+        .button {
+            background-color: #0f0;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .button:hover {
+            background-color: #000;
+            color: #0f0;
+            box-shadow: 0 0 10px #0f0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8em;
+        }
+        a {
+            color: #0ff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <header>
+            <h1>ETHEREAL MIRE</h1>
+        </header>
+        <div id="content">
+            <div id="terminal"></div>
+            <div id="interactive-area">
+                <button class="button" onclick="changeTheme()">Change Theme</button>
+                <button class="button" onclick="generateQuote()">Generate Quote</button>
+                <button class="button" onclick="toggleGlitch()">Toggle Glitch</button>
+            </div>
+        </div>
+        <footer>
+            <a href="#">About</a> | 
+            <a href="#">Archive</a> | 
+            <a href="#">Contact</a>
+        </footer>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const messages = [
+            "Welcome to the technodystopian realm...",
+            "Where medieval magic meets futuristic despair",
+            "Embrace the darkness of the digital age",
+            "Y2K aesthetics collide with elder scrolls lore",
+            "Online cowboys roam the wastelands of cyberspace",
+            "Brutalist structures loom in the virtual horizon",
+            "Hack the mainframe, uncover forgotten knowledge",
+            "In this realm, emo isn't just a phase... it's eternal",
+            "Morrowind's mysteries echo through the net",
+            "Oblivion's gates open to dark digital dimensions"
+        ];
+
+        let index = 0;
+        function typeMessage() {
+            if (index < messages.length) {
+                terminal.textContent += messages[index] + '\n\n';
+                index++;
+                setTimeout(typeMessage, 100);
+            }
+        }
+
+        typeMessage();
+
+        function changeTheme() {
+            const colors = ['#0f0', '#f00', '#00f', '#ff0', '#f0f'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            document.body.style.color = randomColor;
+            document.querySelectorAll('.button').forEach(button => {
+                button.style.backgroundColor = randomColor;
+                button.style.color = '#000';
+            });
+        }
+
+        function generateQuote() {
+            const quotes = [
+                "The future is dark and full of errors.",
+                "In cyberspace, no one can hear you scream.",
+                "Hack the planet, but mind the firewalls.",
+                "Reality is just a consensual hallucination.",
+                "The old web never dies, it just gets buried deeper."
+            ];
+            const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+            terminal.textContent += randomQuote + '\n\n';
+        }
+
+        let glitchInterval;
+        function toggleGlitch() {
+            if (glitchInterval) {
+                clearInterval(glitchInterval);
+                glitchInterval = null;
+                document.body.style.textShadow = 'none';
+            } else {
+                glitchInterval = setInterval(() => {
+                    const x = Math.random() * 5;
+                    const y = Math.random() * 5;
+                    document.body.style.textShadow = `${x}px ${y}px #f00, ${-x}px ${-y}px #0ff`;
+                    setTimeout(() => {
+                        document.body.style.textShadow = 'none';
+                    }, 50);
+                }, 250);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>𝖘𝖜𝖆𝖒𝖕𝖜𝖎𝖙𝖈𝖍</title>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body{background:#0d0d05;margin:0 auto;color:#c0ff02;font-family:'VT323',monospace;font-size:17px;
+  background-image:
+    repeating-linear-gradient(0deg,rgba(149,149,0,.05) 0 1px,transparent 1px 3px),
+    url("https://i.ibb.co/3Ym6qHw1/1.gif"),
+    radial-gradient(ellipse at 30% 0%,#2a2a05 0%,#0d0d05 60%);
+  background-repeat:repeat;background-attachment:fixed;image-rendering:pixelated}
+a{color:#c0ff02}
+::-webkit-scrollbar{width:12px}
+::-webkit-scrollbar-track{background:#0d0d05;border-left:1px solid #505000}
+::-webkit-scrollbar-thumb{background:#505000;border:1px solid #959500}
+::-webkit-scrollbar-thumb:hover{background:#959500}
+
+/* ---- rainbow / sick text animations ---- */
+@keyframes rot{0%{filter:hue-rotate(0)}100%{filter:hue-rotate(360deg)}}
+.rainbowslow{animation:rot 9s linear infinite}
+@keyframes glowpulse{0%,100%{text-shadow:0 0 3px #959500,0 0 8px #5f4000}50%{text-shadow:0 0 8px #c0ff02,0 0 22px #959500}}
+@keyframes wobble{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2deg)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes flick{0%,92%,100%{opacity:1}94%{opacity:.35}96%{opacity:.85}}
+@keyframes creep{0%{background-position:0 0}100%{background-position:0 -60px}}
+
+/* ---- layout: 800 total = 105 fixed sidebar + 600 float right ---- */
+#page{margin:0 auto;width:800px;margin-top:36px;padding-bottom:80px}
+#side{width:105px;float:left;position:fixed;text-align:center}
+#side .lairbox{width:105px;border:1px solid #959500;background:#171705;padding:2px 0;
+  box-shadow:0 0 0 3px #0d0d05, 0 0 0 4px #505000}
+#side .lairbox h2{font-family:'Silkscreen';font-size:8px;letter-spacing:.05em;color:#c0ff02;margin:4px 0;line-height:1.5;
+  animation:glowpulse 3s ease-in-out infinite}
+#side .menu{margin-top:9px}
+#side .menu h2{font-family:'VT323';font-size:19px;margin:0;line-height:1.1;color:#a16c00;letter-spacing:.04em}
+#side .menu h2 a{color:inherit;text-decoration:none;display:block;padding:1px 0}
+#side .menu h2 a:hover{color:#0d0d05;background:#c0ff02}
+#side .menu h2.here{color:#c0ff02;animation:rot 9s linear infinite}
+#side .hr{margin:0 auto;width:105px;background:#505000;height:1px}
+#side .relic{margin-top:12px;font-size:11px;font-family:'Silkscreen';color:#5f4000;line-height:1.9}
+#side .toad{margin-top:10px;animation:bob 2.6s ease-in-out infinite;cursor:help}
+
+/* ---- main column ---- */
+#main{width:600px;float:right;text-align:center}
+.saturate{filter:saturate(140%) contrast(105%)}
+
+/* blinkie parade marquee */
+.parade{width:600px;overflow:hidden;border-top:1px solid #505000;border-bottom:1px solid #505000;
+  background:#131305;padding:3px 0;margin-bottom:8px}
+.parade-track{display:inline-flex;gap:6px;white-space:nowrap;animation:slide 26s linear infinite}
+@keyframes slide{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.blink{font-family:'Silkscreen';font-size:8px;line-height:1;padding:5px 6px;border:1px solid #000;
+  display:inline-block;letter-spacing:.02em;animation:flick 4s steps(1) infinite}
+.b1{background:#959500;color:#0d0d05}.b2{background:#5f4000;color:#c0ff02}
+.b3{background:#c0ff02;color:#0d0d05}.b4{background:#0d0d05;color:#959500;border-color:#959500}
+.b5{background:#a16c00;color:#0d0d05}
+
+/* title slab */
+.slab{border:1px solid #959500;background:#12120a;padding:10px 0 12px;position:relative;
+  box-shadow:inset 0 0 40px #000, 0 0 0 3px #0d0d05, 0 0 0 4px #505000}
+.slab h1{margin:0;font-family:'VT323';font-size:66px;line-height:.85;letter-spacing:.02em;color:#c0ff02;
+  text-shadow:3px 3px 0 #5f4000, 6px 6px 0 #2a2a05;animation:glowpulse 4s ease-in-out infinite}
+.slab .sub{font-family:'Silkscreen';font-size:8px;color:#a16c00;letter-spacing:.28em;margin-top:6px}
+/* stickers slapped on at angles */
+.sticker{position:absolute;font-family:'Silkscreen';font-size:8px;padding:3px 5px;border:1px solid #000;
+  line-height:1.4;text-align:center;z-index:5}
+.s1{top:-11px;left:-16px;transform:rotate(-14deg);background:#c0ff02;color:#0d0d05}
+.s2{top:-9px;right:-20px;transform:rotate(11deg);background:#5f4000;color:#c0ff02;border-color:#959500}
+.s3{bottom:-12px;right:16px;transform:rotate(-7deg);background:#959500;color:#0d0d05}
+.s4{bottom:-10px;left:-14px;transform:rotate(6deg);background:#0d0d05;color:#959500;border-color:#959500}
+
+/* content boxes */
+.box{border:1px solid #505000;background:#111105;margin-top:14px;text-align:left;position:relative;
+  box-shadow:inset 0 0 30px #000}
+.box>.bh{background:#5f4000;color:#c0ff02;font-family:'Silkscreen';font-size:8px;letter-spacing:.18em;
+  padding:4px 8px;border-bottom:1px solid #959500;display:flex;justify-content:space-between}
+.box>.bc{padding:12px 14px;line-height:1.55;color:#d8e88a}
+.box>.bc p{margin:0 0 9px}
+
+/* the dither/mud texture band */
+.mud{height:26px;margin-top:14px;border:1px solid #505000;
+  background-image:repeating-linear-gradient(45deg,#2a2a05 0 3px,#171705 3px 6px,#3a2a05 6px 9px);
+  animation:creep 5s linear infinite;background-size:auto 60px}
+
+/* shrine grid of self-drawn sigil tiles */
+.shrine{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid #505000}
+.stile{border:1px solid #2a2a05;background:#0f0f05;padding:8px 4px;text-align:center;cursor:pointer;
+  transition:background 120ms}
+.stile:hover{background:#1c1c08}
+.stile svg{display:block;margin:0 auto 5px}
+.stile .nm{font-family:'Silkscreen';font-size:7px;color:#a16c00;letter-spacing:.06em;line-height:1.6}
+.stile:hover .nm{color:#c0ff02}
+.stile:hover svg{animation:wobble .6s ease-in-out infinite}
+#say{border-top:1px solid #505000;padding:10px 12px;font-size:17px;color:#c0ff02;min-height:40px;background:#0a0a03}
+
+/* log rows */
+.log{max-height:210px;overflow-y:auto;padding:0 4px}
+.lr{border-bottom:1px dashed #2a2a05;padding:6px 8px}
+.lr:hover{background:#1a1a08;border-left:2px solid #c0ff02}
+.lr .d{font-family:'Silkscreen';font-size:7px;color:#5f4000;letter-spacing:.1em}
+.lr .t{color:#c0ff02}
+.lr .x{color:#8a9a4a;font-size:16px}
+
+/* jar / potion meters */
+.jars{display:flex;gap:8px;padding:12px}
+.jar{flex:1;text-align:center}
+.jar .glass{height:52px;border:1px solid #959500;background:#0a0a03;position:relative;overflow:hidden}
+.jar .fill{position:absolute;bottom:0;left:0;right:0;background:#5f4000;
+  background-image:repeating-linear-gradient(0deg,#a16c00 0 2px,#5f4000 2px 4px);animation:slosh 4s ease-in-out infinite}
+@keyframes slosh{0%,100%{height:38%}50%{height:62%}}
+.jar .lb{font-family:'Silkscreen';font-size:7px;color:#a16c00;margin-top:4px;letter-spacing:.08em}
+
+/* buttons wall */
+.wall{display:flex;flex-wrap:wrap;gap:5px;padding:12px;justify-content:center}
+.wall img{width:88px;height:31px;border:1px solid #000;image-rendering:pixelated;cursor:pointer;
+  transition:transform 120ms,box-shadow 120ms}
+.wall img:hover{transform:scale(1.14) rotate(-3deg);box-shadow:0 0 0 2px #c0ff02,0 3px 10px #000;z-index:5;position:relative}
+.btn88{width:88px;height:31px;border:1px solid #000;display:flex;align-items:center;justify-content:center;
+  text-align:center;font-family:'Silkscreen';font-size:7px;line-height:1.45;cursor:pointer}
+.btn88:hover{transform:scale(1.09) rotate(-3deg)}
+/* decor gif placement */
+.decor{position:absolute;pointer-events:none;image-rendering:pixelated;z-index:6}
+.gifrow{display:flex;justify-content:center;align-items:center;gap:10px;padding:8px 0;flex-wrap:wrap}
+.gifrow img{image-rendering:pixelated}
+.bannerbar{width:600px;overflow:hidden;border:1px solid #505000;background:#0a0a03;margin-top:14px;padding:4px 0}
+.bannerbar .btrack{display:inline-flex;gap:14px;white-space:nowrap;align-items:center;animation:slide 40s linear infinite}
+.bannerbar img{height:56px;border:1px solid #2a2a05}
+footer{clear:both;text-align:center;font-family:'Silkscreen';font-size:7px;color:#5f4000;letter-spacing:.2em;
+  padding-top:26px;line-height:2.2}
+.crt{position:fixed;inset:0;pointer-events:none;z-index:999;
+  background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(0,0,0,.14) 2px 4px)}
+.crt::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.6))}
+</style>
+</head>
+<body>
+<div class="crt"></div>
+<div id="page">
+
+<!-- ============ 105px FIXED SIDEBAR ============ -->
+<div id="side">
+  <div class="lairbox"><h2>ENTER<br>THE BOG</h2></div>
+  <div class="menu">
+    <h2 class="here rainbowslow">Home</h2>
+    <div class="hr"></div>
+    <h2><a href="#mire">Mire</a></h2>
+    <div class="hr"></div>
+    <h2><a href="#shrine">Shrine</a></h2>
+    <div class="hr"></div>
+    <h2><a href="#brews">Brews</a></h2>
+    <div class="hr"></div>
+    <h2><a href="#logbook">Logbook</a></h2>
+    <div class="hr"></div>
+    <h2><a href="#buttons">Buttons</a></h2>
+    <div class="hr"></div>
+    <h2><a href="#nothing">??????</a></h2>
+    <div class="hr"></div>
+    <h2><a href="#mire">Toadmail</a></h2>
+  </div>
+  <div class="toad">
+    <svg width="42" height="34" viewBox="0 0 42 34">
+      <ellipse cx="21" cy="23" rx="16" ry="10" fill="#5f4000" stroke="#959500"/>
+      <circle cx="14" cy="13" r="6" fill="#5f4000" stroke="#959500"/>
+      <circle cx="28" cy="13" r="6" fill="#5f4000" stroke="#959500"/>
+      <circle cx="14" cy="12" r="2.4" fill="#c0ff02"><animate attributeName="r" values="2.4;.4;2.4" dur="4s" repeatCount="indefinite"/></circle>
+      <circle cx="28" cy="12" r="2.4" fill="#c0ff02"><animate attributeName="r" values="2.4;.4;2.4" dur="4s" repeatCount="indefinite"/></circle>
+      <path d="M13 25 q8 5 16 0" stroke="#0d0d05" fill="none" stroke-width="2"/>
+      <circle cx="10" cy="26" r="1.5" fill="#959500"/><circle cx="32" cy="27" r="1.5" fill="#959500"/>
+    </svg>
+  </div>
+  <div class="relic">est. 1998<br>hits: 044,301<br>bog depth: 6ft<br><span class="rainbowslow">◈ ◈ ◈</span></div>
+  <div style="margin-top:10px">
+    <img src="https://i.ibb.co/k21BYv8c/tumblr-inline-nqbl6a-VCe-K1ry72eo-100.gif" alt="" style="max-width:92px;image-rendering:pixelated">
+    <img src="https://i.ibb.co/RkKbVyB9/tumblr-llp7fg-J5d61qkvalqo1-100.gif" alt="" style="max-width:92px;margin-top:6px;image-rendering:pixelated">
+  </div>
+</div>
+
+<!-- ============ 600px MAIN COLUMN ============ -->
+<div id="main" class="saturate">
+
+  <!-- blinkie parade -->
+  <div class="parade"><div class="parade-track" id="track"></div></div>
+
+  <!-- title slab with slapped stickers -->
+  <div class="slab">
+    <span class="sticker s1">DO NOT<br>DRINK IT</span>
+    <span class="sticker s2">BOG<br>APPROVED</span>
+    <span class="sticker s3">100% REAL<br>SWAMP GAS</span>
+    <span class="sticker s4">EST.<br>1998</span>
+    <h1>swampwitch</h1>
+    <div class="sub">A WET PAGE FOR A WET WORLD · KEEP YOUR BOOTS ON</div>
+  </div>
+
+  <div class="mud"></div>
+
+  <!-- MIRE / about -->
+  <div class="box" id="mire">
+    <div class="bh"><span>▓ THE MIRE // who is out here</span><span>[ − □ × ]</span></div>
+    <div class="bc">
+      <p>I live at the bottom of a page that keeps flooding. Down here I collect things the water gives back —
+      lost teeth, bottle glass, a car radio that only receives one station, several opinions about mushrooms.</p>
+      <p>This site is a bog. Nothing on it is organized. Everything on it is <span class="rainbowslow" style="color:#c0ff02">preserved</span>,
+      which is different and worse. Sink around. Take a look at the <a href="#shrine">shrine</a> if you want to feel watched.</p>
+      <div class="gifrow" style="padding-top:2px">
+        <img src="https://i.ibb.co/CpCBnXK7/scorn11.png" alt="" style="width:128px;border:1px solid #505000;transform:rotate(-4deg);filter:sepia(.5) hue-rotate(20deg) saturate(1.6) brightness(.85)">
+        <img src="https://i.ibb.co/3mLRnn8C/oblivion.png" alt="" style="width:128px;border:1px solid #505000;transform:rotate(3deg);filter:sepia(.5) hue-rotate(20deg) saturate(1.6) brightness(.85)">
+        <img src="https://i.ibb.co/RkVhJGTL/scorn12.png" alt="" style="width:128px;border:1px solid #505000;transform:rotate(-2deg);filter:sepia(.5) hue-rotate(20deg) saturate(1.6) brightness(.85)">
+      </div>
+      <div class="jars">
+        <div class="jar"><div class="glass"><div class="fill"></div></div><div class="lb">SPITE</div></div>
+        <div class="jar"><div class="glass"><div class="fill" style="animation-delay:-1.4s"></div></div><div class="lb">SILT</div></div>
+        <div class="jar"><div class="glass"><div class="fill" style="animation-delay:-2.6s"></div></div><div class="lb">MOTH DUST</div></div>
+        <div class="jar"><div class="glass"><div class="fill" style="animation-delay:-3.3s"></div></div><div class="lb">REGRET</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHRINE grid -->
+  <div class="box" id="shrine">
+    <div class="bh"><span>▓ THE SHRINE // poke a sigil, it answers</span><span>[ − □ × ]</span></div>
+    <div class="shrine">
+      <div class="stile" data-i="0"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="16" fill="none" stroke="#959500"/><path d="M22 6 L22 38 M6 22 L38 22" stroke="#c0ff02"/><circle cx="22" cy="22" r="5" fill="#5f4000" stroke="#c0ff02"/></svg><div class="nm">THE<br>DROWNED<br>CLOCK</div></div>
+      <div class="stile" data-i="1"><svg width="44" height="44" viewBox="0 0 44 44"><path d="M22 6 L36 34 L8 34 Z" fill="none" stroke="#959500"/><path d="M22 14 L22 26" stroke="#c0ff02" stroke-width="2"/><circle cx="22" cy="30" r="1.8" fill="#c0ff02"/></svg><div class="nm">THE<br>WARNING<br>TOOTH</div></div>
+      <div class="stile" data-i="2"><svg width="44" height="44" viewBox="0 0 44 44"><rect x="9" y="9" width="26" height="26" fill="none" stroke="#959500" transform="rotate(45 22 22)"/><circle cx="22" cy="22" r="3" fill="#c0ff02"/><circle cx="22" cy="22" r="10" fill="none" stroke="#5f4000"/></svg><div class="nm">THE<br>STILL<br>SURFACE</div></div>
+      <div class="stile" data-i="3"><svg width="44" height="44" viewBox="0 0 44 44"><path d="M10 34 Q22 4 34 34" fill="none" stroke="#959500"/><path d="M14 34 Q22 14 30 34" fill="none" stroke="#5f4000"/><circle cx="22" cy="34" r="2" fill="#c0ff02"/></svg><div class="nm">THE<br>ARCH OF<br>REEDS</div></div>
+      <div class="stile" data-i="4"><svg width="44" height="44" viewBox="0 0 44 44"><circle cx="22" cy="22" r="14" fill="none" stroke="#959500" stroke-dasharray="3 3"/><path d="M14 22 L30 22 M22 14 L22 30" stroke="#c0ff02"/><circle cx="30" cy="14" r="2" fill="#a16c00"/></svg><div class="nm">THE<br>LANTERN<br>THAT LIES</div></div>
+      <div class="stile" data-i="5"><svg width="44" height="44" viewBox="0 0 44 44"><path d="M8 22 L22 8 L36 22 L22 36 Z" fill="none" stroke="#959500"/><path d="M22 8 L22 36" stroke="#5f4000"/><path d="M8 22 L36 22" stroke="#c0ff02"/></svg><div class="nm">THE<br>FOUR<br>MOUTHS</div></div>
+      <div class="stile" data-i="6"><svg width="44" height="44" viewBox="0 0 44 44"><ellipse cx="22" cy="22" rx="16" ry="7" fill="none" stroke="#959500"/><ellipse cx="22" cy="22" rx="7" ry="16" fill="none" stroke="#5f4000"/><circle cx="22" cy="22" r="2.5" fill="#c0ff02"/></svg><div class="nm">THE<br>EYE THAT<br>FLOATS</div></div>
+      <div class="stile" data-i="7"><svg width="44" height="44" viewBox="0 0 44 44"><path d="M12 12 L32 32 M32 12 L12 32" stroke="#959500" stroke-width="2"/><circle cx="22" cy="22" r="13" fill="none" stroke="#5f4000" stroke-dasharray="2 4"/></svg><div class="nm">THE<br>UNSENT<br>LETTER</div></div>
+    </div>
+    <div id="say">the bog is quiet. tap a sigil and it will say something unhelpful.</div>
+  </div>
+
+  <!-- BREWS -->
+  <div class="box" id="brews">
+    <div class="bh"><span>▓ BREWS // things currently fermenting</span><span>[ − □ × ]</span></div>
+    <div class="bc">
+      <p>◈ <b style="color:#c0ff02">bottle no. 4</b> — three weeks in. smells like a library. tastes like a decision I regret.</p>
+      <p>◈ <b style="color:#c0ff02">bottle no. 7</b> — hums when the fridge hums. we are not discussing bottle no. 7.</p>
+      <p>◈ <b style="color:#c0ff02">bottle no. 11</b> — clear, still, refuses to freeze. filed under <a href="#nothing">??????</a></p>
+      <p style="color:#8a9a4a;font-size:15px">brewing notes are kept in the <a href="#logbook">logbook</a>. do not read them out loud.</p>
+    </div>
+  </div>
+
+  <!-- LOGBOOK -->
+  <div class="box" id="logbook">
+    <div class="bh"><span>▓ LOGBOOK // wet entries</span><span>[ − □ × ]</span></div>
+    <div class="log">
+      <div class="lr"><span class="d">[ 2026.07.20 ]</span><br><span class="t">the water came up two inches and left a shoe</span><br><span class="x">not my size. not anyone's size. filed it under the porch with the others.</span></div>
+      <div class="lr"><span class="d">[ 2026.07.11 ]</span><br><span class="t">the radio played a song I have not written yet</span><br><span class="x">wrote it down. it's fine. it's a fine song. I don't want it.</span></div>
+      <div class="lr"><span class="d">[ 2026.06.29 ]</span><br><span class="t">counted the frogs. got a different number each time.</span><br><span class="x">14, then 11, then 14 again. the missing three were very polite about it.</span></div>
+      <div class="lr"><span class="d">[ 2026.06.02 ]</span><br><span class="t">found the bottom of the bog</span><br><span class="x">it was a door. left it alone. sent a <a href="#nothing">letter</a> instead.</span></div>
+      <div class="lr"><span class="d">[ 2026.05.18 ]</span><br><span class="t">moths got into the jar labeled MOTH DUST</span><br><span class="x">unclear whether this is a success.</span></div>
+    </div>
+  </div>
+
+  <!-- BUTTONS wall -->
+  <div class="box" id="buttons">
+    <div class="bh"><span>▓ BUTTON WALL // take one, leave one</span><span>[ − □ × ]</span></div>
+    <div class="wall" id="wall"></div>
+    <div style="text-align:center;padding:0 12px 12px;font-family:'Silkscreen';font-size:7px;color:#5f4000;letter-spacing:.14em">
+      RIGHT-CLICK · SAVE · HOTLINK AND THE BOG KNOWS
+    </div>
+  </div>
+
+  <!-- BANNERS -->
+  <div class="bannerbar"><div class="btrack" id="btrack"></div></div>
+
+  <!-- ?????? -->
+  <div class="box" id="nothing">
+    <div class="bh"><span>▓ ??????</span><span>[ − □ × ]</span></div>
+    <div class="bc" style="text-align:center;padding:26px 14px">
+      <p style="font-size:26px;color:#c0ff02" class="rainbowslow">you weren't supposed to click that</p>
+      <p style="color:#8a9a4a">but since you're here: the door at the bottom of the bog is still shut,
+      the shoe is still under the porch, and bottle no. 7 is still humming.</p>
+      <p style="font-family:'Silkscreen';font-size:8px;color:#5f4000;letter-spacing:.2em">GO BACK UP. <a href="#mire">▲</a></p>
+    </div>
+  </div>
+
+  <div class="mud"></div>
+</div>
+
+<footer>
+  SWAMPWITCH · HAND-DUG SINCE 1998 · BEST VIEWED AT 800×600 IN THE DARK<br>
+  <span class="rainbowslow">◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈ ◈</span><br>
+  DO NOT DRINK THE WATER · DO NOT ANSWER THE RADIO
+</footer>
+</div>
+
+<script>
+/* ---- assets ---- */
+const BTN=["https://i.ibb.co/XZb1vJ5G/222.png","https://i.ibb.co/2GZychQ/Augment.png",
+"https://i.ibb.co/qLrkCygM/NUM.png","https://i.ibb.co/B2Q3qMyj/splic.png",
+"https://i.ibb.co/4nbrn1nF/nolove4.png","https://i.ibb.co/SDLXVMSD/gg.png",
+"https://i.ibb.co/rGgHwnqt/dropkit2.png","https://i.ibb.co/Rkfnnk3y/SIGIL.gif",
+"https://i.ibb.co/TB42wkR1/CHAINCODERPRIME.gif","https://i.ibb.co/QjQw5g5K/butterfly.gif",
+"https://i.ibb.co/mrDn1x5Y/DECODEX2.png","https://i.ibb.co/60wfm0jk/aug3.png",
+"https://i.ibb.co/mC1zZZ1F/dropkir.png","https://i.ibb.co/Kjtr7wnz/CHAINCODER444.png",
+"https://i.ibb.co/ynDCj7hZ/aug.png","https://i.ibb.co/4gMwbSQ3/decodex.png"];
+const BANNER=["https://i.ibb.co/pvChyzBy/video-banner.gif","https://i.ibb.co/sdRPNcNB/photoimpact.gif",
+"https://i.ibb.co/j9NnMhn6/photo-banner.gif","https://i.ibb.co/6RWjWWVC/GRIFYQ5-VIOVP7-IZSQ3-MJH2-APBSHAW3-DE.gif",
+"https://i.ibb.co/21h3vbSy/JEI42-C5-TUTIYUM6-KQOZDFNRNVUDU2-RBL.gif","https://i.ibb.co/NgWN2GRc/IHBM22-URCGSEI5-GSS25-FBLLUGKTYAI2-P.gif"];
+document.getElementById('wall').innerHTML=BTN.map(u=>`<img src="${u}" alt="">`).join('');
+let bh='';for(let r=0;r<2;r++)BANNER.forEach(u=>bh+=`<img src="${u}" alt="">`);
+document.getElementById('btrack').innerHTML=bh;
+
+/* blinkie parade — duplicated for seamless loop */
+const list=[["b1","SWAMP<br>GAS ONLY"],["b2","FROG<br>APPROVED"],["b3","WET<br>SITE"],["b4","NO<br>GODS"],
+["b5","BOTTLE<br>NO.7"],["b1","SINK<br>HERE"],["b2","BOG<br>CERTIFIED"],["b3","MOTH<br>DUST"],
+["b4","EST.<br>1998"],["b5","DO NOT<br>DRINK"],["b1","KEEP YOUR<br>BOOTS ON"],["b3","THE DOOR<br>IS SHUT"]];
+const track=document.getElementById('track');
+let html='';for(let r=0;r<2;r++){list.forEach((b,i)=>{
+  html+=`<span class="blink ${b[0]}" style="animation-delay:-${i*.37}s">${b[1]}</span>`})}
+track.innerHTML=html;
+
+/* sigil sayings */
+const says=[
+"THE DROWNED CLOCK — it still keeps time. just not yours. not anymore.",
+"THE WARNING TOOTH — something bit this. something bigger bit that. keep walking.",
+"THE STILL SURFACE — nothing is under it. that is the warning, not the comfort.",
+"THE ARCH OF REEDS — you can walk through. you can't walk back the same width.",
+"THE LANTERN THAT LIES — it is showing you a path. there is no path. there is a lantern.",
+"THE FOUR MOUTHS — they all say your name. only one of them is asking.",
+"THE EYE THAT FLOATS — it has been face-down for years. do not turn it over.",
+"THE UNSENT LETTER — still in the bottle. still addressed to you. still your handwriting."];
+document.querySelectorAll('.stile').forEach(t=>t.addEventListener('click',()=>{
+  document.getElementById('say').textContent=says[+t.dataset.i];
+}));
+</script>
+</body>
+</html>

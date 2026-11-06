@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P Λ R Λ N Ө I Λ . S Y S</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --neon-pink: #ff71ce;
+            --neon-blue: #01cdfe;
+            --neon-purple: #b967ff;
+            --neon-green: #05ffa1;
+            --dark-bg: #1a1a1a;
+            --grid-color: rgba(255, 113, 206, 0.1);
+            --scanline: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'VT323', monospace;
+            text-shadow: 0 0 5px currentColor;
+        }
+
+        body {
+            background: var(--dark-bg);
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            color: var(--neon-pink);
+            display: flex;
+        }
+
+        /* Perspective Grid Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(transparent 0%, rgba(1, 205, 254, 0.2) 2%, transparent 3%),
+                linear-gradient(90deg, transparent 0%, rgba(1, 205, 254, 0.2) 2%, transparent 3%);
+            background-size: 100px 100px;
+            animation: grid-scroll 20s linear infinite;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Scanline Effect */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                var(--scanline),
+                var(--scanline) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            animation: scanline 10s linear infinite;
+            z-index: 999;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: header-glitch 4s infinite;
+            font-size: 2em;
+        }
+
+        .header h1 {
+            color: var(--neon-purple);
+            letter-spacing: 10px;
+            font-size: 3em;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            flex: 1;
+        }
+
+        .terminal {
+            border: 2px solid var(--neon-pink);
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            position: relative;
+            min-height: 300px;
+            box-shadow: 0 0 20px var(--neon-pink);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .terminal:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 30px var(--neon-blue);
+            border-color: var(--neon-blue);
+        }
+
+        .terminal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 25px;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-blue));
+            opacity: 0.3;
+        }
+
+        /* Enhanced Camera Feed */
+        .camera-feed {
+            width: 100%;
+            height: 250px;
+            border: 1px solid var(--neon-blue);
+            position: relative;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .camera-feed::before {
+            content: 'LIVE';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 5px 10px;
+            background: var(--neon-pink);
+            color: #000;
+            animation: blink 1s infinite;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .camera-static {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyIiBoZWlnaHQ9IjIiPjxyZWN0IHdpZHRoPSIyIiBoZWlnaHQ9IjIiIGZpbGw9IiMwMDAiLz48L3N2Zz4=');
+            opacity: 0.3;
+            animation: static 0.5s steps(4) infinite;
+        }
+
+        /* Enhanced Truth Meter */
+        .truth-container {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--neon-green);
+            padding: 10px;
+            margin-top: 20px;
+        }
+
+        .truth-meter {
+            height: 30px;
+            background: linear-gradient(90deg, var(--neon-green), var(--neon-blue));
+            width: 0%;
+            transition: width 0.5s;
+            position: relative;
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .truth-value {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            color: #fff;
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        /* Enhanced Connection Map */
+        .connection-map {
+            position: relative;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+
+        .entity {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--neon-purple);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--neon-purple);
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 2px;
+            background: var(--neon-blue);
+            transform-origin: left center;
+            animation: connection-fade 4s infinite;
+        }
+
+        /* Enhanced Radar */
+        #radar {
+            width: 100%;
+            height: 300px;
+            border: 2px solid var(--neon-green);
+            border-radius: 50%;
+            position: relative;
+            margin: 20px auto;
+            background: radial-gradient(circle, rgba(5, 255, 161, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%);
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+
+        .radar-line {
+            position: absolute;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--neon-green));
+            top: 50%;
+            left: 50%;
+            transform-origin: left;
+            animation: radar-sweep 4s infinite linear;
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .radar-circle {
+            position: absolute;
+            border: 1px solid var(--neon-green);
+            border-radius: 50%;
+            opacity: 0.5;
+        }
+
+        /* File System */
+        .file-tree {
+            font-family: 'VT323', monospace;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--neon-blue);
+            margin-top: 20px;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .file-tree pre {
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+        }
+
+        /* Alert Box */
+        .alert-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.2);
+            border: 2px solid var(--neon-pink);
+            color: var(--neon-pink);
+            display: none;
+            animation: alert-pulse 2s infinite;
+            z-index: 1000;
+            box-shadow: 0 0 20px var(--neon-pink);
+        }
+
+        /* Info Panel */
+        .info-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-size: 0.8em;
+            animation: info-fade 4s infinite;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            margin-right: 20px;
+            box-shadow: 0 0 20px var(--neon-purple);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .sidebar .profile-pic {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            margin-bottom: 20px;
+        }
+
+        .sidebar .about {
+            color: var(--neon-green);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar .icons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar .icons a {
+            color: var(--neon-pink);
+            text-decoration: none;
+            font-size: 1.5em;
+            transition: color 0.3s ease;
+        }
+
+        .sidebar .icons a:hover {
+            color: var(--neon-blue);
+        }
+
+        .sidebar .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 100px;
+            perspective: 1000px;
+            margin-top: 20px;
+        }
+
+        .sidebar .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+        }
+
+        .sidebar .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .sidebar .flip-card-front, .sidebar .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--neon-purple);
+            color: white;
+        }
+
+        .sidebar .flip-card-back {
+            transform: rotateY(180deg);
+        }
+
+        /* Animations */
+        @keyframes grid-scroll {
+            0% { transform: translateZ(0); }
+            100% { transform: translateZ(100px); }
+        }
+
+        @keyframes header-glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); color: var(--neon-blue); }
+            40% { transform: translate(2px, -2px); color: var(--neon-pink); }
+            60% { transform: translate(-2px, -2px); color: var(--neon-purple); }
+            80% { transform: translate(2px, 2px); color: var(--neon-green); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100%); }
+        }
+
+        @keyframes static {
+            0% { transform: translate(0,0); }
+            25% { transform: translate(-1px,-1px); }
+            50% { transform: translate(1px,1px); }
+            75% { transform: translate(-1px,1px); }
+            100% { transform: translate(1px,-1px); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes radar-sweep {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes connection-fade {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        @keyframes alert-pulse {
+            0% { box-shadow: 0 0 20px var(--neon-pink); }
+            50% { box-shadow: 0 0 40px var(--neon-pink); }
+            100% { box-shadow: 0 0 20px var(--neon-pink); }
+        }
+
+        @keyframes info-fade {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* File Tree Hover Effects */
+        .file-tree pre span {
+            position: relative;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+        .file-tree pre span:hover {
+            color: var(--neon-blue);
+        }
+
+        .file-tree pre span:hover::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--neon-blue);
+            animation: glow 1s infinite;
+        }
+
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px var(--neon-blue); }
+            50% { box-shadow: 0 0 20px var(--neon-blue); }
+            100% { box-shadow: 0 0 5px var(--neon-blue); }
+        }
+
+        /* Dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            color: var(--neon-green);
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Popup */
+        .popup {
+            position: relative;
+            display: inline-block;
+        }
+
+        .popup-content {
+            display: none;
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border: 1px solid var(--neon-blue);
+            padding: 10px;
+            color: var(--neon-green);
+        }
+
+        .popup:hover .popup-content {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="profile-pic"></div>
+        <div class="about">
+            <p>Welcome to P Λ R Λ N Ө I Λ . S Y S</p>
+            <p>Your gateway to conspiracy research</p>
+        </div>
+        <div class="icons">
+            <a href="https://files.catbox.moe/3zvcrj.gif"><i class="fas fa-home"></i></a>
+            <a href="https://files.catbox.moe/49zrw2.gif"><i class="fas fa-search"></i></a>
+            <a href="https://files.catbox.moe/wouwa9.gif"><i class="fas fa-cog"></i></a>
+        </div>
+        <div class="flip-card">
+            <div class="flip-card-inner">
+                <div class="flip-card-front">
+                    <p>Hover to Flip</p>
+                </div>
+                <div class="flip-card-back">
+                    <p>Back Side</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>P Λ R Λ N Ө I Λ . S Y S</h1>
+        <p>C Ө N S P I R Λ C Y  R Σ S Σ Λ R C H  T Σ R M I N Λ L</p>
+    </div>
+
+    <div class="grid-container">
+        <div class="terminal">
+            <h3>SURVEILLANCE FEED ALPHA</h3>
+            <div class="camera-feed">
+                <!-- Replace the placeholder URL with the actual live feed URL -->
+                <iframe src="https://www.youtube.com/embed/51jzMZSxk9k?autoplay=1&mute=1" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+            </div>
+            <div id="surveillance-data"></div>
+        </div>
+
+        <div class="terminal">
+            <h3>TRUTH VERIFICATION MATRIX</h3>
+            <div class="truth-container">
+                <div class="truth-meter" id="truthMeter">
+                    <span class="truth-value">0%</span>
+                </div>
+            </div>
+            <div id="truth-analysis"></div>
+        </div>
+
+        <div class="terminal">
+            <h3>CONNECTION MAPPER v2.0</h3>
+            <div class="connection-map" id="connectionMap"></div>
+        </div>
+
+        <div class="terminal">
+            <h3>ENTITY TRACKING RADAR</h3>
+            <div id="radar">
+                <div class="radar-line"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="alert-box" id="alertBox">
+        ⚠️ CONSPIRACY LEVEL CRITICAL ⚠️
+        <div id="alert-details"></div>
+    </div>
+
+    <div class="terminal file-tree">
+        <h3>SYSTEM ARCHITECTURE</h3>
+        <pre id="fileSystem">
+╔══ <span class="dropdown">TRUTH_TOOLS/
+    ├── <span class="popup" data-popup="conspiracy.exe">conspiracy.exe</span>
+    ├── <span class="popup" data-popup="connection_mapper.sys">connection_mapper.sys</span>
+    ├── <span class="popup" data-popup="truth_verify.log">truth_verify.log</span>
+    └── <span class="popup" data-popup="entity_tracker.dat">entity_tracker.dat</span></span>
+║
+╠══ <span class="dropdown">RESEARCH_PROGRAMS/
+    ├── <span class="popup" data-popup="document_decoder">document_decoder</span>
+    ├── <span class="popup" data-popup="pattern_finder">pattern_finder</span>
+    └── <span class="popup" data-popup="surveillance_analyzer">surveillance_analyzer</span></span>
+║
+╚══ <span class="dropdown">SYSTEM_PROTOCOLS/
+    ├── <span class="popup" data-popup="security.paranoid">security.paranoid</span>
+    ├── <span class="popup" data-popup="trace_remove.exe">trace_remove.exe</span>
+    └── <span class="popup" data-popup="evidence_burn.cmd">evidence_burn.cmd</span></span>
+        </pre>
+    </div>
+
+    <div class="info-panel">
+        <div id="system-status"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Enhanced File System
+            const fileSystem = `
+╔══ TRUTH_TOOLS/
+║   ├── conspiracy.exe
+║   ├── connection_mapper.sys
+║   ├── truth_verify.log
+║   └── entity_tracker.dat
+║
+╠══ RESEARCH_PROGRAMS/
+║   ├── document_decoder
+║   ├── pattern_finder
+║   └── surveillance_analyzer
+║
+╚══ SYSTEM_PROTOCOLS/
+    ├── security.paranoid
+    ├── trace_remove.exe
+    └── evidence_burn.cmd`;
+            
+            document.getElementById('fileSystem').textContent = fileSystem;
+
+            // Enhanced Truth Meter
+            let truthValue = 0;
+            const truthAnalysis = [
+                "ANALYZING TEMPORAL ANOMALIES...",
+                "CROSS-REFERENCING QUANTUM PATTERNS...",
+                "DETECTING REALITY DISTORTIONS...",
+                "CALCULATING CONSPIRACY PROBABILITY...",
+                "VERIFYING DIMENSIONAL STABILITY..."
+            ];
+
+            setInterval(() => {
+                truthValue = Math.random() * 100;
+                const meter = document.getElementById('truthMeter');
+                meter.style.width = `${truthValue}%`;
+                meter.querySelector('.truth-value').textContent = `${truthValue.toFixed(1)}%`;
+
+                // Truth Analysis Updates
+                document.getElementById('truth-analysis').innerHTML = 
+                    truthAnalysis[Math.floor(Math.random() * truthAnalysis.length)];
+
+                if (truthValue > 75) {
+                    document.getElementById('alertBox').style.display = 'block';
+                    document.getElementById('alert-details').innerHTML = `
+                        THREAT LEVEL: ${(truthValue/10).toFixed(1)}α<br>
+                        REALITY BREACH IMMINENT<br>
+                        QUANTUM ENTANGLEMENT DETECTED<br>
+                        <span style="color: #ff0000">■ ACTIVATE CONTAINMENT PROTOCOLS ■</span>
+                    `;
+                } else {
+                    document.getElementById('alertBox').style.display = 'none';
+                }
+            }, 2000);
+
+            // Enhanced Connection Map
+            const connectionMap = document.getElementById('connectionMap');
+            const entities = [];
+            const connections = [];
+
+            function createEntity() {
+                const entity = document.createElement('div');
+                entity.className = 'entity';
+                entity.style.left = `${Math.random() * 90}%`;
+                entity.style.top = `${Math.random() * 90}%`;
+                connectionMap.appendChild(entity);
+                return entity;
+            }
+
+            function createConnection(entity1, entity2) {
+                const connection = document.createElement('div');
+                connection.className = 'connection-line';
+                connectionMap.appendChild(connection);
+
+                function updateConnection() {
+                    const rect1 = entity1.getBoundingClientRect();
+                    const rect2 = entity2.getBoundingClientRect();
+                    const mapRect = connectionMap.getBoundingClientRect();
+
+                    const x1 = rect1.left - mapRect.left + rect1.width/2;
+                    const y1 = rect1.top - mapRect.top + rect1.height/2;
+                    const x2 = rect2.left - mapRect.left + rect2.width/2;
+                    const y2 = rect2.top - mapRect.top + rect2.height/2;
+
+                    const length = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
+                    const angle = Math.atan2(y2-y1, x2-x1) * 180/Math.PI;
+
+                    connection.style.width = `${length}px`;
+                    connection.style.left = `${x1}px`;
+                    connection.style.top = `${y1}px`;
+                    connection.style.transform = `rotate(${angle}deg)`;
+                }
+
+                return { update: updateConnection };
+            }
+
+            // Create multiple entities and connections
+            for (let i = 0; i < 8; i++) {
+                entities.push(createEntity());
+            }
+
+            // Create connections between entities
+            for (let i = 0; i < entities.length; i++) {
+                for (let j = i + 1; j < entities.length; j++) {
+                    if (Math.random() < 0.3) { // 30% chance of connection
+                        connections.push(createConnection(entities[i], entities[j]));
+                    }
+                }
+            }
+
+            // Animate entities
+            function animateEntities() {
+                entities.forEach(entity => {
+                    entity.style.left = `${Math.random() * 90}%`;
+                    entity.style.top = `${Math.random() * 90}%`;
+                });
+                connections.forEach(conn => conn.update());
+            }
+
+            setInterval(animateEntities, 3000);
+
+            // Enhanced Radar
+            const radar = document.getElementById('radar');
+            function createRadarCircles() {
+                for (let i = 1; i <= 4; i++) {
+                    const circle = document.createElement('div');
+                    circle.className = 'radar-circle';
+                    const size = i * 25;
+                    circle.style.width = `${size}%`;
+                    circle.style.height = `${size}%`;
+                    circle.style.left = `${(100-size)/2}%`;
+                    circle.style.top = `${(100-size)/2}%`;
+                    radar.appendChild(circle);
+                }
+            }
+            createRadarCircles();
+
+            // Add radar blips
+            function createRadarBlip() {
+                const blip = document.createElement('div');
+                blip.className = 'entity';
+                const angle = Math.random() * Math.PI * 2;
+                const distance = Math.random() * 45;
+                const x = 50 + Math.cos(angle) * distance;
+                const y = 50 + Math.sin(angle) * distance;
+                blip.style.left = `${x}%`;
+                blip.style.top = `${y}%`;
+                radar.appendChild(blip);
+                setTimeout(() => radar.removeChild(blip), 4000);
+            }
+
+            setInterval(createRadarBlip, 2000);
+
+            // Enhanced Surveillance Feed
+            function updateSurveillanceData() {
+                const data = [
+                    "TRACKING SUBJECT #" + Math.floor(Math.random() * 9999),
+                    "LOCATION: SECTOR " + String.fromCharCode(65 + Math.floor(Math.random() * 26)),
+                    "TEMPORAL VARIANCE: " + (Math.random() * 0.1).toFixed(3),
+                    "REALITY INDEX: " + (Math.random() * 100).toFixed(2) + "%",
+                    "QUANTUM STATE: " + (Math.random() > 0.5 ? "STABLE" : "UNSTABLE"),
+                ];
+                document.getElementById('surveillance-data').innerHTML = data.join('<br>');
+            }
+            setInterval(updateSurveillanceData, 1000);
+
+            // System Status Updates
+            function updateSystemStatus() {
+                const timestamp = new Date().toLocaleTimeString();
+                const memoryUsage = Math.floor(Math.random() * 100);
+                const processes = Math.floor(Math.random() * 50) + 20;
+                
+                document.getElementById('system-status').innerHTML = `
+                    <div style="color: var(--neon-green)">
+                        ${timestamp} :: SYS.STATUS<br>
+                        MEM: ${memoryUsage}% | PROC: ${processes} | NET: ACTIVE<br>
+                        <span style="color: ${Math.random() > 0.9 ? '#ff0000' : 'var(--neon-blue)'}">
+                            ${Math.random() > 0.9 ? 'WARNING: INTRUSION DETECTED' : 'SYSTEM SECURE'}
+                        </span>
+                    </div>
+                `;
+            }
+            setInterval(updateSystemStatus, 1000);
+
+            // Camera Feed Static Effect
+            function updateCameraStatic() {
+                const feeds = document.querySelectorAll('.camera-feed');
+                feeds.forEach(feed => {
+                    const staticIntensity = Math.random() * 0.5;
+                    feed.style.boxShadow = `
+                        inset 0 0 50px rgba(255, 255, 255, ${staticIntensity}),
+                        0 0 20px rgba(0, 255, 255, ${staticIntensity})
+                    `;
+                });
+            }
+            setInterval(updateCameraStatic, 100);
+
+            // Add glitch effect to terminals randomly
+            function addRandomGlitch() {
+                const terminals = document.querySelectorAll('.terminal');
+                const randomTerminal = terminals[Math.floor(Math.random() * terminals.length)];
+                randomTerminal.style.transform = 'scale(1.02) skew(2deg)';
+                randomTerminal.style.filter = 'hue-rotate(90deg)';
+                setTimeout(() => {
+                    randomTerminal.style.transform = '';
+                    randomTerminal.style.filter = '';
+                }, 200);
+            }
+            setInterval(addRandomGlitch, 5000);
+
+            // Popup functionality
+            document.querySelectorAll('.popup').forEach(popup => {
+                const content = popup.getAttribute('data-popup');
+                const popupContent = document.createElement('div');
+                popupContent.className = 'popup-content';
+                popupContent.textContent = content;
+                popup.appendChild(popupContent);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Cyberpunk Webpage</title>
+    <style>
+        :root {
+            --neon-green: #39FF14;
+            --neon-purple: #9D00FF;
+            --neon-blue: #00FFFF;
+            --dark-bg: #0A0A0A;
+            --text-color: #E0E0E0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', monospace;
+            background-color: var(--dark-bg);
+            color: var(--text-color);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 3fr 1fr;
+            grid-template-areas: 
+                "header header header"
+                "nav nav nav"
+                "left-sidebar content right-sidebar"
+                "footer footer footer";
+            gap: 20px;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .glitch-container {
+            border: 2px solid transparent;
+            border-image: linear-gradient(45deg, var(--neon-green), var(--neon-purple)) 1;
+            animation: borderGlow 2s infinite alternate;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        @keyframes borderGlow {
+            0% { box-shadow: 0 0 5px var(--neon-green); }
+            100% { box-shadow: 0 0 20px var(--neon-purple); }
+        }
+
+        header { grid-area: header; text-align: center; }
+        nav { grid-area: nav; }
+        .left-sidebar { grid-area: left-sidebar; }
+        .content { grid-area: content; overflow-y: auto; max-height: calc(100vh - 200px); }
+        .right-sidebar { grid-area: right-sidebar; }
+        footer { grid-area: footer; text-align: center; }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav ul li { margin: 0 15px; }
+
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+
+        .vertical-marquee {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .marquee-content {
+            animation: marquee 20s linear infinite;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(-100%); }
+        }
+
+        .widget, .floating-container { margin-top: 20px; }
+
+        .image-interaction {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .interactive-image {
+            transition: transform 0.3s ease;
+            max-width: 80px;
+            height: auto;
+            margin: 5px;
+        }
+
+        .interactive-image:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .object-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .object {
+            width: 50px;
+            height: 50px;
+            margin: 10px 0;
+            background-color: var(--neon-green);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .object:hover {
+            transform: rotate(45deg);
+            background-color: var(--neon-purple);
+        }
+
+        .enhanced-3d-object {
+            width: 200px;
+            height: 200px;
+            perspective: 1000px;
+            margin: 50px auto;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate 20s infinite linear;
+        }
+
+        .face {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border: 2px solid var(--neon-green);
+            opacity: 0.7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .front  { transform: rotateY(0deg) translateZ(100px); }
+        .back   { transform: rotateY(180deg) translateZ(100px); }
+        .right  { transform: rotateY(90deg) translateZ(100px); }
+        .left   { transform: rotateY(-90deg) translateZ(100px); }
+        .top    { transform: rotateX(90deg) translateZ(100px); }
+        .bottom { transform: rotateX(-90deg) translateZ(100px); }
+
+        @keyframes rotate {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg); }
+        }
+
+        .floating-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .flip-card {
+            background-color: transparent;
+            width: 100%;
+            height: 150px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px solid var(--neon-purple);
+        }
+
+        .flip-card-front {
+            background-color: #2c2c2c;
+        }
+
+        .flip-card-back {
+            background-color: #1a1a1a;
+            transform: rotateY(180deg);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                grid-template-areas: 
+                    "header"
+                    "nav"
+                    "left-sidebar"
+                    "content"
+                    "right-sidebar"
+                    "footer";
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="glitch-container">
+            <h1 class="glitch-text">Cyberpunk Manifesto</h1>
+        </header>
+        
+        <nav class="glitch-container">
+            <ul>
+                <li><a href="#" class="glitch-text">Home</a></li>
+                <li><a href="#" class="glitch-text">About</a></li>
+                <li><a href="#" class="glitch-text">Contact</a></li>
+            </ul>
+        </nav>
+        
+        <div class="left-sidebar glitch-container">
+            <div class="vertical-marquee">
+                <div class="marquee-content">
+                    <p class="glitch-text">Cyberpunk Revolution</p>
+                    <img src="/api/placeholder/100/100" alt="Cyberpunk 1">
+                    <p class="glitch-text">Digital Rebellion</p>
+                    <img src="/api/placeholder/100/100" alt="Cyberpunk 2">
+                    <p class="glitch-text">Neon Dreams</p>
+                    <img src="/api/placeholder/100/100" alt="Cyberpunk 3">
+                </div>
+            </div>
+            <div class="widget glitch-container">
+                <h3 class="glitch-text">Cyber Widget</h3>
+                <div class="image-interaction">
+                    <img src="/api/placeholder/80/80" alt="Interactive 1" class="interactive-image">
+                    <img src="/api/placeholder/80/80" alt="Interactive 2" class="interactive-image">
+                    <img src="/api/placeholder/80/80" alt="Interactive 3" class="interactive-image">
+                    <img src="/api/placeholder/80/80" alt="Interactive 4" class="interactive-image">
+                    <img src="/api/placeholder/80/80" alt="Interactive 5" class="interactive-image">
+                    <img src="/api/placeholder/80/80" alt="Interactive 6" class="interactive-image">
+                </div>
+            </div>
+        </div>
+        
+        <div class="content glitch-container">
+            <div class="enhanced-3d-object">
+                <div class="cube">
+                    <div class="face front">CYBER</div>
+                    <div class="face back">PUNK</div>
+                    <div class="face right">NEON</div>
+                    <div class="face left">TECH</div>
+                    <div class="face top">HACK</div>
+                    <div class="face bottom">REBEL</div>
+                </div>
+            </div>
+            <article>
+                <h2 class="glitch-text">Welcome to the Future</h2>
+                <p class="glitch-text">In a world where technology and humanity intertwine, we stand at the precipice of a new era. The lines between man and machine blur, and the streets pulse with the energy of a billion interconnected minds.</p>
+                <p class="glitch-text">We are the children of this digital age, born into a reality where information flows like electricity through our veins. Our thoughts are amplified by neural networks, our bodies enhanced by cybernetic implants.</p>
+                <p class="glitch-text">But with great power comes great responsibility. We must navigate the treacherous waters of corporate greed and government surveillance, fighting to maintain our individuality in a world that seeks to commodify our very existence.</p>
+            </article>
+            <div class="floating-gallery">
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="/api/placeholder/150/150" alt="Flip Card 1">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Cyber City</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="/api/placeholder/150/150" alt="Flip Card 2">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Neural Link</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="/api/placeholder/150/150" alt="Flip Card 3">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>AI Uprising</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="/api/placeholder/150/150" alt="Flip Card 4">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Neon Streets</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="/api/placeholder/150/150" alt="Flip Card 5">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Hacker's Den</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="flip-card">
+                    <div class="flip-card-inner">
+                        <div class="flip-card-front">
+                            <img src="/api/placeholder/150/150" alt="Flip Card 6">
+                        </div>
+                        <div class="flip-card-back">
+                            <h3>Cyber Rebellion</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="right-sidebar glitch-container">
+            <div class="object-container">
+                <div class="object" data-shape="cube"></div>
+                <div class="object" data-shape="sphere"></div>
+                <div class="object" data-shape="pyramid"></div>
+                <div class="object" data-shape="cylinder"></div>
+                <div class="object" data-shape="torus"></div>
+            </div>
+        </div>
+        
+        <footer class="glitch-container">
+            <p class="glitch-text">&copy; 2024 Cyberpunk Manifesto. All rights reserved.</p>
+        </footer>
+    </div>
+    <script>
+        // Glitch text effect
+        function glitchText(element) {
+            const originalText = element.textContent;
+            const glitchChars = '!@#$%^&*()_+-={}[]|;:,.<>?';
+            let glitchedText = '';
+            for (let i = 0; i < originalText.length; i++) {
+                if (Math.random() < 0.1) {
+                    glitchedText += glitchChars[Math.floor(Math.random() * glitchChars.length)];
+                } else {
+                    glitchedText += originalText[i];
+                }
+            }
+            element.textContent = glitchedText;
+            setTimeout(() => element.textContent = originalText, 100);
+        }
+
+        // Apply glitch effect randomly
+        function applyRandomGlitch() {
+            const glitchTexts = document.querySelectorAll('.glitch-text');
+            const randomElement = glitchTexts[Math.floor(Math.random() * glitchTexts.length)];
+            glitchText(randomElement);
+        }
+
+        setInterval(applyRandomGlitch, 2000);
+
+        // Interactive cursor effect
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.classList.ad// Interactive cursor effect
+        document.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.classList.add('cursor-ripple');
+            ripple.style.left = e.clientX + 'px';
+            ripple.style.top = e.clientY + 'px';
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 1000);
+        });
+
+        // Dynamic background shift
+        function shiftBackground() {
+            const hue = (Date.now() / 100) % 360;
+            document.body.style.backgroundColor = `hsl(${hue}, 20%, 5%)`;
+            requestAnimationFrame(shiftBackground);
+        }
+
+        shiftBackground();
+
+        // Interactive images
+        const interactiveImages = document.querySelectorAll('.interactive-image');
+        interactiveImages.forEach(img => {
+            img.addEventListener('mouseover', () => {
+                const randomX = Math.random() * 20 - 10;
+                const randomY = Math.random() * 20 - 10;
+                img.style.transform = `translate(${randomX}px, ${randomY}px) scale(1.1) rotate(${Math.random() * 20 - 10}deg)`;
+            });
+            img.addEventListener('mouseout', () => {
+                img.style.transform = 'translate(0, 0) scale(1) rotate(0deg)';
+            });
+        });
+
+        // 3D objects interaction
+        const objects = document.querySelectorAll('.object');
+        objects.forEach(obj => {
+            obj.addEventListener('mouseover', () => {
+                obj.style.transform = 'rotate(45deg) scale(1.2)';
+                obj.style.boxShadow = '0 0 20px var(--neon-purple)';
+            });
+            obj.addEventListener('mouseout', () => {
+                obj.style.transform = 'rotate(0deg) scale(1)';
+                obj.style.boxShadow = 'none';
+            });
+            obj.addEventListener('click', () => {
+                const shapes = ['cube', 'sphere', 'pyramid', 'cylinder', 'torus'];
+                const currentShape = obj.getAttribute('data-shape');
+                const currentIndex = shapes.indexOf(currentShape);
+                const nextIndex = (currentIndex + 1) % shapes.length;
+                obj.setAttribute('data-shape', shapes[nextIndex]);
+                obj.textContent = shapes[nextIndex];
+            });
+        });
+
+        // Audio glitch effect
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playGlitchSound() {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillator.type = 'sawtooth';
+            oscillator.frequency.setValueAtTime(Math.random() * 1000 + 200, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.1);
+        }
+
+        document.addEventListener('mousemove', () => {
+            if (Math.random() < 0.01) playGlitchSound();
+        });
+
+        // Glitchy effect for flip cards
+        const flipCards = document.querySelectorAll('.flip-card');
+        flipCards.forEach(card => {
+            card.addEventListener('mouseover', () => {
+                const glitchInterval = setInterval(() => {
+                    card.style.transform = `translate(${Math.random() * 5 - 2.5}px, ${Math.random() * 5 - 2.5}px)`;
+                }, 50);
+                card.addEventListener('mouseout', () => {
+                    clearInterval(glitchInterval);
+                    card.style.transform = 'translate(0, 0)';
+                }, { once: true });
+            });
+        });
+
+        // Enhanced 3D object interaction
+        const cube = document.querySelector('.cube');
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            cube.style.transform = `rotateX(${y}deg) rotateY(${x}deg)`;
+        });
+    </script>
+</body>
+</html>

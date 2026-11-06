@@ -540,5 +540,239 @@
         "path": "previews/celebi-temporal-rift/mobile.webp"
       }
     ]
+  },
+  {
+    "slug": "cyberpunk",
+    "entrypoint": "templates/profiles/cyberpunk/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 52040,
+        "path": "previews/cyberpunk/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 15332,
+        "path": "previews/cyberpunk/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "pixelpasta",
+    "entrypoint": "templates/terminals/pixelpasta/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 45968,
+        "path": "previews/pixelpasta/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 19588,
+        "path": "previews/pixelpasta/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "angelware-98",
+    "entrypoint": "templates/desktops/angelware-98/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 7644,
+        "path": "previews/angelware-98/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 6456,
+        "path": "previews/angelware-98/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "discrot",
+    "entrypoint": "templates/terminals/discrot/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 7862,
+        "path": "previews/discrot/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 3476,
+        "path": "previews/discrot/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "dollgrave",
+    "entrypoint": "templates/shrines/dollgrave/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 72974,
+        "path": "previews/dollgrave/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 35516,
+        "path": "previews/dollgrave/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "mothwort",
+    "entrypoint": "templates/shrines/mothwort/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 72058,
+        "path": "previews/mothwort/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 16186,
+        "path": "previews/mothwort/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "swampwitch",
+    "entrypoint": "templates/shrines/swampwitch/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": false,
+        "bytes": 0,
+        "path": null
+      },
+      {
+        "mode": "mobile",
+        "ok": false,
+        "bytes": 0,
+        "path": null
+      }
+    ]
+  },
+  {
+    "slug": "yumetwint",
+    "entrypoint": "templates/desktops/yumetwint/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 128704,
+        "path": "previews/yumetwint/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 37520,
+        "path": "previews/yumetwint/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "paranoia-sys",
+    "entrypoint": "templates/terminals/paranoia-sys/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 63186,
+        "path": "previews/paranoia-sys/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 28206,
+        "path": "previews/paranoia-sys/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "goricamilia",
+    "entrypoint": "templates/shrines/goricamilia/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 56132,
+        "path": "previews/goricamilia/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 29614,
+        "path": "previews/goricamilia/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "ethereal-mire",
+    "entrypoint": "templates/shrines/ethereal-mire/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 43788,
+        "path": "previews/ethereal-mire/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 38578,
+        "path": "previews/ethereal-mire/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "ascii-hackers-journal",
+    "entrypoint": "templates/publishing/ascii-hackers-journal/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 9052,
+        "path": "previews/ascii-hackers-journal/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 5018,
+        "path": "previews/ascii-hackers-journal/mobile.webp"
+      }
+    ]
+  },
+  {
+    "slug": "frutiger-aero-profile",
+    "entrypoint": "templates/profiles/frutiger-aero-profile/index.html",
+    "captures": [
+      {
+        "mode": "desktop",
+        "ok": true,
+        "bytes": 33972,
+        "path": "previews/frutiger-aero-profile/desktop.webp"
+      },
+      {
+        "mode": "mobile",
+        "ok": true,
+        "bytes": 28308,
+        "path": "previews/frutiger-aero-profile/mobile.webp"
+      }
+    ]
   }
 ]
